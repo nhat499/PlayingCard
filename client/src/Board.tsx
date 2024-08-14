@@ -7,7 +7,7 @@ export type BoardProps = {
 
 const Board = ({ items }: BoardProps) => {
     const { isOver, setNodeRef, node, active, over, rect } = useDroppable({
-        id: 'droppable',
+        id: 'Board',
     });
 
     return (
