@@ -1,52 +1,65 @@
 import { useState } from "react";
 import Board, { BoardProps } from "./Board";
 import Hand, { HandProps } from "./Hand";
-import { DndContext, DragEndEvent, MouseSensor, TouchSensor, PointerSensor, useSensor, useSensors, DragOverEvent } from '@dnd-kit/core';
+import { DndContext, DragEndEvent, MouseSensor, TouchSensor, PointerSensor, useSensor, useSensors, DragOverEvent, DragStartEvent } from '@dnd-kit/core';
 import { DraggableProps } from "./Draggable";
 
 const cards: DraggableProps["item"][] = [
     {
         id: "1",
         name: "card1",
+        zIndex: 0,
         width: 40,
         height: 55,
         top: 0,
-        left: 0
+        left: 0,
+        disabled: false,
+        isHidden: false
     },
     {
         id: "2",
         name: "card2",
+        zIndex: 0,
         width: 40,
         height: 55,
         top: 0,
-        left: 0
+        left: 0,
+        disabled: false,
+        isHidden: false
     },
     {
         id: "3",
         name: "card3",
+        zIndex: 0,
         width: 40,
         height: 55,
         top: 0,
-        left: 0
+        left: 0,
+        disabled: false,
+        isHidden: false
     },
     {
         id: "4",
         name: "card4",
+        zIndex: 0,
         width: 40,
         height: 55,
         top: 0,
-        left: 0
+        left: 0,
+        disabled: false,
+        isHidden: false
     }
 ]
 
 
 
 function GameScreen() {
-
+    const [highestZIndex, setHighestZIndex] = useState<number>(1);
     const [boardItem, setBoardItem] = useState<BoardProps["items"]>({
         "5": {
             id: "5",
             name: "card5",
+            zIndex: 0,
             width: 40,
             height: 55,
             top: 0,
@@ -58,12 +71,12 @@ function GameScreen() {
 
     function handleDragEnd(event: DragEndEvent) {
         const { active, over, delta, activatorEvent, collisions } = event;
-        const item: DraggableProps["item"] | undefined = active.data.current
+        const item = active.data.current as DraggableProps["item"] | undefined;
         if (!item) return;
         if (over && over.id === 'Board') {
             setBoardItem((currItem) => {
-                item.left = activatorEvent.target.getBoundingClientRect().left - over.rect.left;
-                item.top = activatorEvent.target.getBoundingClientRect().top - over.rect.top;
+                item.left = activatorEvent.target?.getBoundingClientRect().left - over.rect.left;
+                item.top = activatorEvent.target?.getBoundingClientRect().top - over.rect.top;
                 currItem[item.id] = item;
                 return currItem;
             });
@@ -79,21 +92,27 @@ function GameScreen() {
             // add to hand
             setHandItem((currHandItem) => {
                 // check if exists
-                const a = currHandItem.find((curr) => curr.id === item.id)
-                if (!a) {
+                const index = currHandItem.findIndex((curr) => curr.id === item.id)
+                if (index === -1) {
                     // else add
                     currHandItem.push(item);
+                } else {
+                    currHandItem[index] = item;
                 }
                 return currHandItem;
             })
         }
     }
 
-    function handleDragOver(event: DragOverEvent) {
-        const { activatorEvent, active, collisions, delta, over } = event;
-        if (!over) return;
-
-        console.log("i am dragOver:", active, over);
+    function handleDragStart(event: DragStartEvent) {
+        console.log("on drag start:");
+        const { active } = event;
+        const item = active.data.current as DraggableProps["item"] | undefined;
+        if (!item) return;
+        if (item.zIndex < highestZIndex) {
+            item.zIndex = highestZIndex;
+            setHighestZIndex(highestZIndex + 1);
+        }
 
     }
 
@@ -101,8 +120,7 @@ function GameScreen() {
     return (
         <DndContext
             onDragEnd={handleDragEnd}
-            onDragOver={handleDragOver}
-
+            onDragStart={handleDragStart}
         >
             <div style={{
                 width: "100vw",
@@ -114,8 +132,8 @@ function GameScreen() {
                 gap: "10px",
                 border: "1px solid black"
             }}>
-                <Board items={boardItem} />
-                <Hand cards={handItem}></Hand>
+                <Board items={boardItem} setItems={setBoardItem} />
+                <Hand cards={handItem} setItems={setHandItem}></Hand>
             </div>
         </DndContext >
     );

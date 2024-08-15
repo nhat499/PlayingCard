@@ -3,10 +3,11 @@ import Draggable, { DraggableProps } from "./Draggable";
 import { useDroppable } from '@dnd-kit/core';
 
 export type HandProps = {
-    cards: DraggableProps["item"][]
+    cards: DraggableProps["item"][];
+    setItems: (value: React.SetStateAction<DraggableProps["item"][]>) => void
 }
 
-const Hand = ({ cards }: HandProps) => {
+const Hand = ({ cards, setItems }: HandProps) => {
     const { setNodeRef } = useDroppable({
         id: 'Hand',
     });
@@ -21,9 +22,13 @@ const Hand = ({ cards }: HandProps) => {
                 display: "flex",
                 gap: "5px"
             }}>
-            <SortableContext items={cards}>
-                {cards.map(card => <Draggable key={card.id} item={card} />)}
-            </SortableContext>
+            {cards.map(card => <Draggable key={card.id} item={card}
+                setAttribute={(id, key, value) => setItems(currItems => {
+                    const index = currItems.findIndex((curr) => curr.id === id);
+                    currItems[index][key] = value;
+                    return currItems;
+                })}
+            />)}
         </div>
     )
 }
