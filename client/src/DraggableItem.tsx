@@ -1,10 +1,9 @@
 import { useDraggable } from '@dnd-kit/core';
-import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
 
 
-export type DraggableProps = {
+export type DraggableItemProps = {
     item: {
         id: string,
         name: string,
@@ -15,32 +14,17 @@ export type DraggableProps = {
     }
 }
 
-const Draggable = ({ item }: DraggableProps) => {
-    // const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    //     id: item.id,
-    //     data: item,
-
-    // });
-
-    // const style = transform ? {
-    //     transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-    // } : undefined;
-
-
+const DraggableItem = ({ item }: DraggableItemProps) => {
     const { attributes, listeners, setNodeRef, transform } = useDraggable({
         id: item.id,
         data: item,
     });
 
-
     const style = {
-
         transform: CSS.Translate.toString(transform)
     }
 
-
     return (
-
         <div
             ref={setNodeRef}
             style={{
@@ -52,10 +36,9 @@ const Draggable = ({ item }: DraggableProps) => {
             {...listeners}
             {...attributes}
         >
-
             {item.name}
         </div>
 
     )
 }
-export default Draggable
+export default DraggableItem

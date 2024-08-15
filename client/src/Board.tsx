@@ -1,8 +1,8 @@
 import { useDroppable } from '@dnd-kit/core';
-import Draggable, { DraggableProps } from './Draggable';
+import DraggableItem, { DraggableItemProps } from './DraggableItem';
 
 export type BoardProps = {
-    items: { [key: string]: DraggableProps["item"] };
+    items: { [key: string]: DraggableItemProps["item"] };
 }
 
 const Board = ({ items }: BoardProps) => {
@@ -29,7 +29,7 @@ const Board = ({ items }: BoardProps) => {
                         left: item.left
                     }}
                 >
-                    <Draggable item={item} />
+                    <DraggableItem item={item} />
                 </div>)}
         </div>
     )

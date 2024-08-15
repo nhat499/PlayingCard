@@ -1,8 +1,8 @@
 import { useState } from "react";
 import Board, { BoardProps } from "./Board";
 import Hand, { HandProps } from "./Hand";
-import { DndContext, DragEndEvent, MouseSensor, TouchSensor, PointerSensor, useSensor, useSensors, DragOverEvent } from '@dnd-kit/core';
-import { DraggableProps } from "./Draggable";
+import { DndContext, DragEndEvent, MouseSensor, TouchSensor, PointerSensor, useSensor, useSensors, DragOverEvent, pointerWithin, rectIntersection } from '@dnd-kit/core';
+import { DraggableProps } from "./DraggableItem";
 
 const cards: DraggableProps["item"][] = [
     {
@@ -102,7 +102,14 @@ function GameScreen() {
         <DndContext
             onDragEnd={handleDragEnd}
             onDragOver={handleDragOver}
-
+            collisionDetection={(args) => {
+                // only detect if point is in contatiner
+                const pointerCollisions = pointerWithin(args);
+                if (pointerCollisions.length > 0) {
+                    return pointerCollisions;
+                }
+                return []
+            }}
         >
             <div style={{
                 width: "100vw",
