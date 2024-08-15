@@ -78,7 +78,12 @@ function GameScreen() {
             })
             // add to hand
             setHandItem((currHandItem) => {
-                currHandItem.push(item);
+                // check if exists
+                const a = currHandItem.find((curr) => curr.id === item.id)
+                if (!a) {
+                    // else add
+                    currHandItem.push(item);
+                }
                 return currHandItem;
             })
         }
@@ -109,10 +114,6 @@ function GameScreen() {
                 gap: "10px",
                 border: "1px solid black"
             }}>
-                <div style={{
-                    fontSize: "50px",
-                    border: "1px solid red"
-                }}>&#x2B22;</div>
                 <Board items={boardItem} />
                 <Hand cards={handItem}></Hand>
             </div>
