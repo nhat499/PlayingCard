@@ -1,8 +1,9 @@
 import { useState } from "react";
 import Board, { BoardProps } from "./Board";
-import Hand, { HandProps } from "./Hand";
-import { DndContext, DragEndEvent, MouseSensor, TouchSensor, PointerSensor, useSensor, useSensors, DragOverEvent, DragStartEvent } from '@dnd-kit/core';
+import Hand from "./Hand";
+import { DndContext, DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import { DraggableProps } from "./Draggable";
+
 
 const cards: DraggableProps["item"][] = [
     {
@@ -63,7 +64,9 @@ function GameScreen() {
             width: 40,
             height: 55,
             top: 0,
-            left: 0
+            left: 0,
+            disabled: false,
+            isHidden: false,
         }
     });
     const [handItem, setHandItem] = useState<DraggableProps["item"][]>(cards);
@@ -132,7 +135,26 @@ function GameScreen() {
                 gap: "10px",
                 border: "1px solid black"
             }}>
-                <Board items={boardItem} setItems={setBoardItem} />
+
+                <div
+                    style={{
+                        display: "flex",
+                        // border: "1px solid black",
+                        width: "100%",
+                        height: "70%",
+                    }}
+                >
+                    <div
+                        style={{
+                            width: "10%"
+                        }}
+                    >test</div>
+                    <Board items={boardItem} setItems={setBoardItem} />
+                    <div
+                        style={{
+                            width: "10%"
+                        }}>test</div>
+                </div>
                 <Hand cards={handItem} setItems={setHandItem}></Hand>
             </div>
         </DndContext >

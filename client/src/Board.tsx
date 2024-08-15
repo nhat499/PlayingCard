@@ -16,8 +16,8 @@ const Board = ({ items, setItems }: BoardProps) => {
             style={{
                 position: "relative",
                 border: "1px solid black",
-                width: "85%",
-                height: "70%",
+                width: "100%",
+                height: "100%",
 
             }}>
             {Object.entries(items).map(([key, item]) =>
