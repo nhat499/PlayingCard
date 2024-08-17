@@ -1,6 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import App from "./GameScreen.tsx";
+import App from "./components/GameScreen";
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>

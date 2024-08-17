@@ -15,10 +15,9 @@ const Board = ({ items, setItems }: BoardProps) => {
         <div ref={setNodeRef}
             style={{
                 position: "relative",
-                border: "1px solid black",
                 width: "100%",
                 height: "100%",
-
+                backgroundColor: "lightblue"
             }}>
             {Object.entries(items).map(([key, item]) =>
                 <div

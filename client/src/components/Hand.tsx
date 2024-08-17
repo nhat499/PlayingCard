@@ -17,8 +17,11 @@ const Hand = ({ cards, setItems }: HandProps) => {
         <div
             ref={setNodeRef}
             style={{
-                border: "1px solid black",
-                padding: "0px 5px 0px 5px",
+                border: "1px solid lightblue",
+                backgroundColor: "lightcyan",
+                minWidth: "500px",
+                minHeight: "50px",
+                padding: "5px",
                 display: "flex",
                 gap: "5px"
             }}>
