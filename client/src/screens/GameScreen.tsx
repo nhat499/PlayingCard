@@ -1,64 +1,8 @@
 import { useState } from "react";
-import Board, { BoardProps } from "./Board";
-import Hand from "./Hand";
+import Board, { BoardProps } from "../components/Board";
+import Hand from "../components/Hand";
 import { DndContext, DragEndEvent, DragStartEvent } from '@dnd-kit/core';
-import { DraggableProps } from "./Draggable";
-import Setting, { SettingProps } from "./Setting";
-
-const itemData: SettingProps["itemData"] = {
-    "cards": [
-        {
-            id: "1",
-            name: "card1",
-            zIndex: 0,
-            width: 40,
-            height: 55,
-            top: 0,
-            left: 0,
-            disabled: false,
-            isHidden: false
-        },
-        {
-            id: "2",
-            name: "card2",
-            zIndex: 0,
-            width: 40,
-            height: 55,
-            top: 0,
-            left: 0,
-            disabled: false,
-            isHidden: false
-        },
-        {
-            id: "3",
-            name: "card3",
-            zIndex: 0,
-            width: 40,
-            height: 55,
-            top: 0,
-            left: 0,
-            disabled: false,
-            isHidden: false
-        },
-        {
-            id: "4",
-            name: "card4",
-            zIndex: 0,
-            width: 40,
-            height: 55,
-            top: 0,
-            left: 0,
-            disabled: false,
-            isHidden: false
-        }
-    ]
-}
-
-
-// const cards: DraggableProps["item"][] = [
-
-// ]
-
+import { DraggableProps } from "../components/Draggable";
 
 
 function GameScreen() {
@@ -176,7 +120,6 @@ function GameScreen() {
                     <Hand cards={handItem} setItems={setHandItem}></Hand>
                 </div>
             </DndContext >
-            <Setting open={settingOpen} setOpen={setSettingOpen} itemData={itemData} />
         </div>
     );
 }
