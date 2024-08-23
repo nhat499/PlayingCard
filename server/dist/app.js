@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -17,8 +26,8 @@ const server = http_1.default.createServer(app);
 app.use((0, cors_1.default)());
 const io = new socket_io_1.Server(server, {
     cors: {
-        origin: "http://localhost:5173"
-    }
+        origin: "http://localhost:5173",
+    },
 });
 io.on("connection", (socket) => {
     console.log("user connected: ", socket.id);
@@ -26,21 +35,60 @@ io.on("connection", (socket) => {
         const roomId = (0, nanoid_esm_1.default)(5);
         console.log("on create room:", name, roomId);
         socket.join(roomId);
-        socket.emit("roomId", { roomId });
+        socket.emit("roomId", {
+            roomId,
+            name,
+            socketId: socket.id,
+            roomLeader: true,
+        });
     });
-    socket.on("JoinRoom", ({ name, roomId }) => {
+    socket.on("JoinRoom", (_a) => __awaiter(void 0, [_a], void 0, function* ({ name, roomId }) {
         const listOfRooms = io.of("/").adapter.rooms;
-        console.log("i am listof room:", listOfRooms);
-        console.log("room", listOfRooms.get(roomId));
         if (!listOfRooms.get(roomId)) {
             socket.emit("error", { message: "wrong room" });
             return;
         }
-        socket.emit("roomId", { roomId });
+        // i join room
+        yield socket.join(roomId);
+        socket.emit("roomId", { roomId, socketId: socket.id, name });
+        // const clients = io.sockets.adapter.rooms.get(roomId);
+        // console.log("i am all Socket:", clients);
+        // let everyone know I join
+        socket.broadcast
+            .to(roomId)
+            .emit("SomeOneJoin", { name, socketId: socket.id });
         // console.log("i am a:", a);
+    }));
+    // sent list of current players
+    socket.on("CurrentPlayers", ({ players, to }) => {
+        socket.to(to).emit("CurrentPlayers", { players });
+    });
+    // let other know the roomLeader has started the game
+    socket.on("StartGame", ({ roomId, players }) => {
+        socket.broadcast.to(roomId).emit("StartGame", { roomId, players });
     });
 });
 server.listen(3000, () => {
-    console.log('server running at http://localhost:3000');
+    console.log("server running at http://localhost:3000");
 });
+// // sending to sender-client only
+// socket.emit('message', "this is a test");
+// // sending to all clients, include sender
+// io.emit('message', "this is a test");
+// // sending to all clients except sender
+// socket.broadcast.emit('message', "this is a test");
+// // sending to all clients in 'game' room(channel) except sender
+// socket.broadcast.to('game').emit('message', 'nice game');
+// // sending to all clients in 'game' room(channel), include sender
+// io.in('game').emit('message', 'cool game');
+// // sending to sender client, only if they are in 'game' room(channel)
+// socket.to('game').emit('message', 'enjoy the game');
+// // sending to all clients in namespace 'myNamespace', include sender
+// io.of('myNamespace').emit('message', 'gg');
+// // sending to individual socketid
+// socket.broadcast.to(socketid).emit('message', 'for your eyes only');
+// // list socketid
+// for (var socketid in io.sockets.sockets) {}
+//  OR
+// Object.keys(io.sockets.sockets).forEach((socketid) => {});
 //# sourceMappingURL=app.js.map
