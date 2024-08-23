@@ -108,6 +108,7 @@ const CreateGameScreen = () => {
                 >
                     {players.map((player) => (
                         <PlayerIcon
+                            key={player.socketId}
                             name={player.name}
                             socketId={player.socketId}
                         />
