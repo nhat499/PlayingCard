@@ -1,54 +1,65 @@
-import { useDraggable } from '@dnd-kit/core';
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import { useState } from 'react';
-
-
+import { useDraggable } from "@dnd-kit/core";
+import { CSS } from "@dnd-kit/utilities";
+import { useState } from "react";
 
 export type DraggableProps = {
     item: {
-        id: string,
-        name: string,
-        zIndex: number,
-        top: number,
-        left: number
-        width: number,
-        height: number,
+        id: string;
+        name: string;
+        zIndex: number;
+        top: number;
+        left: number;
+        width: number;
+        height: number;
         disabled: boolean;
         isHidden: boolean;
-    },
-    setAttribute: (itemId: string, key: keyof DraggableProps["item"], value: string | number | boolean) => void;
-}
+    };
+    setAttribute: (
+        itemId: string,
+        key: keyof DraggableProps["item"],
+        value: string | number | boolean
+    ) => void;
+};
 
 const Draggable = ({ item, setAttribute }: DraggableProps) => {
     const { attributes, listeners, setNodeRef, transform } = useDraggable({
         id: item.id,
         data: item,
-        disabled: item.disabled
+        disabled: item.disabled,
     });
     const [openDiaglo, setOpenDialog] = useState(false);
 
     const style = {
-        transform: CSS.Translate.toString(transform)
-    }
+        transform: CSS.Translate.toString(transform),
+    };
 
     return (
         <>
             <dialog open={openDiaglo}>
-                <button onClick={(e) => {
-                    console.log("click")
-                    setAttribute(item.id, 'disabled', !item.disabled);
-                    setOpenDialog(false);
-                }}>
+                <button
+                    onClick={(e) => {
+                        console.log("click");
+                        setAttribute(item.id, "disabled", !item.disabled);
+                        setOpenDialog(false);
+                    }}
+                >
                     {item.disabled ? "unlock" : "lock"}
                 </button>
-                <button onClick={(e) => {
-                    setOpenDialog(false);
-                    setAttribute(item.id, "isHidden", !item.isHidden)
-                }}>flip</button>
-                <button onClick={(e) => {
-                    setOpenDialog(false);
-                }}>cancel</button>
+                <button
+                    onClick={(e) => {
+                        setOpenDialog(false);
+                        setAttribute(item.id, "isHidden", !item.isHidden);
+                    }}
+                >
+                    flip
+                </button>
+                <button
+                    onClick={(e) => {
+                        setOpenDialog(false);
+                    }}
+                >
+                    cancel
+                </button>
             </dialog>
             <div
                 ref={setNodeRef}
@@ -57,10 +68,11 @@ const Draggable = ({ item, setAttribute }: DraggableProps) => {
                     backgroundColor: "white",
                     width: `${item.width}px`,
                     height: `${item.height}px`,
-                    ...style
+                    ...style,
                 }}
-
-                onClick={(e) => { console.log("i am left click") }}
+                onClick={(e) => {
+                    console.log("i am left click");
+                }}
                 onContextMenu={(e) => {
                     e.preventDefault();
 
@@ -68,14 +80,10 @@ const Draggable = ({ item, setAttribute }: DraggableProps) => {
                 }}
                 {...listeners}
                 {...attributes}
-
             >
                 {item.isHidden ? "hidden" : item.name}
-
             </div>
-
         </>
-
-    )
-}
-export default Draggable
+    );
+};
+export default Draggable;

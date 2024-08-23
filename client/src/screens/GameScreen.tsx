@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Board, { BoardProps } from "../components/Board";
 import Hand from "../components/Hand";
 import { DndContext, DragEndEvent, DragStartEvent } from "@dnd-kit/core";
 import { DraggableProps } from "../components/Draggable";
+import { socket } from "../socket/Socket";
+import { useParams } from "react-router-dom";
 
 function GameScreen() {
     const [highestZIndex, setHighestZIndex] = useState<number>(1);
+    const { roomId } = useParams();
     const [boardItem, setBoardItem] = useState<BoardProps["items"]>({
         "5": {
             id: "5",
@@ -38,6 +41,8 @@ function GameScreen() {
             });
             const newHanditem = handItem.filter((curr) => curr.id !== item.id);
             setHandItem(newHanditem);
+
+            socket.emit("DropOnBoard", { item, roomId });
         } else if (over && over.id === "Hand") {
             console.log("over Hand", event);
             // delete from broad
@@ -73,6 +78,15 @@ function GameScreen() {
         }
     }
 
+    useEffect(() => {
+        socket.on("DropOnBoard", ({ item, roomId }) => {
+            setBoardItem((currItem) => {
+                currItem[item.id] = item;
+                return currItem;
+            });
+        });
+    }, []);
+
     return (
         <div
             style={{
@@ -80,7 +94,15 @@ function GameScreen() {
                 height: "100vh",
             }}
         >
-            <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
+            <DndContext
+                onDragEnd={handleDragEnd}
+                onDragStart={handleDragStart}
+
+                // onDragMove={(event) => {
+                //     // if (event.delta.x > 20 || event.delta.y > 20)
+                //     //     console.log("I am mvoing:", event);
+                // }}
+            >
                 <div
                     style={{
                         width: "100%",

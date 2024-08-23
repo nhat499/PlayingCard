@@ -77,6 +77,10 @@ io.on("connection", (socket) => {
   socket.on("StartGame", ({ roomId, players }) => {
     socket.broadcast.to(roomId).emit("StartGame", { roomId, players });
   });
+
+  socket.on("DropOnBoard", ({ item, roomId }) => {
+    socket.broadcast.to(roomId).emit("DropOnBoard", { item, roomId });
+  });
 });
 
 server.listen(3000, () => {
