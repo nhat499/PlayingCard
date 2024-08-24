@@ -9,11 +9,25 @@ import { useParams } from "react-router-dom";
 function GameScreen() {
     const [highestZIndex, setHighestZIndex] = useState<number>(1);
     const { roomId } = useParams();
+
+    const [isDragging, setIsDragging] = useState<boolean>(false);
+
     const [boardItem, setBoardItem] = useState<BoardProps["items"]>({
+        "4": {
+            id: "4",
+            name: "card4",
+            zIndex: 1,
+            width: 40,
+            height: 55,
+            top: 0,
+            left: 0,
+            disabled: false,
+            isHidden: false,
+        },
         "5": {
             id: "5",
             name: "card5",
-            zIndex: 0,
+            zIndex: 1,
             width: 40,
             height: 55,
             top: 0,
@@ -25,6 +39,8 @@ function GameScreen() {
     const [handItem, setHandItem] = useState<DraggableProps["item"][]>([]);
 
     function handleDragEnd(event: DragEndEvent) {
+        console.log("i am event:", event);
+        setIsDragging(false);
         const { active, over, delta, activatorEvent, collisions } = event;
         const item = active.data.current as DraggableProps["item"] | undefined;
         if (!item) return;
@@ -44,7 +60,6 @@ function GameScreen() {
 
             socket.emit("DropOnBoard", { item, roomId });
         } else if (over && over.id === "Hand") {
-            console.log("over Hand", event);
             // delete from broad
             setBoardItem((currItem) => {
                 delete currItem[item.id];
@@ -68,7 +83,7 @@ function GameScreen() {
     }
 
     function handleDragStart(event: DragStartEvent) {
-        console.log("on drag start:");
+        setIsDragging(true);
         const { active } = event;
         const item = active.data.current as DraggableProps["item"] | undefined;
         if (!item) return;
@@ -130,7 +145,11 @@ function GameScreen() {
                         >
                             test
                         </div>
-                        <Board items={boardItem} setItems={setBoardItem} />
+                        <Board
+                            items={boardItem}
+                            setItems={setBoardItem}
+                            isDragging={isDragging}
+                        />
                         <div
                             style={{
                                 width: "10%",

@@ -65,13 +65,12 @@ const Draggable = ({ item, setAttribute }: DraggableProps) => {
                 ref={setNodeRef}
                 style={{
                     border: "1px solid black",
+                    // position: "fixed",
+                    cursor: "move",
                     backgroundColor: "white",
                     width: `${item.width}px`,
                     height: `${item.height}px`,
                     ...style,
-                }}
-                onClick={(e) => {
-                    console.log("i am left click");
                 }}
                 onContextMenu={(e) => {
                     e.preventDefault();
