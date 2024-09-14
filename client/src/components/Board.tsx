@@ -1,6 +1,6 @@
 import { useDroppable } from "@dnd-kit/core";
 import Draggable, { DraggableProps } from "./Draggable";
-import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
+import { TransformWrapper, TransformComponent, useTransformContext } from "react-zoom-pan-pinch";
 
 export type BoardProps = {
     items: { [key: string]: DraggableProps["item"] };
@@ -19,53 +19,38 @@ const Board = ({ items, setItems, isDragging }: BoardProps) => {
         <div
             ref={setNodeRef}
             style={{
-                // position: "relative",
+                position: "relative",
                 width: "100%",
-                height: "100%",
-                border: "1px solid gray",
-                // backgroundColor: "lightblue",
+
+                height: "700px",
+                // border: "1px solid gray",
+                backgroundColor: "lightblue",
             }}
         >
-            <TransformWrapper
-                initialScale={1}
-                minScale={0.5}
-                limitToBounds={false}
-                maxScale={3}
-                disabled={isDragging}
-            >
-                <TransformComponent
-                    contentStyle={
-                        {
-                            // display: "flex",
-                            // flexDirection: "row",
-                            // position: "absolute",
-                        }
-                    }
-                    wrapperStyle={{ height: "100%", width: "100%" }}
+
+            {Object.entries(items).map(([key, item], index) => (
+                <div
+                    key={key}
+                    style={{
+                        position: "relative",
+                        // border: "1px solid red",
+                        width: "fit-content",
+                        top: item.top,
+                        left: item.left,
+                    }}
                 >
-                    {Object.entries(items).map(([key, item]) => (
-                        <div
-                            key={key}
-                            style={{
-                                position: "fixed",
-                                top: item.top,
-                                left: item.left,
-                            }}
-                        >
-                            <Draggable
-                                key={key}
-                                item={item}
-                                setAttribute={(id, key, value) =>
-                                    setItems((currItems) => {
-                                        currItems[id][key] = value;
-                                        return currItems;
-                                    })
-                                }
-                            />
-                        </div>
-                    ))}
-                </TransformComponent>
-            </TransformWrapper>
+                    <Draggable
+                        key={key}
+                        item={item}
+                        setAttribute={(id, key, value) =>
+                            setItems((currItems) => {
+                                currItems[id][key] = value;
+                                return currItems;
+                            })
+                        }
+                    />
+                </div>
+            ))}
         </div>
     );
 };

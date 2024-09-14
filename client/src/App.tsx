@@ -6,6 +6,7 @@ import GameScreen from "./screens/GameScreen";
 
 const App = () => {
     return (
+
         <BrowserRouter>
             <Routes>
                 <Route path="/" element={<Layout />}>

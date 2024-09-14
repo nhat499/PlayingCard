@@ -1,6 +1,7 @@
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { useState } from "react";
+import { useTransformContext } from "react-zoom-pan-pinch";
 
 export type DraggableProps = {
     item: {
@@ -32,6 +33,7 @@ const Draggable = ({ item, setAttribute }: DraggableProps) => {
     const style = {
         transform: CSS.Translate.toString(transform),
     };
+
 
     return (
         <>
@@ -65,7 +67,6 @@ const Draggable = ({ item, setAttribute }: DraggableProps) => {
                 ref={setNodeRef}
                 style={{
                     border: "1px solid black",
-                    // position: "fixed",
                     cursor: "move",
                     backgroundColor: "white",
                     width: `${item.width}px`,
