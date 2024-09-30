@@ -78,8 +78,18 @@ io.on("connection", (socket) => {
     socket.broadcast.to(roomId).emit("StartGame", { roomId, players });
   });
 
-  socket.on("DropOnBoard", ({ item, roomId }) => {
-    socket.broadcast.to(roomId).emit("DropOnBoard", { item, roomId });
+  socket.on("DropOnBoard", ({ item, roomId, boardItem }) => {
+    // socket.broadcast.to(roomId).emit("DropOnBoard", { item, roomId });\
+    console.log("i am roomId:", roomId);
+    io.in(roomId).emit("DropOnBoard", { item, roomId, boardItem });
+    // io.emit("DropOnBoard", { item, roomId, boardItem });
+  });
+
+  socket.on("DropOnHand", ({ item, roomId, boardItem }) => {
+    // socket.broadcast.to(roomId).emit("DropOnBoard", { item, roomId });\
+    console.log("i am roomId:", roomId);
+    io.in(roomId).emit("DropOnHand", { item, roomId, boardItem });
+    // io.emit("DropOnBoard", { item, roomId, boardItem });
   });
 });
 

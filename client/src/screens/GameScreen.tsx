@@ -35,9 +35,7 @@ function GameScreen() {
             disabled: false,
             isHidden: false,
         },
-    });
-    const [handItem, setHandItem] = useState<DraggableProps["item"][]>([
-        {
+        "5": {
             id: "5",
             name: "card5",
             zIndex: 1,
@@ -48,7 +46,8 @@ function GameScreen() {
             disabled: false,
             isHidden: false,
         },
-    ]);
+    });
+    const [handItem, setHandItem] = useState<DraggableProps["item"][]>([]);
 
     function handleDragEnd(event: DragEndEvent) {
         // setIsDragging(false);
@@ -56,35 +55,59 @@ function GameScreen() {
         const item = active.data.current as DraggableProps["item"] | undefined;
         if (!item) return;
         if (over && over.id === "Board") {
-            setBoardItem((currItem) => {
-                if (currItem[item.id]) {
-                    item.left += delta.x;
-                    // item.left = over.rect.left
-                    // item.left = active.data.current?.left + delta.x
-                    // item.left = activatorEvent.target?.getBoundingClientRect().left -
-                    //     over.rect.left;
-                    item.top += delta.y;
-                    // item.top = active.data.current?.top + delta.y
-                    // item.top = activatorEvent.target?.getBoundingClientRect().top -
-                    //     over.rect.top;
-                } else {
-                    console.log("i am in else drop");
-                    item.left = 10;
-                    item.top = 30;
-                }
-                currItem[item.id] = item;
-                return currItem;
+            // setBoardItem((currItem) => {
+            //     if (currItem[item.id]) {
+            //         item.left += delta.x;
+            //         // item.left = over.rect.left
+            //         // item.left = active.data.current?.left + delta.x
+            //         // item.left = activatorEvent.target?.getBoundingClientRect().left -
+            //         //     over.rect.left;
+            //         item.top += delta.y;
+            //         // item.top = active.data.current?.top + delta.y
+            //         // item.top = activatorEvent.target?.getBoundingClientRect().top -
+            //         //     over.rect.top;
+            //     } else {
+            //         console.log("i am in else drop");
+            //         item.left = 10;
+            //         item.top = 500;
+            //     }
+            //     currItem[item.id] = item;
+
+            //     return currItem;
+
+            // });
+            const newBoardItems = { ...boardItem };
+            let updateItem = newBoardItems[item.id];
+            // if item is already on the board;
+            if (updateItem) {
+                updateItem.left += delta.x;
+                updateItem.top += delta.y;
+            } else {
+                // item is not already on the board;
+                // updateItem.left = 10;
+                // updateItem.top = 10;
+                updateItem = { ...item };
+            }
+            console.log("dropped");
+            socket.emit("DropOnBoard", {
+                item: updateItem,
+                roomId,
+                boardItem: newBoardItems,
             });
+
             const newHanditem = handItem.filter((curr) => curr.id !== item.id);
             setHandItem(newHanditem);
-
-            socket.emit("DropOnBoard", { item, roomId });
         } else if (over && over.id === "Hand") {
             // delete from broad
-            setBoardItem((currItem) => {
-                delete currItem[item.id];
-                return currItem;
+            socket.emit("DropOnHand", {
+                item: item,
+                roomId,
+                boardItem: boardItem,
             });
+            // setBoardItem((currItem) => {
+            //     delete currItem[item.id];
+            //     return currItem;
+            // });
             // add to hand
             setHandItem((currHandItem) => {
                 // check if exists
@@ -101,8 +124,8 @@ function GameScreen() {
 
                 if (index === -1) {
                     // else add
-                    item.left = 0;
-                    item.top = 0;
+                    item.left = 10;
+                    item.top = 10;
                     currHandItem.push(item);
                 } else {
                     item.left += delta.x;
@@ -125,14 +148,24 @@ function GameScreen() {
         }
     }
 
-    // useEffect(() => {
-    //     socket.on("DropOnBoard", ({ item, roomId }) => {
-    //         setBoardItem((currItem) => {
-    //             currItem[item.id] = item;
-    //             return currItem;
-    //         });
-    //     });
-    // }, []);
+    useEffect(() => {
+        socket.on("DropOnBoard", ({ item, roomId, boardItem }) => {
+            console.log("drop on board", roomId);
+            setBoardItem((currBoardItem) => {
+                currBoardItem[item.id] = item;
+
+                return { ...currBoardItem };
+            });
+        });
+
+        socket.on("DropOnHand", ({ item, roomId, boardItem }) => {
+            console.log("drop on hand", roomId);
+            setBoardItem((currItem) => {
+                delete currItem[item.id];
+                return { ...currItem };
+            });
+        });
+    }, []);
 
     return (
         // <div
