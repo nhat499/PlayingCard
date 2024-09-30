@@ -34,7 +34,6 @@ const Draggable = ({ item, setAttribute }: DraggableProps) => {
         transform: CSS.Translate.toString(transform),
     };
 
-
     return (
         <>
             <dialog open={openDiaglo}>
@@ -67,6 +66,7 @@ const Draggable = ({ item, setAttribute }: DraggableProps) => {
                 ref={setNodeRef}
                 style={{
                     border: "1px solid black",
+                    position: "absolute",
                     cursor: "move",
                     backgroundColor: "white",
                     width: `${item.width}px`,

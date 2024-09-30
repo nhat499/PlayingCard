@@ -51,19 +51,13 @@ function GameScreen() {
     ]);
 
     function handleDragEnd(event: DragEndEvent) {
-        console.log("i am event:", event);
-        setIsDragging(false);
+        // setIsDragging(false);
         const { active, over, delta, activatorEvent, collisions } = event;
         const item = active.data.current as DraggableProps["item"] | undefined;
         if (!item) return;
         if (over && over.id === "Board") {
-            console.log("currentItem:", item);
-
             setBoardItem((currItem) => {
-
                 if (currItem[item.id]) {
-
-
                     item.left += delta.x;
                     // item.left = over.rect.left
                     // item.left = active.data.current?.left + delta.x
@@ -74,10 +68,10 @@ function GameScreen() {
                     // item.top = activatorEvent.target?.getBoundingClientRect().top -
                     //     over.rect.top;
                 } else {
-                    item.left = 30;
-                    item.top = 0;
+                    console.log("i am in else drop");
+                    item.left = 10;
+                    item.top = 30;
                 }
-                console.log("updateItem:", item);
                 currItem[item.id] = item;
                 return currItem;
             });
@@ -97,7 +91,6 @@ function GameScreen() {
                 const index = currHandItem.findIndex(
                     (curr) => curr.id === item.id
                 );
-                console.log("i am index", index);
                 // item.left =
                 //     activatorEvent.target?.getBoundingClientRect().left -
                 //     over.rect.left;
@@ -115,7 +108,6 @@ function GameScreen() {
                     item.left += delta.x;
                     item.top += delta.y;
                     currHandItem[index] = item;
-
                 }
                 return currHandItem;
             });
@@ -124,13 +116,13 @@ function GameScreen() {
 
     function handleDragStart(event: DragStartEvent) {
         // setIsDragging(true);
-        // const { active } = event;
-        // const item = active.data.current as DraggableProps["item"] | undefined;
-        // if (!item) return;
-        // if (item.zIndex < highestZIndex) {
-        //     item.zIndex = highestZIndex;
-        //     setHighestZIndex(highestZIndex + 1);
-        // }
+        const { active } = event;
+        const item = active.data.current as DraggableProps["item"] | undefined;
+        if (!item) return;
+        if (item.zIndex < highestZIndex) {
+            item.zIndex = highestZIndex;
+            setHighestZIndex(highestZIndex + 1);
+        }
     }
 
     // useEffect(() => {
@@ -143,68 +135,67 @@ function GameScreen() {
     // }, []);
 
     return (
-        <div
-
-            style={{
-                width: "100%",
-                height: "100%",
-                // overflow: "hidden"
-            }}
-        >
-            <DndContext
-                onDragEnd={handleDragEnd}
-                onDragStart={handleDragStart}
+        // <div
+        //     style={{
+        //         width: "100%",
+        //         height: "100%",
+        //         // overflow: "hidden"
+        //     }}
+        // >
+        <DndContext
+            onDragEnd={handleDragEnd}
+            onDragStart={handleDragStart}
 
             // onDragMove={(event) => {
             //     // if (event.delta.x > 20 || event.delta.y > 20)
             //     //     console.log("I am mvoing:", event);
             // }}
+        >
+            <div
+                style={{
+                    // width: 100,
+                    // height: 100,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "10px",
+                    overflow: "hidden",
+                    // border: "1px solid black",
+                }}
             >
                 <div
                     style={{
-                        // width: 100,
-                        // height: 100,
                         display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        gap: "10px",
-                        overflow: "hidden"
                         // border: "1px solid black",
+                        width: "100%",
+                        height: "70%",
                     }}
                 >
                     <div
                         style={{
-                            display: "flex",
-                            // border: "1px solid black",
-                            width: "100%",
-                            height: "70%",
+                            width: "10%",
+                            border: "1px solid black",
                         }}
                     >
-                        <div
-                            style={{
-                                width: "10%",
-                            }}
-                        >
-                            test
-                        </div>
-                        <Board
-                            items={boardItem}
-                            setItems={setBoardItem}
-                            isDragging={isDragging}
-                        />
-                        <div
-                            style={{
-                                width: "10%",
-                            }}
-                        >
-                            test
-                        </div>
+                        test
                     </div>
-                    <Hand cards={handItem} setItems={setHandItem}></Hand>
+                    <Board
+                        items={boardItem}
+                        setItems={setBoardItem}
+                        isDragging={isDragging}
+                    />
+                    <div
+                        style={{
+                            width: "10%",
+                            border: "1px solid black",
+                        }}
+                    ></div>
                 </div>
-            </DndContext>
-        </div>
+                <Hand cards={handItem} setItems={setHandItem}></Hand>
+            </div>
+        </DndContext>
+        // </div>
     );
 }
 

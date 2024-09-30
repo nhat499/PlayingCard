@@ -58,14 +58,12 @@ const defaultOne: SettingProps["itemData"] = {
 const CreateGameScreen = () => {
     const { user } = useUser();
     if (!user) throw Error("User Not Found");
-    console.log("i am user", user);
     const [players, setPlayers] = useState<Iuser[]>([user]);
     const navigate = useNavigate();
     const { roomId } = useParams();
 
     useEffect(() => {
         socket.on("SomeOneJoin", ({ name, socketId }) => {
-            console.log(name, "just join the room");
             socket.emit("SomeOneJoin2", players);
             const newPlayers: Iuser[] = [...players, { name, socketId }];
             setPlayers(newPlayers);

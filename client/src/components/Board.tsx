@@ -1,6 +1,10 @@
 import { useDroppable } from "@dnd-kit/core";
 import Draggable, { DraggableProps } from "./Draggable";
-import { TransformWrapper, TransformComponent, useTransformContext } from "react-zoom-pan-pinch";
+import {
+    TransformWrapper,
+    TransformComponent,
+    useTransformContext,
+} from "react-zoom-pan-pinch";
 
 export type BoardProps = {
     items: { [key: string]: DraggableProps["item"] };
@@ -21,20 +25,19 @@ const Board = ({ items, setItems, isDragging }: BoardProps) => {
             style={{
                 position: "relative",
                 width: "100%",
-
+                display: "flex",
                 height: "700px",
                 // border: "1px solid gray",
                 backgroundColor: "lightblue",
             }}
         >
-
             {Object.entries(items).map(([key, item], index) => (
                 <div
                     key={key}
                     style={{
                         position: "relative",
                         // border: "1px solid red",
-                        width: "fit-content",
+                        // width: "fit-content",
                         top: item.top,
                         left: item.left,
                     }}
