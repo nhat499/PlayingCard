@@ -14,6 +14,8 @@ export type DraggableProps = {
         height: number;
         disabled: boolean;
         isHidden: boolean;
+        isDragging: boolean;
+        transform: string | undefined; // translate3d(xpx, ypx, scale)
     };
     setAttribute: (
         itemId: string,
@@ -31,7 +33,7 @@ const Draggable = ({ item, setAttribute }: DraggableProps) => {
     const [openDiaglo, setOpenDialog] = useState(false);
 
     const style = {
-        transform: CSS.Translate.toString(transform),
+        transform: item.transform ?? CSS.Translate.toString(transform),
     };
 
     return (
@@ -71,6 +73,7 @@ const Draggable = ({ item, setAttribute }: DraggableProps) => {
                     backgroundColor: "white",
                     width: `${item.width}px`,
                     height: `${item.height}px`,
+
                     ...style,
                 }}
                 onContextMenu={(e) => {

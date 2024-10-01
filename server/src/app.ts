@@ -82,14 +82,20 @@ io.on("connection", (socket) => {
     // socket.broadcast.to(roomId).emit("DropOnBoard", { item, roomId });\
     console.log("i am roomId:", roomId);
     io.in(roomId).emit("DropOnBoard", { item, roomId, boardItem });
-    // io.emit("DropOnBoard", { item, roomId, boardItem });
   });
 
   socket.on("DropOnHand", ({ item, roomId, boardItem }) => {
     // socket.broadcast.to(roomId).emit("DropOnBoard", { item, roomId });\
     console.log("i am roomId:", roomId);
     io.in(roomId).emit("DropOnHand", { item, roomId, boardItem });
-    // io.emit("DropOnBoard", { item, roomId, boardItem });
+  });
+
+  socket.on("OnBoardDrag", ({ item, roomId, boardItem }) => {
+    // socket.broadcast.to(roomId).emit("DropOnBoard", { item, roomId });\
+    console.log("i am item:", item.top, item.left);
+    socket.broadcast
+      .to(roomId)
+      .emit("OnBoardDrag", { item, roomId, boardItem });
   });
 });
 

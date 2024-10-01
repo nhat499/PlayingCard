@@ -20,6 +20,9 @@ export interface ServerToClientEvents {
 
   // let all(include myself) people know I took an item on the board
   DropOnHand: ({ item, roomId, boardItem }: IDragDropItem) => void;
+
+  // let other know i am dragging
+  OnBoardDrag: ({ item, roomId, boardItem }: IDragDropItem) => void;
 }
 
 export interface ClientToServerEvents {
@@ -38,6 +41,9 @@ export interface ClientToServerEvents {
 
   // a user took an item
   DropOnHand: ({ item, roomId, boardItem }: IDragDropItem) => void;
+
+  // a user is dragging
+  OnBoardDrag: ({ item, roomId, boardItem }: IDragDropItem) => void;
 }
 
 export interface IDragDropItem {

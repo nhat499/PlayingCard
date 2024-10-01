@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import Board, { BoardProps } from "../components/Board";
 import Hand from "../components/Hand";
-import { DndContext, DragEndEvent, DragStartEvent } from "@dnd-kit/core";
+import {
+    DndContext,
+    DragEndEvent,
+    DragMoveEvent,
+    DragStartEvent,
+} from "@dnd-kit/core";
 import { DraggableProps } from "../components/Draggable";
 import { socket } from "../socket/Socket";
 import { useParams } from "react-router-dom";
@@ -23,6 +28,7 @@ function GameScreen() {
             left: 0,
             disabled: false,
             isHidden: false,
+            isDragging: false,
         },
         "4": {
             id: "4",
@@ -34,6 +40,7 @@ function GameScreen() {
             left: 0,
             disabled: false,
             isHidden: false,
+            isDragging: false,
         },
         "5": {
             id: "5",
@@ -45,6 +52,7 @@ function GameScreen() {
             left: 0,
             disabled: false,
             isHidden: false,
+            isDragging: false,
         },
     });
     const [handItem, setHandItem] = useState<DraggableProps["item"][]>([]);
@@ -148,6 +156,19 @@ function GameScreen() {
         }
     }
 
+    function handleDragMove(event: DragMoveEvent) {
+        const updateItem = { ...event.active.data.current };
+        if (updateItem && event.over?.id === "Board") {
+            updateItem.transform = `translate3d(${event.delta.x}px, ${event.delta.y}px, 0)`;
+            socket.emit("OnBoardDrag", {
+                item: updateItem,
+                roomId,
+                boardItem: boardItem,
+            });
+        }
+        console.log("i am updateItem:", updateItem);
+    }
+
     useEffect(() => {
         socket.on("DropOnBoard", ({ item, roomId, boardItem }) => {
             console.log("drop on board", roomId);
@@ -165,6 +186,14 @@ function GameScreen() {
                 return { ...currItem };
             });
         });
+
+        socket.on("OnBoardDrag", ({ item, roomId, boardItem }) => {
+            console.log("onboard dragging", roomId);
+            setBoardItem((currItem) => {
+                currItem[item.id] = item;
+                return { ...currItem };
+            });
+        });
     }, []);
 
     return (
@@ -178,11 +207,7 @@ function GameScreen() {
         <DndContext
             onDragEnd={handleDragEnd}
             onDragStart={handleDragStart}
-
-            // onDragMove={(event) => {
-            //     // if (event.delta.x > 20 || event.delta.y > 20)
-            //     //     console.log("I am mvoing:", event);
-            // }}
+            onDragMove={handleDragMove}
         >
             <div
                 style={{
