@@ -1,40 +1,53 @@
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
-import { useState } from "react";
+import React, { Children, ReactNode, useState } from "react";
 import { useTransformContext } from "react-zoom-pan-pinch";
 
+export type item = {
+    id: string;
+    name: string;
+    zIndex: number;
+    top: number;
+    left: number;
+    width: number;
+    height: number;
+    disabled: boolean;
+    isHidden: boolean;
+    parent: string;
+    data?: unknown;
+    transform?: string; // translate3d(xpx, ypx, scale)
+};
+
 export type DraggableProps = {
-    item: {
-        id: string;
-        name: string;
-        zIndex: number;
-        top: number;
-        left: number;
-        width: number;
-        height: number;
-        disabled: boolean;
-        isHidden: boolean;
-        isDragging: boolean;
-        transform: string | undefined; // translate3d(xpx, ypx, scale)
-    };
+    item: item;
     setAttribute: (
         itemId: string,
         key: keyof DraggableProps["item"],
         value: string | number | boolean
     ) => void;
+    Children?: (isDragging: boolean) => ReactNode;
 };
 
-const Draggable = ({ item, setAttribute }: DraggableProps) => {
-    const { attributes, listeners, setNodeRef, transform } = useDraggable({
-        id: item.id,
-        data: item,
-        disabled: item.disabled,
-    });
+const Draggable = ({ item, setAttribute, Children }: DraggableProps) => {
+    const { attributes, listeners, setNodeRef, transform, isDragging } =
+        useDraggable({
+            id: item.id,
+            data: item,
+            disabled: item.disabled,
+        });
     const [openDiaglo, setOpenDialog] = useState(false);
 
     const style = {
         transform: item.transform ?? CSS.Translate.toString(transform),
     };
+
+    // const renderChildren = () => {
+    //     return React.Children.map(children, (child) => {
+    //         return React.cloneElement(child, {
+    //             isDragging,
+    //         });
+    //     });
+    // };
 
     return (
         <>
@@ -85,6 +98,7 @@ const Draggable = ({ item, setAttribute }: DraggableProps) => {
                 {...attributes}
             >
                 {item.isHidden ? "hidden" : item.name}
+                {Children && Children(isDragging)}
             </div>
         </>
     );

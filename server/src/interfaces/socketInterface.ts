@@ -19,10 +19,16 @@ export interface ServerToClientEvents {
   DropOnBoard: ({ item, roomId, boardItem }: IDragDropItem) => void;
 
   // let all(include myself) people know I took an item on the board
-  DropOnHand: ({ item, roomId, boardItem }: IDragDropItem) => void;
+  DropFromBoard: ({ item, roomId, boardItem }: IDragDropItem) => void;
 
   // let other know i am dragging
   OnBoardDrag: ({ item, roomId, boardItem }: IDragDropItem) => void;
+
+  // let other know I add to a stack
+  AddToStack: ({ item, roomId, stackId }: MoveItem) => void;
+
+  // let other know I drop an item from a stack
+  DropFromStack2: ({ item, roomId, stackId }: MoveItem) => void;
 }
 
 export interface ClientToServerEvents {
@@ -40,16 +46,29 @@ export interface ClientToServerEvents {
   DropOnBoard: ({ item, roomId }: IDragDropItem) => void;
 
   // a user took an item
-  DropOnHand: ({ item, roomId, boardItem }: IDragDropItem) => void;
+  DropFromBoard: ({ item, roomId, boardItem }: IDragDropItem) => void;
 
   // a user is dragging
   OnBoardDrag: ({ item, roomId, boardItem }: IDragDropItem) => void;
+
+  // a user drop an item on a stack
+  AddToStack: ({ item, roomId, stackId }: MoveItem) => void;
+
+  // a user drop an item from a stack
+  DropFromStack: ({ item, roomId, stackId }: MoveItem) => void;
+}
+
+export interface MoveItem {
+  item: IDragDropItem["item"];
+  roomId: string;
+  stackId: string;
 }
 
 export interface IDragDropItem {
   item: {
     id: string;
     name: string;
+    data: IDragDropItem["item"];
     zIndex: number;
     top: number;
     left: number;

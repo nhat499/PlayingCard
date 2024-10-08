@@ -1,13 +1,14 @@
 import { useDroppable } from "@dnd-kit/core";
-import Draggable, { DraggableProps } from "./Draggable";
+import Draggable, { DraggableProps, item } from "./Draggable";
 import {
     TransformWrapper,
     TransformComponent,
     useTransformContext,
 } from "react-zoom-pan-pinch";
+import Stack, { StackProps } from "./Stack";
 
 export type BoardProps = {
-    items: { [key: string]: DraggableProps["item"] };
+    items: { [key: string]: DraggableProps["item"] | StackProps["stack"] };
     setItems: React.Dispatch<
         React.SetStateAction<{ [key: string]: DraggableProps["item"] }>
     >;
@@ -15,7 +16,7 @@ export type BoardProps = {
 };
 
 const Board = ({ items, setItems, isDragging }: BoardProps) => {
-    const { isOver, setNodeRef, node, active, over, rect } = useDroppable({
+    const { setNodeRef } = useDroppable({
         id: "Board",
     });
 
@@ -38,20 +39,31 @@ const Board = ({ items, setItems, isDragging }: BoardProps) => {
                         position: "relative",
                         // border: "1px solid red",
                         // width: "fit-content",
+                        zIndex: item.zIndex,
                         top: item.top,
                         left: item.left,
                     }}
                 >
-                    <Draggable
-                        key={key}
-                        item={item}
-                        setAttribute={(id, key, value) =>
-                            setItems((currItems) => {
-                                currItems[id][key] = value;
-                                return currItems;
-                            })
-                        }
-                    />
+                    {item.id.startsWith("card") && (
+                        <Draggable
+                            key={key}
+                            item={item}
+                            setAttribute={(id, key, value) =>
+                                setItems((currItems) => {
+                                    currItems[id][key] = value;
+                                    return currItems;
+                                })
+                            }
+                        />
+                    )}
+                    {item.id.startsWith("stack") && (
+                        <Stack
+                            key={key}
+                            // listOfItem={item.data ?? []}
+                            data={item.data as item[]}
+                            stack={item}
+                        />
+                    )}
                 </div>
             ))}
         </div>
