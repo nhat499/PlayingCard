@@ -5,54 +5,93 @@ import { socket } from "../socket/Socket";
 import useUser, { Iuser } from "../atom/userAtom";
 import PlayerIcon from "../components/PlayerIcon";
 import { useNavigate, useParams } from "react-router-dom";
+import { BoardProps } from "../components/Board";
+import { BOARD } from "./GameScreen";
 
-const defaultOne: SettingProps["itemData"] = {
-    cards: [
-        {
-            id: "1",
-            name: "card1",
-            zIndex: 0,
+const Suite = ["spade", "club", "diamond", "heart"];
+
+const createRegularDeckObject = () => {
+    const object: item[] = [];
+    for (let i = 1; i <= 10; i++) {
+        for (const s of Suite) {
+            const card: item = {
+                id: `card${i}${s}`,
+                name: `${i} ${s}`,
+                parent: "stack1",
+                zIndex: 1,
+                width: 40,
+                height: 55,
+                top: 0,
+                left: 0,
+                disabled: false,
+                isHidden: false,
+            };
+            object.push(card);
+        }
+    }
+    for (const s of Suite) {
+        const card: item = {
+            id: `card${"jack"}${s}`,
+            name: `${"jack"} ${s}`,
+            parent: "stack1",
+            zIndex: 1,
             width: 40,
             height: 55,
             top: 0,
             left: 0,
             disabled: false,
             isHidden: false,
-        },
-        {
-            id: "2",
-            name: "card2",
-            zIndex: 0,
+        };
+        object.push(card);
+    }
+    for (const s of Suite) {
+        const card: item = {
+            id: `card${"queen"}${s}`,
+            name: `${"queen"} ${s}`,
+            parent: "stack1",
+            zIndex: 1,
             width: 40,
             height: 55,
             top: 0,
             left: 0,
             disabled: false,
             isHidden: false,
-        },
-        {
-            id: "3",
-            name: "card3",
-            zIndex: 0,
+        };
+        object.push(card);
+    }
+    for (const s of Suite) {
+        const card: item = {
+            id: `card${"king"}${s}`,
+            name: `${"king"} ${s}`,
+            parent: "stack1",
+            zIndex: 1,
             width: 40,
             height: 55,
             top: 0,
             left: 0,
             disabled: false,
             isHidden: false,
-        },
-        {
-            id: "4",
-            name: "card4",
-            zIndex: 0,
-            width: 40,
-            height: 55,
-            top: 0,
-            left: 0,
-            disabled: false,
-            isHidden: false,
-        },
-    ],
+        };
+        object.push(card);
+    }
+
+    return object;
+};
+
+const setting: BoardProps["items"] = {
+    stack1: {
+        id: "stack1",
+        name: "stack1",
+        parent: BOARD,
+        data: [...createRegularDeckObject()],
+        zIndex: 1,
+        width: 50,
+        height: 70,
+        top: 50,
+        left: 50,
+        disabled: false,
+        isHidden: false,
+    },
 };
 
 const CreateGameScreen = () => {
@@ -61,6 +100,10 @@ const CreateGameScreen = () => {
     const [players, setPlayers] = useState<Iuser[]>([user]);
     const navigate = useNavigate();
     const { roomId } = useParams();
+
+    const [settingValue, setSettingValue] = useState<string>(
+        JSON.stringify(setting, undefined, 2)
+    );
 
     useEffect(() => {
         socket.on("SomeOneJoin", ({ name, socketId }) => {
@@ -82,8 +125,8 @@ const CreateGameScreen = () => {
         });
 
         // start game
-        socket.on("StartGame", ({ roomId, players }) => {
-            navigate("/game/" + roomId);
+        socket.on("StartGame", ({ roomId, players, boardData }) => {
+            navigate("/game/" + roomId, { state: boardData });
         });
 
         // socket.emit()
@@ -113,11 +156,16 @@ const CreateGameScreen = () => {
                     ))}
                 </div>
                 <Setting
-                    itemData={defaultOne}
+                    settingValue={settingValue}
+                    setSettingValue={setSettingValue}
                     startGame={() => {
                         if (!user.roomLeader) return;
 
-                        socket.emit("StartGame", { roomId, players });
+                        socket.emit("StartGame", {
+                            roomId,
+                            players,
+                            boardData: JSON.parse(settingValue),
+                        });
 
                         navigate("/game/" + roomId);
                     }}

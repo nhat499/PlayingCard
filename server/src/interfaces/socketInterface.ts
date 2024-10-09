@@ -13,7 +13,7 @@ export interface ServerToClientEvents {
   CurrentPlayers: ({ players }: { players: IUser[] }) => void;
 
   // server let non roomleader knows to start the game
-  StartGame: ({ roomId, players }) => void;
+  StartGame: ({ roomId, players, boardData }) => void;
 
   // let all(including myself) know drop a card on the board
   DropOnBoard: ({ item, roomId, boardItem }: IDragDropItem) => void;
@@ -40,7 +40,7 @@ export interface ClientToServerEvents {
   CurrentPlayers: ({ players, to }) => void;
 
   // room leader let room know the game has started
-  StartGame: ({ roomId, players }) => void;
+  StartGame: ({ roomId, players, boardData }) => void;
 
   // a user drop a item on the board
   DropOnBoard: ({ item, roomId }: IDragDropItem) => void;

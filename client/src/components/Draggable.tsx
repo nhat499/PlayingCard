@@ -51,7 +51,15 @@ const Draggable = ({ item, setAttribute, Children }: DraggableProps) => {
 
     return (
         <>
-            <dialog open={openDiaglo}>
+            <dialog
+                open={openDiaglo}
+                style={{
+                    position: "absolute",
+                    zIndex: item.zIndex + 1,
+                    left: 30,
+                }}
+            >
+                {/* card button */}
                 <button
                     onClick={(e) => {
                         console.log("click");
@@ -69,6 +77,7 @@ const Draggable = ({ item, setAttribute, Children }: DraggableProps) => {
                 >
                     flip
                 </button>
+
                 <button
                     onClick={(e) => {
                         setOpenDialog(false);
@@ -91,8 +100,9 @@ const Draggable = ({ item, setAttribute, Children }: DraggableProps) => {
                 }}
                 onContextMenu={(e) => {
                     e.preventDefault();
-
-                    setOpenDialog(true);
+                    if (!item.parent.startsWith("stack")) {
+                        setOpenDialog(true);
+                    }
                 }}
                 {...listeners}
                 {...attributes}

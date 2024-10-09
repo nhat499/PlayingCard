@@ -9,68 +9,88 @@ import {
 } from "@dnd-kit/core";
 import { DraggableProps, item } from "../components/Draggable";
 import { socket } from "../socket/Socket";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 
-const BOARD = "Board";
-const HAND = "Hand";
+export const BOARD = "Board";
+export const HAND = "Hand";
+
+const Suite = ["spade", "club", "diamond", "heart"];
+
+const createRegularDeckObject = () => {
+    const object: item[] = [];
+    for (let i = 1; i <= 10; i++) {
+        for (const s of Suite) {
+            const card: item = {
+                id: `card${i}${s}`,
+                name: `${i} ${s}`,
+                parent: "stack1",
+                zIndex: 1,
+                width: 40,
+                height: 55,
+                top: 0,
+                left: 0,
+                disabled: false,
+                isHidden: false,
+            };
+            object.push(card);
+        }
+    }
+    for (const s of Suite) {
+        const card: item = {
+            id: `card${"jack"}${s}`,
+            name: `${"jack"} ${s}`,
+            parent: "stack1",
+            zIndex: 1,
+            width: 40,
+            height: 55,
+            top: 0,
+            left: 0,
+            disabled: false,
+            isHidden: false,
+        };
+        object.push(card);
+    }
+    for (const s of Suite) {
+        const card: item = {
+            id: `card${"queen"}${s}`,
+            name: `${"queen"} ${s}`,
+            parent: "stack1",
+            zIndex: 1,
+            width: 40,
+            height: 55,
+            top: 0,
+            left: 0,
+            disabled: false,
+            isHidden: false,
+        };
+        object.push(card);
+    }
+    for (const s of Suite) {
+        const card: item = {
+            id: `card${"king"}${s}`,
+            name: `${"king"} ${s}`,
+            parent: "stack1",
+            zIndex: 1,
+            width: 40,
+            height: 55,
+            top: 0,
+            left: 0,
+            disabled: false,
+            isHidden: false,
+        };
+        object.push(card);
+    }
+
+    return object;
+};
 
 function GameScreen() {
     const [highestZIndex, setHighestZIndex] = useState<number>(2);
     const { roomId } = useParams();
-
+    const { state } = useLocation();
     const [isDragging, setIsDragging] = useState<boolean>(false);
-
-    const [boardItem, setBoardItem] = useState<BoardProps["items"]>({
-        card3: {
-            id: "card3",
-            name: "card3",
-            parent: BOARD,
-            zIndex: 1,
-            width: 40,
-            height: 55,
-            top: 0,
-            left: 0,
-            disabled: false,
-            isHidden: false,
-        },
-        card4: {
-            id: "card4",
-            name: "card4",
-            parent: BOARD,
-            zIndex: 1,
-            width: 40,
-            height: 55,
-            top: 0,
-            left: 0,
-            disabled: false,
-            isHidden: false,
-        },
-        card5: {
-            id: "card5",
-            name: "card5",
-            parent: BOARD,
-            zIndex: 1,
-            width: 40,
-            height: 55,
-            top: 0,
-            left: 0,
-            disabled: false,
-            isHidden: false,
-        },
-        stack1: {
-            id: "stack1",
-            name: "stack1",
-            parent: BOARD,
-            data: [],
-            zIndex: 1,
-            width: 50,
-            height: 70,
-            top: 50,
-            left: 50,
-            disabled: false,
-            isHidden: false,
-        },
-    });
+    console.log("i a state:", state);
+    const [boardItem, setBoardItem] = useState<BoardProps["items"]>({});
     const [handItem, setHandItem] = useState<DraggableProps["item"][]>([]);
 
     function handleDragEnd(event: DragEndEvent) {
@@ -265,6 +285,13 @@ function GameScreen() {
     }
 
     useEffect(() => {
+        if (state) {
+            console.log("i a state:", state);
+            setBoardItem(state);
+        }
+    }, [state]);
+
+    useEffect(() => {
         socket.on("DropOnBoard", ({ item, roomId, boardItem }) => {
             console.log("drop on board", roomId);
             setBoardItem((currBoardItem) => {
@@ -342,6 +369,9 @@ function GameScreen() {
             onDragEnd={handleDragEnd}
             onDragStart={handleDragStart}
             onDragMove={handleDragMove}
+            onDragOver={(a) => {
+                console.log("i am a", a);
+            }}
         >
             <div
                 style={{

@@ -74,8 +74,9 @@ io.on("connection", (socket) => {
   });
 
   // let other know the roomLeader has started the game
-  socket.on("StartGame", ({ roomId, players }) => {
-    socket.broadcast.to(roomId).emit("StartGame", { roomId, players });
+  socket.on("StartGame", ({ roomId, players, boardData }) => {
+    // socket.broadcast.to(roomId).emit("StartGame", { roomId, players, boardData });
+    io.in(roomId).emit("StartGame", { roomId, players, boardData });
   });
 
   socket.on("DropOnBoard", ({ item, roomId, boardItem }) => {

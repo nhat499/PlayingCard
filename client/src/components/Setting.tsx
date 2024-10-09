@@ -1,15 +1,17 @@
 import { useState } from "react";
-import { DraggableProps } from "./Draggable";
+import { BoardProps } from "./Board";
 
 export type SettingProps = {
-    itemData: { [key: string]: DraggableProps["item"][] };
+    settingValue: string;
+    setSettingValue: (value: string) => void;
     startGame: () => void;
 };
 
-const Setting = ({ itemData, startGame }: SettingProps) => {
-    const [settingValue, setSettingValue] = useState<string>(
-        JSON.stringify(itemData, undefined, 2)
-    );
+const Setting = ({
+    settingValue,
+    setSettingValue,
+    startGame,
+}: SettingProps) => {
     return (
         <div
             autoFocus
