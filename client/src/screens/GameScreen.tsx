@@ -10,92 +10,26 @@ import {
 import { DraggableProps, item } from "../components/Draggable";
 import { socket } from "../socket/Socket";
 import { useLocation, useParams } from "react-router-dom";
+import AddItemPopup from "../components/AddItemPopup";
 
 export const BOARD = "Board";
 export const HAND = "Hand";
-
-const Suite = ["spade", "club", "diamond", "heart"];
-
-const createRegularDeckObject = () => {
-    const object: item[] = [];
-    for (let i = 1; i <= 10; i++) {
-        for (const s of Suite) {
-            const card: item = {
-                id: `card${i}${s}`,
-                name: `${i} ${s}`,
-                parent: "stack1",
-                zIndex: 1,
-                width: 40,
-                height: 55,
-                top: 0,
-                left: 0,
-                disabled: false,
-                isHidden: false,
-            };
-            object.push(card);
-        }
-    }
-    for (const s of Suite) {
-        const card: item = {
-            id: `card${"jack"}${s}`,
-            name: `${"jack"} ${s}`,
-            parent: "stack1",
-            zIndex: 1,
-            width: 40,
-            height: 55,
-            top: 0,
-            left: 0,
-            disabled: false,
-            isHidden: false,
-        };
-        object.push(card);
-    }
-    for (const s of Suite) {
-        const card: item = {
-            id: `card${"queen"}${s}`,
-            name: `${"queen"} ${s}`,
-            parent: "stack1",
-            zIndex: 1,
-            width: 40,
-            height: 55,
-            top: 0,
-            left: 0,
-            disabled: false,
-            isHidden: false,
-        };
-        object.push(card);
-    }
-    for (const s of Suite) {
-        const card: item = {
-            id: `card${"king"}${s}`,
-            name: `${"king"} ${s}`,
-            parent: "stack1",
-            zIndex: 1,
-            width: 40,
-            height: 55,
-            top: 0,
-            left: 0,
-            disabled: false,
-            isHidden: false,
-        };
-        object.push(card);
-    }
-
-    return object;
-};
 
 function GameScreen() {
     const [highestZIndex, setHighestZIndex] = useState<number>(2);
     const { roomId } = useParams();
     const { state } = useLocation();
     const [isDragging, setIsDragging] = useState<boolean>(false);
-    console.log("i a state:", state);
     const [boardItem, setBoardItem] = useState<BoardProps["items"]>({});
     const [handItem, setHandItem] = useState<DraggableProps["item"][]>([]);
+    const [boardSize, setBoardSize] = useState({
+        width: 300,
+        height: 500,
+    });
+    const [openAddItemPopup, setOpenAddItemPopup] = useState<boolean>(false);
 
     function handleDragEnd(event: DragEndEvent) {
         // setIsDragging(false);
-        console.log("i am drag end event:", event);
         const { active, over, delta, activatorEvent, collisions } = event;
         const item = active.data.current as DraggableProps["item"] | undefined;
         if (!item) return;
@@ -116,7 +50,6 @@ function GameScreen() {
             //         // item.top = activatorEvent.target?.getBoundingClientRect().top -
             //         //     over.rect.top;
             //     } else {
-            //         console.log("i am in else drop");
             //         item.left = 10;
             //         item.top = 500;
             //     }
@@ -151,7 +84,6 @@ function GameScreen() {
                 );
                 setHandItem(newHanditem);
             } else if (previousParent.startsWith("stack")) {
-                console.log("i drop on board from stack");
                 socket.emit("DropFromStack", {
                     item: item,
                     roomId,
@@ -227,7 +159,6 @@ function GameScreen() {
                 //     currItem[over.id] = stackItem;
                 //     return { ...currItem };
                 // });
-                console.log("adding to stack");
 
                 socket.emit("AddToStack", {
                     item: item,
@@ -254,7 +185,6 @@ function GameScreen() {
     function handleDragStart(event: DragStartEvent) {
         // setIsDragging(true);
         const { active } = event;
-        console.log("i am drag start event:", event);
         const item = active.data.current as DraggableProps["item"] | undefined;
         if (!item) return;
 
@@ -286,14 +216,13 @@ function GameScreen() {
 
     useEffect(() => {
         if (state) {
-            console.log("i a state:", state);
-            setBoardItem(state);
+            setBoardItem(state[BOARD]);
+            setBoardSize(state.window);
         }
     }, [state]);
 
     useEffect(() => {
         socket.on("DropOnBoard", ({ item, roomId, boardItem }) => {
-            console.log("drop on board", roomId);
             setBoardItem((currBoardItem) => {
                 item.transform = undefined;
                 currBoardItem[item.id] = item;
@@ -303,7 +232,6 @@ function GameScreen() {
         });
 
         socket.on("DropFromBoard", ({ item, roomId, boardItem }) => {
-            console.log("DropFromBoard", roomId);
             setBoardItem((currItem) => {
                 delete currItem[item.id];
                 return { ...currItem };
@@ -324,7 +252,6 @@ function GameScreen() {
                 item.parent = stackId;
                 if (stackArr && stackArr.length > 0) {
                     if (stackArr[stackArr.length - 1].id !== item.id) {
-                        console.log("i am pushing");
                         stackItem.data.push(item);
                     }
                 } else {
@@ -336,12 +263,10 @@ function GameScreen() {
         });
 
         socket.on("DropFromStack2", ({ item, roomId, stackId }) => {
-            console.log("i am popping1");
             setBoardItem((currItem) => {
                 const stackItem = structuredClone(currItem[stackId]);
                 const stackArr = stackItem.data as item[];
                 if (stackArr && stackArr.length > 0) {
-                    console.log("i am popping");
                     if (stackArr[stackArr.length - 1].id === item.id) {
                         stackArr.pop();
                     }
@@ -358,39 +283,25 @@ function GameScreen() {
     }, []);
 
     return (
-        // <div
-        //     style={{
-        //         width: "100%",
-        //         height: "100%",
-        //         // overflow: "hidden"
-        //     }}
-        // >
         <DndContext
             onDragEnd={handleDragEnd}
             onDragStart={handleDragStart}
             onDragMove={handleDragMove}
-            onDragOver={(a) => {
-                console.log("i am a", a);
-            }}
         >
             <div
                 style={{
-                    // width: 100,
-                    // height: 100,
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
                     justifyContent: "center",
                     gap: "10px",
                     overflow: "hidden",
-                    // border: "1px solid black",
                 }}
             >
                 <div
                     style={{
                         display: "flex",
-                        // border: "1px solid black",
-                        width: "100%",
+                        width: `${boardSize.width}px`,
                         height: "70%",
                     }}
                 >
@@ -401,6 +312,7 @@ function GameScreen() {
                         }}
                     ></div>
                     <Board
+                        size={boardSize}
                         items={boardItem}
                         setItems={setBoardItem}
                         isDragging={isDragging}
@@ -410,12 +322,23 @@ function GameScreen() {
                             width: "10%",
                             border: "1px solid black",
                         }}
-                    ></div>
+                    >
+                        <button onClick={() => setOpenAddItemPopup(true)}>
+                            add item
+                        </button>
+                    </div>
                 </div>
-                <Hand cards={handItem} setItems={setHandItem}></Hand>
+                <Hand
+                    boardSize={boardSize}
+                    cards={handItem}
+                    setItems={setHandItem}
+                ></Hand>
             </div>
+            <AddItemPopup
+                open={openAddItemPopup}
+                setOpen={setOpenAddItemPopup}
+            />
         </DndContext>
-        // </div>
     );
 }
 

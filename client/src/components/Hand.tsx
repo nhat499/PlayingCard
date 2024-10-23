@@ -4,13 +4,15 @@ import {
 } from "@dnd-kit/sortable";
 import Draggable, { DraggableProps } from "./Draggable";
 import { useDroppable } from "@dnd-kit/core";
+import { BoardProps } from "./Board";
 
 export type HandProps = {
     cards: DraggableProps["item"][];
     setItems: (value: React.SetStateAction<DraggableProps["item"][]>) => void;
+    boardSize: BoardProps["size"];
 };
 
-const Hand = ({ cards, setItems }: HandProps) => {
+const Hand = ({ cards, setItems, boardSize }: HandProps) => {
     const { setNodeRef } = useDroppable({
         id: "Hand",
     });
@@ -23,7 +25,7 @@ const Hand = ({ cards, setItems }: HandProps) => {
                 // position: "relative",
                 backgroundColor: "lightblue",
                 display: "flex",
-                minWidth: "70%",
+                minWidth: `${boardSize.width}px`,
                 minHeight: "100px",
                 // padding: "5px",
                 // display: "flex",

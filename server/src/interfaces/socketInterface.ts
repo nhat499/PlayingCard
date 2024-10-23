@@ -13,7 +13,7 @@ export interface ServerToClientEvents {
   CurrentPlayers: ({ players }: { players: IUser[] }) => void;
 
   // server let non roomleader knows to start the game
-  StartGame: ({ roomId, players, boardData }) => void;
+  StartGame: ({ roomId, players, setting }) => void;
 
   // let all(including myself) know drop a card on the board
   DropOnBoard: ({ item, roomId, boardItem }: IDragDropItem) => void;
@@ -29,6 +29,15 @@ export interface ServerToClientEvents {
 
   // let other know I drop an item from a stack
   DropFromStack2: ({ item, roomId, stackId }: MoveItem) => void;
+
+  // let other know i shuffle stack
+  ShuffleStack: ({ roomId, stackId, stackData }) => void;
+
+  // let other know i flip stack
+  FlipStack: ({ roomId, stackId, stackData }) => void;
+
+  // let other know i flip a Card
+  FlipCard: ({ roomId, itemId, value }) => void;
 }
 
 export interface ClientToServerEvents {
@@ -40,7 +49,7 @@ export interface ClientToServerEvents {
   CurrentPlayers: ({ players, to }) => void;
 
   // room leader let room know the game has started
-  StartGame: ({ roomId, players, boardData }) => void;
+  StartGame: ({ roomId, players, setting }) => void;
 
   // a user drop a item on the board
   DropOnBoard: ({ item, roomId }: IDragDropItem) => void;
@@ -56,6 +65,15 @@ export interface ClientToServerEvents {
 
   // a user drop an item from a stack
   DropFromStack: ({ item, roomId, stackId }: MoveItem) => void;
+
+  // a user shuffle a stack
+  ShuffleStack: ({ roomId, stackId, stackData }) => void;
+
+  // a user flip a stack
+  FlipStack: ({ roomId, stackId, stackData }) => void;
+
+  // a user flip a Card
+  FlipCard: ({ roomId, itemId, value }) => void;
 }
 
 export interface MoveItem {
