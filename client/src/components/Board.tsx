@@ -79,7 +79,7 @@ const Board = ({ items, setItems, isDragging, size }: BoardProps) => {
                                 setAttribute={(id, key, value) =>
                                     setItems((currItems) => {
                                         currItems[id][key] = value;
-                                        return { ...currItems };
+                                        return currItems;
                                     })
                                 }
                             />
@@ -91,7 +91,7 @@ const Board = ({ items, setItems, isDragging, size }: BoardProps) => {
                                 setAttribute={(id, key, value) =>
                                     setItems((currItems) => {
                                         currItems[id][key] = value;
-                                        return { ...currItems };
+                                        return currItems;
                                     })
                                 }
                             />

@@ -5,6 +5,7 @@ import {
 import Draggable, { DraggableProps } from "./Draggable";
 import { useDroppable } from "@dnd-kit/core";
 import { BoardProps } from "./Board";
+import Card, { CardProps } from "./Card";
 
 export type HandProps = {
     cards: DraggableProps["item"][];
@@ -16,7 +17,7 @@ const Hand = ({ cards, setItems, boardSize }: HandProps) => {
     const { setNodeRef } = useDroppable({
         id: "Hand",
     });
-
+    console.log("i am hand cards", cards);
     return (
         <div
             ref={setNodeRef}
@@ -32,28 +33,27 @@ const Hand = ({ cards, setItems, boardSize }: HandProps) => {
                 // gap: "5px"
             }}
         >
-            {cards.map((card) => (
+            {cards.map((item) => (
                 <div
-                    key={card.id}
+                    key={item.id}
                     style={{
                         position: "relative",
 
-                        top: card.top ?? 0,
-                        left: card.left ?? 0,
+                        top: item.top ?? 0,
+                        left: item.left ?? 0,
                     }}
                 >
-                    <Draggable
-                        item={card}
-                        setAttribute={(id, key, value) =>
-                            setItems((currItems) => {
-                                const index = currItems.findIndex(
-                                    (curr) => curr.id === id
-                                );
-                                currItems[index][key] = value;
-                                return currItems;
-                            })
-                        }
-                    />
+                    {item.id.startsWith("card") && (
+                        <Card
+                            card={item as CardProps["card"]}
+                            setAttribute={(id, key, value) =>
+                                setItems((currItems) => {
+                                    currItems[id][key] = value;
+                                    return currItems;
+                                })
+                            }
+                        />
+                    )}
                 </div>
             ))}
         </div>
