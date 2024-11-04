@@ -4,7 +4,7 @@ import { useState } from "react";
 import { socket } from "../socket/Socket";
 import DraggableOptions from "./DraggableOptions";
 import { useParams } from "react-router-dom";
-import { CardProps } from "./Card";
+import Card, { CardProps } from "./Card";
 
 export type StackProps = {
     stack: item & { data: CardProps["card"][]; width: number; height: number };
@@ -19,7 +19,7 @@ export type StackProps = {
 //     data: item[];
 // }
 
-function shuffle(array: item[]) {
+function shuffle(array: CardProps["card"][]) {
     let currentIndex = array.length;
 
     // While there remain elements to shuffle...
@@ -36,7 +36,7 @@ function shuffle(array: item[]) {
     }
 }
 
-function flipAll(array: item[], isHidden: boolean) {
+function flipAll(array: CardProps["card"][], isHidden: boolean) {
     for (const item of array) {
         item.isHidden = isHidden;
     }
@@ -96,39 +96,49 @@ const Stack = ({ stack }: StackProps) => {
                     ...stack,
                 }}
                 Children={(isDragging) => (
-                    <>
+                    <div style={{
+                        border: "1px solid black",
+                        textAlign: "center",
+                        display: "flex",
+                        // padding: "10px",
+                        flexDirection: "column",
+                        alignItems: "center"
+                    }}>
                         stack
                         <div
                             ref={!isDragging ? setDropRef : undefined}
                             style={{
-                                width: stack.width,
-                                height: stack.height,
-                                display: "flex",
+                                width: stack.width + 10,
+                                height: stack.height + 10,
+                                // display: "flex",
                             }}
                         >
                             {stack.data?.map((item) => {
                                 return (
-                                    <Draggable
-                                        key={item.id}
-                                        item={item}
-                                        Children={() => (
-                                            <div
-                                                style={{
-                                                    border: "1px solid black",
-                                                    width: item.width,
-                                                    height: item.height,
-                                                }}
-                                            >
-                                                {item.isHidden
-                                                    ? "hidden"
-                                                    : item.name}
-                                            </div>
-                                        )}
+                                    <Card
+                                        card={item}
                                     />
+                                    // <Draggable
+                                    //     key={item.id}
+                                    //     item={item}
+                                    //     Children={() => (
+                                    //         <div
+                                    //             style={{
+                                    //                 border: "1px solid black",
+                                    //                 width: item.width,
+                                    //                 height: item.height,
+                                    //             }}
+                                    //         >
+                                    //             {item.isHidden
+                                    //                 ? "hidden"
+                                    //                 : item.name}
+                                    //         </div>
+                                    //     )}
+                                    // />
                                 );
                             })}
                         </div>
-                    </>
+                    </div>
                 )}
             />
         </div>

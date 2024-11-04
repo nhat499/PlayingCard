@@ -1,13 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Draggable, { item } from "./Draggable";
 import DraggableOptions from "./DraggableOptions";
 import { socket } from "../socket/Socket";
 import { useParams } from "react-router-dom";
+import { Polygon } from "@html-polygon/react";
 
 export type CardProps = {
-    card: item & { width: number; height: number; isHidden: boolean };
+    card: item & {
+        width: number;
+        height: number;
+        isHidden: boolean;
+        sides: number;
+    };
     // data: item[];
-    setAttribute: (
+    setAttribute?: (
         itemId: string,
         key: string,
         value: string | number | boolean
@@ -17,6 +23,8 @@ export type CardProps = {
 const Card = ({ card, setAttribute }: CardProps) => {
     const { roomId } = useParams();
     const [openDialog, setOpenDialog] = useState(false);
+
+
     return (
         <div
             onContextMenu={(e) => {
@@ -24,11 +32,11 @@ const Card = ({ card, setAttribute }: CardProps) => {
                 setOpenDialog(true);
             }}
         >
-            <DraggableOptions
+            {setAttribute && <DraggableOptions
                 openDialog={openDialog}
                 setOpenDialog={setOpenDialog}
                 zIndex={card.zIndex + 1}
-                // setAttribute={setAttribute}
+            // setAttribute={setAttribute}
             >
                 <button
                     onClick={(e) => {
@@ -52,28 +60,26 @@ const Card = ({ card, setAttribute }: CardProps) => {
                 >
                     flip
                 </button>
-            </DraggableOptions>
+            </DraggableOptions>}
             <Draggable
                 item={{
                     ...card,
                 }}
                 Children={(isDragging) => (
-                    <div
+                    <Polygon
+                        sides={card.sides}
+                        rotate={card.rotate}
+                        stable
                         style={{
-                            width: `${card.width}px`,
-                            height: `${card.height}px`,
-                            border: "1px solid black",
-                            transform: `rotate(${card.rotate}deg)`,
+
+                            width: `${card.width + 20}px`,
+                            height: `${card.height + 30}px`,
+                            backgroundColor: 'rgb(204, 204, 204)',
+                            textAlign: 'center',
                         }}
                     >
-                        <div
-                            style={{
-                                transform: `rotate(-${card.rotate}deg)`,
-                            }}
-                        >
-                            {card.isHidden ? "hidden" : card.name}
-                        </div>
-                    </div>
+                        {card.isHidden ? "hidden" : card.name}
+                    </Polygon>
                 )}
             />
         </div>

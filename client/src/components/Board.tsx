@@ -1,10 +1,4 @@
 import { useDroppable } from "@dnd-kit/core";
-import Draggable, { DraggableProps, item } from "./Draggable";
-import {
-    TransformWrapper,
-    TransformComponent,
-    useTransformContext,
-} from "react-zoom-pan-pinch";
 import Stack, { StackProps } from "./Stack";
 import Card, { CardProps } from "./Card";
 import { socket } from "../socket/Socket";
@@ -12,7 +6,9 @@ import { useEffect } from "react";
 
 export type BoardProps = {
     items: { [key: string]: CardProps["card"] | StackProps["stack"] };
-    setItems: (value: BoardProps["items"]) => void;
+    setItems: React.Dispatch<React.SetStateAction<{
+        [key: string]: CardProps["card"] | StackProps["stack"]
+    }>>
     isDragging: boolean;
     size: { width: number; height: number };
 };
@@ -65,8 +61,6 @@ const Board = ({ items, setItems, isDragging, size }: BoardProps) => {
                         key={key}
                         style={{
                             position: "relative",
-                            // border: "1px solid red",
-                            // width: "fit-content",
                             zIndex: item.zIndex,
                             top: item.top,
                             left: item.left,

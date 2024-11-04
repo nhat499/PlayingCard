@@ -16,6 +16,7 @@ const createRegularDeckObject = () => {
     for (let i = 1; i <= 10; i++) {
         for (const s of Suite) {
             const card: CardProps["card"] = {
+                sides: 4,
                 rotate: 0,
                 id: `card${i}${s}`,
                 name: `${i} ${s}`,
@@ -33,6 +34,7 @@ const createRegularDeckObject = () => {
     }
     for (const s of Suite) {
         const card: CardProps["card"] = {
+            sides: 4,
             rotate: 0,
             id: `card${"jack"}${s}`,
             name: `${"jack"} ${s}`,
@@ -49,6 +51,7 @@ const createRegularDeckObject = () => {
     }
     for (const s of Suite) {
         const card: CardProps["card"] = {
+            sides: 4,
             rotate: 10,
             id: `card${"queen"}${s}`,
             name: `${"queen"} ${s}`,
@@ -65,6 +68,7 @@ const createRegularDeckObject = () => {
     }
     for (const s of Suite) {
         const card: CardProps["card"] = {
+            sides: 4,
             rotate: -5,
             id: `card${"king"}${s}`,
             name: `${"king"} ${s}`,

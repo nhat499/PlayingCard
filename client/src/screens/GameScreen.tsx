@@ -11,6 +11,8 @@ import { DraggableProps, item } from "../components/Draggable";
 import { socket } from "../socket/Socket";
 import { useLocation, useParams } from "react-router-dom";
 import AddItemPopup from "../components/AddItemPopup";
+import { CardProps } from "../components/Card";
+import { StackProps } from "../components/Stack";
 
 export const BOARD = "Board";
 export const HAND = "Hand";
@@ -31,7 +33,7 @@ function GameScreen() {
     function handleDragEnd(event: DragEndEvent) {
         // setIsDragging(false);
         const { active, over, delta, activatorEvent, collisions } = event;
-        const item = active.data.current as DraggableProps["item"] | undefined;
+        const item = active.data.current as CardProps["card"] | undefined;
         if (!item) return;
         // if (over && over.id === item.id) {
         //     // drag over itself
@@ -70,6 +72,8 @@ function GameScreen() {
                 // updateItem.left = 10;
                 // updateItem.top = 10;
                 updateItem = { ...item };
+                updateItem.top = 300;
+                updateItem.left = 200;
             }
             updateItem.parent = BOARD;
             socket.emit("DropOnBoard", {
@@ -185,7 +189,7 @@ function GameScreen() {
     function handleDragStart(event: DragStartEvent) {
         // setIsDragging(true);
         const { active } = event;
-        const item = active.data.current as DraggableProps["item"] | undefined;
+        const item = active.data.current as CardProps["card"] | undefined;
         if (!item) return;
 
         if (
@@ -247,7 +251,7 @@ function GameScreen() {
 
         socket.on("AddToStack", ({ item, roomId, stackId }) => {
             setBoardItem((currItem) => {
-                const stackItem = structuredClone(currItem[stackId]);
+                const stackItem = structuredClone(currItem[stackId]) as StackProps["stack"];
                 const stackArr = stackItem.data;
                 item.parent = stackId;
                 if (stackArr && stackArr.length > 0) {
@@ -264,8 +268,8 @@ function GameScreen() {
 
         socket.on("DropFromStack2", ({ item, roomId, stackId }) => {
             setBoardItem((currItem) => {
-                const stackItem = structuredClone(currItem[stackId]);
-                const stackArr = stackItem.data as item[];
+                const stackItem = structuredClone(currItem[stackId]) as StackProps["stack"];
+                const stackArr = stackItem.data;
                 if (stackArr && stackArr.length > 0) {
                     if (stackArr[stackArr.length - 1].id === item.id) {
                         stackArr.pop();
@@ -337,6 +341,7 @@ function GameScreen() {
             <AddItemPopup
                 open={openAddItemPopup}
                 setOpen={setOpenAddItemPopup}
+                setBoardItem={setBoardItem}
             />
         </DndContext>
     );

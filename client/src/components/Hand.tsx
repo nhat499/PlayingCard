@@ -17,7 +17,6 @@ const Hand = ({ cards, setItems, boardSize }: HandProps) => {
     const { setNodeRef } = useDroppable({
         id: "Hand",
     });
-    console.log("i am hand cards", cards);
     return (
         <div
             ref={setNodeRef}

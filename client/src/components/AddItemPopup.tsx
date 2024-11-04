@@ -1,59 +1,82 @@
 import { Polygon } from "@html-polygon/react";
 import Draggable, { item } from "./Draggable";
 import { useState } from "react";
+import { CardProps } from "./Card";
+import { StackProps } from "./Stack";
+import { socket } from "../socket/Socket";
+import { useParams } from "react-router-dom";
 
 type AddItemPopupProps = {
     open: boolean;
     setOpen: (value: boolean) => void;
+    setBoardItem: React.Dispatch<React.SetStateAction<{
+        [key: string]: CardProps["card"] | StackProps["stack"]
+    }>>
 };
 
-const AddItemPopup = ({ open, setOpen }: AddItemPopupProps) => {
-    const [item, setItem] = useState<item>({
-        disabled: false,
-        // height: 100,
-        id: "test",
-        // isHidden: false,
-        left: 0,
-        top: 0,
-        name: "test",
-        parent: "create",
-        // width: 100,
-        zIndex: 0,
-    });
+const baseItem: CardProps["card"] = {
+    disabled: false,
+    height: 100,
+    id: "test",
+    isHidden: false,
+    rotate: 0,
+    left: 0,
+    top: 0,
+    name: "test",
+    parent: "create",
+    width: 100,
+    zIndex: 0,
+    sides: 4,
+};
+
+const AddItemPopup = ({ open, setOpen, setBoardItem }: AddItemPopupProps) => {
+
+    const { roomId } = useParams();
+    const [newItemString, setNewItemString] = useState<string>(JSON.stringify(baseItem, null, 2))
+
+    let newItem: CardProps["card"] | undefined;
+    try {
+
+        newItem = JSON.parse(newItemString) ?? {};
+    } catch (err) {
+
+    }
+
 
     return (
         <dialog open={open} style={{ top: 50 }}>
             <div style={{ display: "flex", gap: "15px" }}>
+                <textarea
+                    style={{
+                        border: "1px solid black",
+                        resize: "none",
+                        height: "300px"
+                    }}
+                    value={newItemString}
+                    onChange={(e) => {
+                        setNewItemString(e.target.value);
+                    }}
+                />
                 <div
                     style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "10px",
+                        minWidth: "100px",
+                        minHeight: "100px"
                     }}
                 >
-                    <button>shape</button>
-                    <button>card</button>
-                    <button>stack</button>
+                    {newItem && <Polygon
+                        sides={newItem.sides ?? 4}
+                        stable
+                        rotate={newItem.rotate ?? 0}
+                        style={{
+                            width: `${newItem.width ?? 0}px`,
+                            height: `${newItem.height ?? 0}px`,
+                            backgroundColor: `green`,
+                            textAlign: "center"
+                        }}
+                    >
+                        {newItem.name}
+                    </Polygon>}
                 </div>
-
-                <Polygon
-                    sides={5}
-                    borderColor="black"
-                    rotate={0}
-                    borderWidth={"10px"}
-                    style={{
-                        width: "100px",
-                        height: "100px",
-                        color: "red",
-                        // stroke: "black",
-                        // border: "50px solid black",
-                        opacity: "70%",
-                        backgroundColor: "green",
-                    }}
-                >
-                    {/* test */}
-                </Polygon>
-
                 <div
                     style={{
                         display: "flex",
@@ -62,7 +85,18 @@ const AddItemPopup = ({ open, setOpen }: AddItemPopupProps) => {
                         gap: "10px",
                     }}
                 >
-                    <button>add</button>
+                    <button
+                        onClick={() => {
+                            if (newItem) {
+                                console.log("test");
+                                socket.emit("DropOnBoard", {
+                                    item: newItem,
+                                    roomId,
+                                    boardItem: {},
+                                });
+                            }
+                        }}
+                    >add</button>
                     <button onClick={() => setOpen(false)}>close</button>
                 </div>
             </div>
