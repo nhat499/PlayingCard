@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import DefaultScreen from "../components/DefaultScreen";
-import Setting, { SettingProps } from "../components/Setting";
+import Setting from "../components/Setting";
 import { socket } from "../socket/Socket";
 import useUser, { Iuser } from "../atom/userAtom";
 import PlayerIcon from "../components/PlayerIcon";
@@ -18,6 +18,7 @@ const createRegularDeckObject = () => {
             const card: CardProps["card"] = {
                 sides: 4,
                 rotate: 0,
+                color: "white",
                 id: `card${i}${s}`,
                 name: `${i} ${s}`,
                 parent: "stack1",
@@ -36,6 +37,7 @@ const createRegularDeckObject = () => {
         const card: CardProps["card"] = {
             sides: 4,
             rotate: 0,
+            color: "white",
             id: `card${"jack"}${s}`,
             name: `${"jack"} ${s}`,
             parent: "stack1",
@@ -52,7 +54,8 @@ const createRegularDeckObject = () => {
     for (const s of Suite) {
         const card: CardProps["card"] = {
             sides: 4,
-            rotate: 10,
+            rotate: 0,
+            color: "white",
             id: `card${"queen"}${s}`,
             name: `${"queen"} ${s}`,
             parent: "stack1",
@@ -69,7 +72,8 @@ const createRegularDeckObject = () => {
     for (const s of Suite) {
         const card: CardProps["card"] = {
             sides: 4,
-            rotate: -5,
+            rotate: 0,
+            color: "white",
             id: `card${"king"}${s}`,
             name: `${"king"} ${s}`,
             parent: "stack1",

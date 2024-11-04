@@ -7,7 +7,7 @@ import {
     DragMoveEvent,
     DragStartEvent,
 } from "@dnd-kit/core";
-import { DraggableProps, item } from "../components/Draggable";
+import { DraggableProps } from "../components/Draggable";
 import { socket } from "../socket/Socket";
 import { useLocation, useParams } from "react-router-dom";
 import AddItemPopup from "../components/AddItemPopup";
@@ -230,7 +230,6 @@ function GameScreen() {
             setBoardItem((currBoardItem) => {
                 item.transform = undefined;
                 currBoardItem[item.id] = item;
-
                 return { ...currBoardItem };
             });
         });
@@ -251,7 +250,9 @@ function GameScreen() {
 
         socket.on("AddToStack", ({ item, roomId, stackId }) => {
             setBoardItem((currItem) => {
-                const stackItem = structuredClone(currItem[stackId]) as StackProps["stack"];
+                const stackItem = structuredClone(
+                    currItem[stackId]
+                ) as StackProps["stack"];
                 const stackArr = stackItem.data;
                 item.parent = stackId;
                 if (stackArr && stackArr.length > 0) {
@@ -268,7 +269,9 @@ function GameScreen() {
 
         socket.on("DropFromStack2", ({ item, roomId, stackId }) => {
             setBoardItem((currItem) => {
-                const stackItem = structuredClone(currItem[stackId]) as StackProps["stack"];
+                const stackItem = structuredClone(
+                    currItem[stackId]
+                ) as StackProps["stack"];
                 const stackArr = stackItem.data;
                 if (stackArr && stackArr.length > 0) {
                     if (stackArr[stackArr.length - 1].id === item.id) {
@@ -282,7 +285,6 @@ function GameScreen() {
 
         return () => {
             console.log("disconnection?");
-            // socket.disconnect();
         };
     }, []);
 

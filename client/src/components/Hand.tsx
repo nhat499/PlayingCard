@@ -1,8 +1,4 @@
-import {
-    horizontalListSortingStrategy,
-    SortableContext,
-} from "@dnd-kit/sortable";
-import Draggable, { DraggableProps } from "./Draggable";
+import { DraggableProps } from "./Draggable";
 import { useDroppable } from "@dnd-kit/core";
 import { BoardProps } from "./Board";
 import Card, { CardProps } from "./Card";
@@ -21,15 +17,10 @@ const Hand = ({ cards, setItems, boardSize }: HandProps) => {
         <div
             ref={setNodeRef}
             style={{
-                // border: "1px solid lightblue",
-                // position: "relative",
                 backgroundColor: "lightblue",
                 display: "flex",
                 minWidth: `${boardSize.width}px`,
                 minHeight: "100px",
-                // padding: "5px",
-                // display: "flex",
-                // gap: "5px"
             }}
         >
             {cards.map((item) => (

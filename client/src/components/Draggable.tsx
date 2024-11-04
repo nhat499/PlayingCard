@@ -1,8 +1,6 @@
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
-import React, { Children, ReactNode, useState } from "react";
-import { useTransformContext } from "react-zoom-pan-pinch";
-import { BoardProps } from "./Board";
+import { ReactNode } from "react";
 
 export type item = {
     id: string;
@@ -10,13 +8,10 @@ export type item = {
     zIndex: number;
     top: number;
     left: number;
-    rotate: number; // rotate(90deg);
-    // width: number;
-    // height: number;
+    rotate: number;
     disabled: boolean;
-    // isHidden: boolean;
     parent: string;
-    transform?: string; // translate3d(xpx, ypx, scale)
+    transform?: string;
 };
 
 export type DraggableProps = {

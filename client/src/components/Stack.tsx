@@ -96,14 +96,16 @@ const Stack = ({ stack }: StackProps) => {
                     ...stack,
                 }}
                 Children={(isDragging) => (
-                    <div style={{
-                        border: "1px solid black",
-                        textAlign: "center",
-                        display: "flex",
-                        // padding: "10px",
-                        flexDirection: "column",
-                        alignItems: "center"
-                    }}>
+                    <div
+                        style={{
+                            border: "1px solid black",
+                            textAlign: "center",
+                            display: "flex",
+                            // padding: "10px",
+                            flexDirection: "column",
+                            alignItems: "center",
+                        }}
+                    >
                         stack
                         <div
                             ref={!isDragging ? setDropRef : undefined}
@@ -115,9 +117,7 @@ const Stack = ({ stack }: StackProps) => {
                         >
                             {stack.data?.map((item) => {
                                 return (
-                                    <Card
-                                        card={item}
-                                    />
+                                    <Card key={item.id} card={item} />
                                     // <Draggable
                                     //     key={item.id}
                                     //     item={item}

@@ -1,19 +1,18 @@
-import { Children, ReactNode } from "react";
-import { BoardProps } from "./Board";
+import { ReactNode } from "react";
 
-type DraggableOptionsProps<k> = {
+type DraggableOptionsProps = {
     openDialog: boolean;
     setOpenDialog: (value: boolean) => void;
     zIndex: number;
     children?: ReactNode;
 };
 
-const DraggableOptions = <k,>({
+const DraggableOptions = ({
     openDialog,
     setOpenDialog,
     zIndex,
     children,
-}: DraggableOptionsProps<k>) => {
+}: DraggableOptionsProps) => {
     return (
         <dialog
             open={openDialog}
@@ -26,7 +25,7 @@ const DraggableOptions = <k,>({
             {children}
 
             <button
-                onClick={(e) => {
+                onClick={() => {
                     setOpenDialog(false);
                 }}
             >

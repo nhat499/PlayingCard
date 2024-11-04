@@ -1,6 +1,3 @@
-import { useState } from "react";
-import { BoardProps } from "./Board";
-
 export type SettingProps = {
     settingValue: string;
     setSettingValue: (value: string) => void;

@@ -4,15 +4,6 @@ const Layout = () => {
     return (
         <div
             style={{
-                // width: "95vw",
-                // height: "100%",
-                // minHeight: "100vh",
-                // maxWidth: "97%",
-                // maxHeight: "97%",
-                // overflowX: "hidden",
-                // overflowY: "hidden",
-                // margin: 0,
-                // padding: 0,
                 border: "1px solid black",
             }}
         >
@@ -20,13 +11,11 @@ const Layout = () => {
                 style={{
                     margin: 0,
                     padding: 0,
-                    // position: "absolute",
                     top: "0px",
                     height: "20px",
                     backgroundColor: "lightblue",
                     borderBottom: "1px solid gray",
                     width: "100%",
-                    // padding: "10px"
                 }}
             >
                 <Link to="/">Home</Link>

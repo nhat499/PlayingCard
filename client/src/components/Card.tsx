@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import Draggable, { item } from "./Draggable";
 import DraggableOptions from "./DraggableOptions";
 import { socket } from "../socket/Socket";
@@ -7,12 +7,12 @@ import { Polygon } from "@html-polygon/react";
 
 export type CardProps = {
     card: item & {
+        color: string;
         width: number;
         height: number;
         isHidden: boolean;
         sides: number;
     };
-    // data: item[];
     setAttribute?: (
         itemId: string,
         key: string,
@@ -24,7 +24,6 @@ const Card = ({ card, setAttribute }: CardProps) => {
     const { roomId } = useParams();
     const [openDialog, setOpenDialog] = useState(false);
 
-
     return (
         <div
             onContextMenu={(e) => {
@@ -32,35 +31,37 @@ const Card = ({ card, setAttribute }: CardProps) => {
                 setOpenDialog(true);
             }}
         >
-            {setAttribute && <DraggableOptions
-                openDialog={openDialog}
-                setOpenDialog={setOpenDialog}
-                zIndex={card.zIndex + 1}
-            // setAttribute={setAttribute}
-            >
-                <button
-                    onClick={(e) => {
-                        setAttribute(card.id, "disabled", !card.disabled);
+            {setAttribute && (
+                <DraggableOptions
+                    openDialog={openDialog}
+                    setOpenDialog={setOpenDialog}
+                    zIndex={card.zIndex + 1}
+                    // setAttribute={setAttribute}
+                >
+                    <button
+                        onClick={(e) => {
+                            setAttribute(card.id, "disabled", !card.disabled);
 
-                        setOpenDialog(false);
-                    }}
-                >
-                    {card.disabled ? "unlock" : "lock"}
-                </button>
-                <button
-                    onClick={(e) => {
-                        // setAttribute(card.id, "isHidden", !card.isHidden);
-                        socket.emit("FlipCard", {
-                            roomId,
-                            itemId: card.id,
-                            value: !card.isHidden,
-                        });
-                        setOpenDialog(false);
-                    }}
-                >
-                    flip
-                </button>
-            </DraggableOptions>}
+                            setOpenDialog(false);
+                        }}
+                    >
+                        {card.disabled ? "unlock" : "lock"}
+                    </button>
+                    <button
+                        onClick={(e) => {
+                            // setAttribute(card.id, "isHidden", !card.isHidden);
+                            socket.emit("FlipCard", {
+                                roomId,
+                                itemId: card.id,
+                                value: !card.isHidden,
+                            });
+                            setOpenDialog(false);
+                        }}
+                    >
+                        flip
+                    </button>
+                </DraggableOptions>
+            )}
             <Draggable
                 item={{
                     ...card,
@@ -69,13 +70,14 @@ const Card = ({ card, setAttribute }: CardProps) => {
                     <Polygon
                         sides={card.sides}
                         rotate={card.rotate}
+                        borderColor="black"
+                        borderWidth={1}
                         stable
                         style={{
-
                             width: `${card.width + 20}px`,
                             height: `${card.height + 30}px`,
-                            backgroundColor: 'rgb(204, 204, 204)',
-                            textAlign: 'center',
+                            backgroundColor: card.color ?? "white",
+                            textAlign: "center",
                         }}
                     >
                         {card.isHidden ? "hidden" : card.name}
