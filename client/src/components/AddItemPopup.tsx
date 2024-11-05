@@ -40,10 +40,10 @@ const AddItemPopup = ({ open, setOpen, setBoardItem }: AddItemPopupProps) => {
     let newItem: CardProps["card"] | undefined;
     try {
         newItem = JSON.parse(newItemString) ?? {};
-    } catch (err) {}
+    } catch (err) { }
 
     return (
-        <dialog open={open} style={{ top: 50 }}>
+        open && <div style={{ top: 50 }}>
             <div style={{ display: "flex", gap: "15px" }}>
                 <textarea
                     style={{
@@ -108,7 +108,7 @@ const AddItemPopup = ({ open, setOpen, setBoardItem }: AddItemPopupProps) => {
                     <button onClick={() => setOpen(false)}>close</button>
                 </div>
             </div>
-        </dialog>
+        </div>
     );
 };
 

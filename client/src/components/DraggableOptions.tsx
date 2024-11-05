@@ -19,19 +19,27 @@ const DraggableOptions = ({
             style={{
                 position: "absolute",
                 zIndex: zIndex,
-                left: 30,
+                left: "30px",
+                padding: "20px", // Add some padding
+                border: "none", // Remove default border
+                borderRadius: "8px", // Rounded corners
+                backgroundColor: "#fff", // Background color
+                boxShadow: "0 4px 15px rgba(0, 0, 0, 0.2)", // Subtle shadow for depth
+                width: "100px", // Set a fixed width
+                fontFamily: "Arial, sans-serif", // Change font family
             }}
         >
-            {children}
+            <div style={{ marginBottom: "15px" }}>
+                {children}
+            </div>
 
             <button
-                onClick={() => {
-                    setOpenDialog(false);
-                }}
+                onClick={() => setOpenDialog(false)}
             >
-                cancel
+                Cancel
             </button>
         </dialog>
+
     );
 };
 

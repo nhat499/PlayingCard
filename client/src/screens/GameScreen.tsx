@@ -297,54 +297,53 @@ function GameScreen() {
             <div
                 style={{
                     display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
+                    // flexDirection: "column",
+                    alignItems: "flex-end",
+                    // justifyContent: "center",
                     gap: "10px",
                     overflow: "hidden",
                 }}
             >
-                <div
-                    style={{
-                        display: "flex",
-                        width: `${boardSize.width}px`,
-                        height: "70%",
-                    }}
-                >
-                    <div
-                        style={{
-                            width: "10%",
-                            border: "1px solid black",
-                        }}
-                    ></div>
+                <div style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "10px",
+                }}>
                     <Board
                         size={boardSize}
                         items={boardItem}
                         setItems={setBoardItem}
                         isDragging={isDragging}
                     />
-                    <div
-                        style={{
-                            width: "10%",
-                            border: "1px solid black",
-                        }}
-                    >
-                        <button onClick={() => setOpenAddItemPopup(true)}>
-                            add item
-                        </button>
-                    </div>
+
+                    <Hand
+                        boardSize={boardSize}
+                        cards={handItem}
+                        setItems={setHandItem}
+                    />
                 </div>
-                <Hand
-                    boardSize={boardSize}
-                    cards={handItem}
-                    setItems={setHandItem}
-                ></Hand>
+
+                <div
+                    style={{
+                        width: "100%",
+                        height: "100%",
+                        border: "1px solid black"
+                    }}
+                >
+                    <AddItemPopup
+                        open={openAddItemPopup}
+                        setOpen={setOpenAddItemPopup}
+                        setBoardItem={setBoardItem}
+                    />
+                    <button onClick={() => setOpenAddItemPopup(true)}>
+                        Add Item
+                    </button>
+                </div>
+
             </div>
-            <AddItemPopup
-                open={openAddItemPopup}
-                setOpen={setOpenAddItemPopup}
-                setBoardItem={setBoardItem}
-            />
+
         </DndContext>
     );
 }

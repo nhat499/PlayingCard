@@ -38,13 +38,8 @@ const Draggable = ({ item, Children }: DraggableProps) => {
             <div
                 ref={setNodeRef}
                 style={{
-                    // border: "1px solid black",
                     position: "absolute",
                     cursor: "move",
-                    // backgroundColor: "white",
-                    // width: `${item.width}px`,
-                    // height: `${item.height}px`,
-
                     ...style,
                 }}
                 {...listeners}

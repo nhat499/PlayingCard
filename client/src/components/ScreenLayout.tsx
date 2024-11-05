@@ -4,30 +4,85 @@ const Layout = () => {
     return (
         <div
             style={{
-                border: "1px solid black",
+                display: "flex",
+                minHeight: "100vh",
+                background: "linear-gradient(135deg, #8e9eab 0%, #eef2f3 100%)",
+                fontFamily: "'Poppins', sans-serif",
             }}
         >
+            {/* Left Sidebar */}
             <nav
                 style={{
-                    margin: 0,
-                    padding: 0,
-                    top: "0px",
-                    height: "20px",
-                    backgroundColor: "lightblue",
-                    borderBottom: "1px solid gray",
-                    width: "100%",
+                    width: "250px",
+                    backgroundColor: "#4a5568",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    padding: "30px 20px",
+                    color: "#fff",
+                    boxShadow: "2px 0 12px rgba(0, 0, 0, 0.1)",
+                    borderRadius: "0 15px 15px 0",
                 }}
             >
-                <Link to="/">Home</Link>
-                <button>setting</button>
+                <div>
+                    <h2 style={{ marginBottom: "30px" }}>Menu</h2>
+                    <Link
+                        to="/"
+                        style={{
+                            display: "block",
+                            textDecoration: "none",
+                            color: "#cbd5e0",
+                            fontSize: "18px",
+                            marginBottom: "20px",
+                        }}
+                    >
+                        Home
+                    </Link>
+                </div>
+                <button
+                    style={{
+                        backgroundColor: "#2d3748",
+                        color: "#cbd5e0",
+                        border: "none",
+                        borderRadius: "20px",
+                        padding: "10px",
+                        fontSize: "16px",
+                        cursor: "pointer",
+                        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                        transition: "background-color 0.3s",
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#1a202c"}
+                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#2d3748"}
+                >
+                    Settings
+                </button>
             </nav>
+
+            {/* Main Content */}
             <div
                 style={{
-                    height: "100%",
-                    padding: "10px",
+                    flex: 1,
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    padding: "40px",
                 }}
             >
-                <Outlet />
+                <div
+                    style={{
+                        width: "90%",
+                        // maxWidth: "500px",
+                        backgroundColor: "#ffffff",
+                        borderRadius: "15px",
+                        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
+                        padding: "30px",
+                        textAlign: "center",
+                    }}
+                >
+                    <h2 style={{ color: "#333", marginBottom: "20px" }}>Playing Cards</h2>
+                    {/* Add a form or input components here */}
+                    <Outlet />
+                </div>
             </div>
         </div>
     );
