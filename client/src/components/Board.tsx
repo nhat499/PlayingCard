@@ -48,51 +48,55 @@ const Board = ({ items, setItems, isDragging, size }: BoardProps) => {
             ref={setNodeRef}
             style={{
                 position: "relative",
-                width: "100%",
-                display: "flex",
                 height: `${size.height}px`,
-                backgroundColor: "lightblue", // Light blue background
-                borderRadius: "8px", // Rounded corners
-                boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)", // Subtle shadow for depth
-                overflow: "hidden", // Hide overflow to keep items contained
-                padding: "10px", // Add padding for better spacing
+                backgroundColor: "#e6f7ff", // Light gradient for a modern touch
+                borderRadius: "12px", // Rounded corners for a softer look
+                padding: "10px",
+                border: "5px solid #a7c7dc", // Light border to frame the board
+                // overflow: "hidden",
             }}
         >
-            {Object.entries(items).map(([key, item]) => (
-                <div
-                    key={key}
-                    style={{
-                        position: "absolute", // Changed to absolute for better placement
-                        zIndex: item.zIndex,
-                        top: item.top,
-                        left: item.left,
-                        transition: "transform 0.2s ease", // Smooth transition for movement
-                    }}
-                >
-                    {item.id.startsWith("card") && (
-                        <Card
-                            card={item as CardProps["card"]}
-                            setAttribute={(id, key, value) =>
-                                setItems((currItems) => {
-                                    currItems[id][key] = value;
-                                    return currItems;
-                                })
-                            }
-                        />
-                    )}
-                    {item.id.startsWith("stack") && (
-                        <Stack
-                            stack={item as StackProps["stack"]}
-                            setAttribute={(id, key, value) =>
-                                setItems((currItems) => {
-                                    currItems[id][key] = value;
-                                    return currItems;
-                                })
-                            }
-                        />
-                    )}
-                </div>
-            ))}
+            {Object.entries(items).map(([key, item], index) => {
+                return (
+                    <div
+                        key={key}
+                        style={{
+                            position: "absolute",
+                            zIndex: item.zIndex,
+                            top: item.top,
+                            left: item.left,
+                            transform: isDragging ? "scale(1.05)" : "scale(1)", // Slight scaling effect when dragging
+                            transition: "transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out", // Smooth transitions
+                            boxShadow: isDragging ? "0 4px 10px rgba(0, 0, 0, 0.3)" : "none", // Shadow effect during drag
+                        }}
+                    >
+                        {item.id.startsWith("card") && (
+                            <Card
+                                key={key}
+                                card={item as CardProps["card"]}
+                                setAttribute={(id, key, value) =>
+                                    setItems((currItems) => {
+                                        currItems[id][key] = value;
+                                        return currItems;
+                                    })
+                                }
+                            />
+                        )}
+                        {item.id.startsWith("stack") && (
+                            <Stack
+                                key={key}
+                                stack={item as StackProps["stack"]}
+                                setAttribute={(id, key, value) =>
+                                    setItems((currItems) => {
+                                        currItems[id][key] = value;
+                                        return currItems;
+                                    })
+                                }
+                            />
+                        )}
+                    </div>
+                );
+            })}
         </div>
     );
 };

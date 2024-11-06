@@ -15,24 +15,13 @@ export type StackProps = {
     ) => void;
 };
 
-// export interface StackItem extends item {
-//     data: item[];
-// }
-
 function shuffle(array: CardProps["card"][]) {
     let currentIndex = array.length;
 
-    // While there remain elements to shuffle...
     while (currentIndex != 0) {
-        // Pick a remaining element...
         const randomIndex = Math.floor(Math.random() * currentIndex);
         currentIndex--;
-
-        // And swap it with the current element.
-        [array[currentIndex], array[randomIndex]] = [
-            array[randomIndex],
-            array[currentIndex],
-        ];
+        [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
     }
 }
 
@@ -51,90 +40,105 @@ const Stack = ({ stack }: StackProps) => {
 
     return (
         <div
+            style={{
+                position: "relative",
+                cursor: "pointer",
+                // width: stack.width, // Add some spacing around the stack
+            }}
             onContextMenu={(e) => {
                 e.preventDefault();
                 setOpenDialog(true);
             }}
         >
+            {/* Context Menu (Draggable Options) */}
             <DraggableOptions
                 openDialog={openDialog}
                 setOpenDialog={setOpenDialog}
                 zIndex={stack.zIndex + 1}
             >
-                <button
-                    onClick={() => {
-                        shuffle(stack.data);
-                        // setAttribute(stack.id, "data", stack.data);
-                        socket.emit("ShuffleStack", {
-                            roomId,
-                            stackId: stack.id,
-                            stackData: stack.data,
-                        });
-                        setOpenDialog(false);
-                    }}
-                >
-                    shuffle
-                </button>
+                <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                    <button
+                        onClick={() => {
+                            shuffle(stack.data);
+                            socket.emit("ShuffleStack", {
+                                roomId,
+                                stackId: stack.id,
+                                stackData: stack.data,
+                            });
+                            setOpenDialog(false);
+                        }}
+                        style={{
+                            padding: "8px 16px",
+                            backgroundColor: "#007bff",
+                            color: "#fff",
+                            border: "none",
+                            borderRadius: "5px",
+                            cursor: "pointer",
+                            transition: "all 0.3s ease",
+                        }}
+                    >
+                        Shuffle
+                    </button>
 
-                <button
-                    onClick={() => {
-                        if (stack.data.length < 1) return;
-                        flipAll(stack.data, !stack.data[0].isHidden);
-                        socket.emit("FlipStack", {
-                            roomId,
-                            stackId: stack.id,
-                            stackData: stack.data,
-                        });
-                        setOpenDialog(false);
-                    }}
-                >
-                    flip
-                </button>
+                    <button
+                        onClick={() => {
+                            if (stack.data.length < 1) return;
+                            flipAll(stack.data, !stack.data[0].isHidden);
+                            socket.emit("FlipStack", {
+                                roomId,
+                                stackId: stack.id,
+                                stackData: stack.data,
+                            });
+                            setOpenDialog(false);
+                        }}
+                        style={{
+                            padding: "8px 16px",
+                            backgroundColor: "#28a745",
+                            color: "#fff",
+                            border: "none",
+                            borderRadius: "5px",
+                            cursor: "pointer",
+                            transition: "all 0.3s ease",
+                        }}
+                    >
+                        Flip
+                    </button>
+                </div>
             </DraggableOptions>
+
+            {/* Draggable Stack */}
             <Draggable
-                item={{
-                    ...stack,
-                }}
+                item={{ ...stack }}
                 Children={(isDragging) => (
                     <div
                         style={{
-                            border: "1px solid black",
-                            textAlign: "center",
-                            display: "flex",
-                            // padding: "10px",
-                            flexDirection: "column",
-                            alignItems: "center",
+                            position: "relative",
+                            border: "2px solid #007bff",
+                            paddingTop: "5px",
+                            borderRadius: "10px",
+                            backgroundColor: "white",
+                            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                            transition: "all 0.2s ease",
+                            opacity: isDragging ? 0.6 : 1,
                         }}
                     >
-                        stack
                         <div
                             ref={!isDragging ? setDropRef : undefined}
                             style={{
-                                width: stack.width + 10,
-                                height: stack.height + 10,
+                                width: stack.width + 20,
+                                height: stack.height + 30,
+                                position: "relative",
                                 // display: "flex",
+                                // alignItems: "center",
+                                // justifyContent: "center",
                             }}
                         >
                             {stack.data?.map((item) => {
                                 return (
-                                    <Card key={item.id} card={item} />
-                                    // <Draggable
-                                    //     key={item.id}
-                                    //     item={item}
-                                    //     Children={() => (
-                                    //         <div
-                                    //             style={{
-                                    //                 border: "1px solid black",
-                                    //                 width: item.width,
-                                    //                 height: item.height,
-                                    //             }}
-                                    //         >
-                                    //             {item.isHidden
-                                    //                 ? "hidden"
-                                    //                 : item.name}
-                                    //         </div>
-                                    //     )}
-                                    // />
+                                    <Card
+                                        key={item.id}
+                                        card={item}
+                                    />
                                 );
                             })}
                         </div>

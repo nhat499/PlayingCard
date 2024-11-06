@@ -13,6 +13,7 @@ import { useLocation, useParams } from "react-router-dom";
 import AddItemPopup from "../components/AddItemPopup";
 import { CardProps } from "../components/Card";
 import { StackProps } from "../components/Stack";
+import ChatBox from "../components/ChatBox";
 
 export const BOARD = "Board";
 export const HAND = "Hand";
@@ -296,21 +297,28 @@ function GameScreen() {
         >
             <div
                 style={{
-                    display: "flex",
+                    // display: "flex",
                     // flexDirection: "column",
-                    alignItems: "flex-end",
+                    // background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
+                    // alignItems: "flex-end",
                     // justifyContent: "center",
+                    display: "grid",
+                    gridTemplateColumns: "3fr 1fr",
                     gap: "10px",
                     overflow: "hidden",
                 }}
             >
-                <div style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: "10px",
-                }}>
+                <div
+                    style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        width: "100%",
+                        gap: "10px", // Increased gap for better spacing
+                        borderRadius: "12px", // Rounded corners for a modern touch
+                        boxShadow: "0 6px 15px rgba(0, 0, 0, 0.1)", // Subtle shadow for depth
+                        overflow: "hidden"
+                    }}
+                >
                     <Board
                         size={boardSize}
                         items={boardItem}
@@ -318,18 +326,25 @@ function GameScreen() {
                         isDragging={isDragging}
                     />
 
+
                     <Hand
-                        boardSize={boardSize}
                         cards={handItem}
                         setItems={setHandItem}
                     />
+
                 </div>
 
                 <div
                     style={{
-                        width: "100%",
-                        height: "100%",
-                        border: "1px solid black"
+                        // width: "100%",
+                        // maxHeight: "parent",
+                        backgroundColor: "#e6f7ff", // Soft light blue
+                        border: "5px solid #a7c7dc", // Light border to frame the board
+                        borderRadius: "12px", // Rounded corners for a modern touch
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-between"
+                        // overflow: "hidden"
                     }}
                 >
                     <AddItemPopup
@@ -337,14 +352,30 @@ function GameScreen() {
                         setOpen={setOpenAddItemPopup}
                         setBoardItem={setBoardItem}
                     />
-                    <button onClick={() => setOpenAddItemPopup(true)}>
-                        Add Item
-                    </button>
+                    {!openAddItemPopup &&
+                        <button
+                            style={{
+                                padding: "8px 16px",
+                                margin: "20px",
+                                // width: "70%",
+                                borderRadius: "8px",
+                                border: "none",
+                                backgroundColor: "#007bff",
+                                color: "white",
+                                cursor: "pointer",
+                                boxShadow: "0 2px 5px rgba(0, 123, 255, 0.2)",
+                                transition: "background-color 0.2s",
+                            }}
+                            onClick={() => setOpenAddItemPopup(true)}>
+                            Add Item
+                        </button>}
+
+                    <ChatBox />
                 </div>
 
             </div>
 
-        </DndContext>
+        </DndContext >
     );
 }
 

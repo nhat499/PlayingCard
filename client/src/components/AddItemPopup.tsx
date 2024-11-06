@@ -43,72 +43,116 @@ const AddItemPopup = ({ open, setOpen, setBoardItem }: AddItemPopupProps) => {
     } catch (err) { }
 
     return (
-        open && <div style={{ top: 50 }}>
-            <div style={{ display: "flex", gap: "15px" }}>
-                <textarea
-                    style={{
-                        border: "1px solid black",
-                        resize: "none",
-                        height: "300px",
-                    }}
-                    value={newItemString}
-                    onChange={(e) => {
-                        setNewItemString(e.target.value);
-                    }}
-                />
-                <div
-                    style={{
-                        minWidth: "100px",
-                        minHeight: "100px",
-                    }}
-                >
-                    {newItem && (
-                        <Polygon
-                            sides={newItem.sides ?? 4}
-                            borderColor="black"
-                            borderWidth={1}
-                            stable
-                            rotate={newItem.rotate ?? 0}
-                            style={{
-                                width: `${newItem.width ?? 0}px`,
-                                height: `${newItem.height ?? 0}px`,
-                                backgroundColor: newItem.color ?? "white",
-                                textAlign: "center",
-                            }}
-                        >
-                            {newItem.name}
-                        </Polygon>
-                    )}
-                </div>
-                <div
-                    style={{
+        open && (
+            <div
+                style={{
+                    borderRadius: "10px",
+                    padding: "20px",
+                    maxWidth: "800px",
+                }}
+            >
+                <div style={{ display: "flex", gap: "15px" }}>
+                    <textarea
+                        style={{
+                            border: "1px solid #ced4da",
+                            borderRadius: "8px",
+                            padding: "10px",
+                            resize: "vertical",
+                            flex: "1",
+                            height: "300px",
+                            fontFamily: "monospace",
+                            outline: "none",
+                        }}
+                        value={newItemString}
+                        onChange={(e) => {
+                            setNewItemString(e.target.value);
+                        }}
+                    />
+                    <div style={{
+                        minWidth: "150px",
+                        minHeight: "150px",
+                        border: "1px solid #ced4da",
+                        backgroundColor: "white",
+                        borderRadius: "8px",
                         display: "flex",
                         flexDirection: "column",
-                        justifyContent: "flex-end",
-                        gap: "10px",
-                    }}
-                >
-                    <button
-                        onClick={() => {
-                            if (newItem) {
-                                console.log("test");
-                                socket.emit("DropOnBoard", {
-                                    item: {
-                                        ...newItem,
-                                        id: "card" + newItem.id,
-                                    },
-                                    roomId,
-                                    boardItem: {},
-                                });
-                            }
-                        }}
-                    >
-                        add
-                    </button>
-                    <button onClick={() => setOpen(false)}>close</button>
+                        alignItems: "center",
+                        justifyContent: "space-evenly",
+                    }}>
+                        <div
+                        >
+                            {newItem && (
+                                <Polygon
+                                    sides={newItem.sides ?? 4}
+                                    borderColor="black"
+                                    borderWidth={1}
+                                    stable
+                                    rotate={newItem.rotate ?? 0}
+                                    style={{
+                                        width: `${newItem.width ?? 0}px`,
+                                        height: `${newItem.height ?? 0}px`,
+                                        backgroundColor: newItem.color ?? "white",
+                                        textAlign: "center",
+                                        borderRadius: "4px",
+                                    }}
+                                >
+                                    {newItem.name}
+                                </Polygon>
+                            )}
+                        </div>
+                        <div
+                            style={{
+                                display: "flex",
+                                justifyContent: "flex-end",
+                                gap: "10px",
+                            }}
+                        >
+                            <button
+                                style={{
+                                    padding: "8px 16px",
+                                    borderRadius: "8px",
+                                    border: "none",
+                                    backgroundColor: "#007bff",
+                                    color: "white",
+                                    cursor: "pointer",
+                                    boxShadow: "0 2px 5px rgba(0, 123, 255, 0.2)",
+                                    transition: "background-color 0.2s",
+                                }}
+                                onClick={() => {
+                                    if (newItem) {
+                                        console.log("test");
+                                        socket.emit("DropOnBoard", {
+                                            item: {
+                                                ...newItem,
+                                                id: "card" + newItem.id,
+                                            },
+                                            roomId,
+                                            boardItem: {},
+                                        });
+                                    }
+                                }}
+                            >
+                                Add
+                            </button>
+                            <button
+                                style={{
+                                    padding: "8px 16px",
+                                    borderRadius: "8px",
+                                    cursor: "pointer",
+                                    boxShadow: "0 2px 5px rgba(0, 123, 255, 0.2)",
+                                    border: "none",
+                                    backgroundColor: "#dc3545",
+                                    color: "white",
+                                }}
+                                onClick={() => setOpen(false)}
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+        )
     );
 };
 

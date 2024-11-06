@@ -34,6 +34,16 @@ const DraggableOptions = ({
             </div>
 
             <button
+                style={{
+                    padding: "8px 16px",
+                    width: "100%",
+                    backgroundColor: "gray",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    transition: "all 0.3s ease",
+                }}
                 onClick={() => setOpenDialog(false)}
             >
                 Cancel
