@@ -17,6 +17,7 @@ const http_1 = __importDefault(require("http"));
 const socket_io_1 = require("socket.io");
 const cors_1 = __importDefault(require("cors"));
 const nanoid_esm_1 = __importDefault(require("nanoid-esm"));
+const regularDeck_1 = __importDefault(require("./presetGame/regularDeck"));
 // const express = require('express');
 // const http = require("http");
 // const { Server } = require("socket.io");
@@ -29,46 +30,66 @@ const io = new socket_io_1.Server(server, {
         origin: "http://localhost:5173",
     },
 });
+const gameStates = {};
 io.on("connection", (socket) => {
     console.log("user connected: ", socket.id);
     socket.on("CreateRoom", ({ name }) => {
         const roomId = (0, nanoid_esm_1.default)(5);
         console.log("on create room:", name, roomId);
         socket.join(roomId);
-        socket.emit("roomId", {
-            roomId,
+        const playerOne = {
+            hand: {},
             name,
+            roomId: roomId,
             socketId: socket.id,
-            roomLeader: true,
-        });
+            roomLeader: true
+        };
+        gameStates[roomId] = {
+            board: { [`${regularDeck_1.default.id}`]: regularDeck_1.default },
+            players: [playerOne],
+            setting: {
+                window: {
+                    width: 1300,
+                    height: 800,
+                },
+            },
+        };
+        socket.emit("JoinRoom", playerOne, gameStates[roomId]);
     });
-    socket.on("JoinRoom", (_a) => __awaiter(void 0, [_a], void 0, function* ({ name, roomId }) {
-        const listOfRooms = io.of("/").adapter.rooms;
-        if (!listOfRooms.get(roomId)) {
+    socket.on("JoinRoom", (_a) => __awaiter(void 0, [_a], void 0, function* ({ hand, name, roomId, roomLeader }) {
+        if (!gameStates[roomId]) {
             socket.emit("error", { message: "wrong room" });
             return;
         }
+        const player = {
+            hand: {},
+            name,
+            roomId,
+            roomLeader: false
+        };
+        gameStates[roomId].players.push(player);
         // i join room
         yield socket.join(roomId);
-        socket.emit("roomId", { roomId, socketId: socket.id, name });
+        socket.emit("JoinRoom", player, gameStates[roomId]);
         // const clients = io.sockets.adapter.rooms.get(roomId);
         // console.log("i am all Socket:", clients);
         // let everyone know I join
         socket.broadcast
             .to(roomId)
-            .emit("SomeOneJoin", { name, socketId: socket.id });
+            .emit("SomeOneJoin", gameStates[roomId].players);
     }));
-    // sent list of current players
-    socket.on("CurrentPlayers", ({ players, to }) => {
-        socket.to(to).emit("CurrentPlayers", { players });
-    });
     // let other know the roomLeader has started the game
-    socket.on("StartGame", ({ roomId, players, setting }) => {
+    socket.on("StartGame", ({ roomId, boardState, setting }) => {
         // socket.broadcast.to(roomId).emit("StartGame", { roomId, players, boardData });
-        io.in(roomId).emit("StartGame", { roomId, players, setting });
+        gameStates[roomId].board = boardState;
+        if (setting) {
+            gameStates[roomId].setting = setting;
+        }
+        io.in(roomId).emit("StartGame", { roomId, gameState: gameStates[roomId] });
     });
     socket.on("DropOnBoard", ({ item, roomId, boardItem }) => {
         // socket.broadcast.to(roomId).emit("DropOnBoard", { item, roomId });\
+        console.log("dropping on board");
         io.in(roomId).emit("DropOnBoard", { item, roomId, boardItem });
     });
     socket.on("DropFromBoard", ({ item, roomId, boardItem }) => {
@@ -87,7 +108,7 @@ io.on("connection", (socket) => {
     });
     socket.on("DropFromStack", ({ item, roomId, stackId }) => {
         // send all in room
-        io.in(roomId).emit("DropFromStack2", { item, roomId, stackId });
+        io.in(roomId).emit("DropFromStack", { item, roomId, stackId });
     });
     socket.on("ShuffleStack", ({ roomId, stackId, stackData }) => {
         io.in(roomId).emit("ShuffleStack", { roomId, stackId, stackData });

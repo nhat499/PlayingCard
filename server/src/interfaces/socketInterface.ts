@@ -1,19 +1,22 @@
+import { GameStates, Player, Room } from "./gameStateInterface";
+
 export interface ServerToClientEvents {
   noArg: () => void;
   basicEmit: (a: number, b: string, c: Buffer) => void;
   withAck: (d: string, callback: (e: number) => void) => void;
-  roomId: ({ roomId, name, socketId, roomLeader }: IUser) => void;
+  // roomId: ({ roomId, name, socketId, roomLeader }: IUser) => void;
+  JoinRoom: (player: Player, gameState: Room) => void;
   error: ({ message }: { message: string }) => void;
 
   // put myself in room
   // let other people in room knows i Join
-  SomeOneJoin: ({ name, socketId }: { name: string; socketId: string }) => void;
+  SomeOneJoin: (player: Player[]) => void;
 
   // send current players
   CurrentPlayers: ({ players }: { players: IUser[] }) => void;
 
   // server let non roomleader knows to start the game
-  StartGame: ({ roomId, players, setting }) => void;
+  StartGame: ({ roomId, gameState }: { roomId: string, gameState: Room }) => void;
 
   // let all(including myself) know drop a card on the board
   DropOnBoard: ({ item, roomId, boardItem }: IDragDropItem) => void;
@@ -28,7 +31,7 @@ export interface ServerToClientEvents {
   AddToStack: ({ item, roomId, stackId }: MoveItem) => void;
 
   // let other know I drop an item from a stack
-  DropFromStack2: ({ item, roomId, stackId }: MoveItem) => void;
+  DropFromStack: ({ item, roomId, stackId }: MoveItem) => void;
 
   // let other know i shuffle stack
   ShuffleStack: ({ roomId, stackId, stackData }) => void;
@@ -41,7 +44,7 @@ export interface ServerToClientEvents {
 }
 
 export interface ClientToServerEvents {
-  JoinRoom: ({ name, roomId }: { name: string; roomId }) => void;
+  JoinRoom: (player: Player) => void;
 
   // create, join room and send room, name of the player,
   CreateRoom: ({ name }: { name: string }) => void;
@@ -49,7 +52,10 @@ export interface ClientToServerEvents {
   CurrentPlayers: ({ players, to }) => void;
 
   // room leader let room know the game has started
-  StartGame: ({ roomId, players, setting }) => void;
+  StartGame: (
+    { roomId, boardState, setting }:
+      { roomId: string, boardState: Room["board"], setting: Room["setting"] }
+  ) => void;
 
   // a user drop a item on the board
   DropOnBoard: ({ item, roomId }: IDragDropItem) => void;
@@ -75,6 +81,9 @@ export interface ClientToServerEvents {
   // a user flip a Card
   FlipCard: ({ roomId, itemId, value }) => void;
 }
+
+
+
 
 export interface MoveItem {
   item: IDragDropItem["item"];

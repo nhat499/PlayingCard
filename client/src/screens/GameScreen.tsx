@@ -14,6 +14,8 @@ import AddItemPopup from "../components/AddItemPopup";
 import { CardProps } from "../components/Card";
 import { StackProps } from "../components/Stack";
 import ChatBox from "../components/ChatBox";
+import { useGameState } from "../atom/userAtom";
+import { Room } from "../../../server/src/interfaces/gameStateInterface";
 
 export const BOARD = "Board";
 export const HAND = "Hand";
@@ -21,14 +23,19 @@ export const HAND = "Hand";
 function GameScreen() {
     const [highestZIndex, setHighestZIndex] = useState<number>(2);
     const { roomId } = useParams();
-    const { state } = useLocation();
+    const { gameStates, setGameStates } = useGameState();
+    if (!gameStates) {
+        return <>error</>
+    }
+    console.log("i am gameStates:", gameStates);
+    // const { state } = useLocation();
     const [isDragging, setIsDragging] = useState<boolean>(false);
-    const [boardItem, setBoardItem] = useState<BoardProps["items"]>({});
+    const [boardItem, setBoardItem] = useState<Room["board"]>(gameStates.board);
     const [handItem, setHandItem] = useState<DraggableProps["item"][]>([]);
-    const [boardSize, setBoardSize] = useState({
-        width: 300,
-        height: 500,
-    });
+    // const [boardSize, setBoardSize] = useState({
+    //     width: gameStates.setting.window.width,
+    //     height: gameStates.setting.window.height,
+    // });
     const [openAddItemPopup, setOpenAddItemPopup] = useState<boolean>(false);
 
     function handleDragEnd(event: DragEndEvent) {
@@ -41,26 +48,6 @@ function GameScreen() {
         //     return;
         // }
         if (over && over.id === BOARD) {
-            // setBoardItem((currItem) => {
-            //     if (currItem[item.id]) {
-            //         item.left += delta.x;
-            //         // item.left = over.rect.left
-            //         // item.left = active.data.current?.left + delta.x
-            //         // item.left = activatorEvent.target?.getBoundingClientRect().left -
-            //         //     over.rect.left;
-            //         item.top += delta.y;
-            //         // item.top = active.data.current?.top + delta.y
-            //         // item.top = activatorEvent.target?.getBoundingClientRect().top -
-            //         //     over.rect.top;
-            //     } else {
-            //         item.left = 10;
-            //         item.top = 500;
-            //     }
-            //     currItem[item.id] = item;
-
-            //     return currItem;
-
-            // });
             const newBoardItems = { ...boardItem };
             let updateItem = newBoardItems[item.id];
             const previousParent = item.parent;
@@ -220,14 +207,8 @@ function GameScreen() {
     }
 
     useEffect(() => {
-        if (state) {
-            setBoardItem(state[BOARD]);
-            setBoardSize(state.window);
-        }
-    }, [state]);
-
-    useEffect(() => {
         socket.on("DropOnBoard", ({ item, roomId, boardItem }) => {
+            console.log("client recived drop");
             setBoardItem((currBoardItem) => {
                 item.transform = undefined;
                 currBoardItem[item.id] = item;
@@ -268,7 +249,7 @@ function GameScreen() {
             });
         });
 
-        socket.on("DropFromStack2", ({ item, roomId, stackId }) => {
+        socket.on("DropFromStack", ({ item, roomId, stackId }) => {
             setBoardItem((currItem) => {
                 const stackItem = structuredClone(
                     currItem[stackId]
@@ -286,6 +267,11 @@ function GameScreen() {
 
         return () => {
             console.log("disconnection?");
+            socket.off("DropFromStack");
+            socket.off("AddToStack");
+            socket.off("OnBoardDrag");
+            socket.off("DropFromBoard");
+            socket.off("DropOnBoard");
         };
     }, []);
 
@@ -320,7 +306,7 @@ function GameScreen() {
                     }}
                 >
                     <Board
-                        size={boardSize}
+                        size={gameStates.setting.window}
                         items={boardItem}
                         setItems={setBoardItem}
                         isDragging={isDragging}

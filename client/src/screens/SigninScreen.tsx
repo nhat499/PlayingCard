@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import DefaultScreen from "../components/DefaultScreen";
 import { socket } from "../socket/Socket";
 import { Navigate, useNavigate } from "react-router-dom";
-import useUser from "../atom/userAtom";
+import { useGameState, useUser } from "../atom/userAtom";
+import { Player } from "../../../server/src/interfaces/gameStateInterface";
 
 const SigninScreen = () => {
     const [name, setName] = useState<string>("");
 
-    const { user, setUser } = useUser();
+    const { setUser } = useUser();
+    const { setGameStates } = useGameState();
 
     const [roomId, setRoomId] = useState<string>("");
     const navigate = useNavigate();
@@ -15,8 +17,9 @@ const SigninScreen = () => {
     const [buttonDisable, setButtonDisable] = useState(false);
 
     useEffect(() => {
-        socket.on("roomId", ({ roomId, name, socketId, roomLeader }) => {
-            setUser({ name, socketId, roomLeader });
+        socket.on("JoinRoom", ({ hand, name, roomId, roomLeader, socketId }, gameState) => {
+            setUser({ name, socketId, roomLeader, hand, roomId });
+            setGameStates(gameState)
             navigate("/room/" + roomId);
         });
 
@@ -24,7 +27,12 @@ const SigninScreen = () => {
             console.log("error mesage:", message);
             setButtonDisable(false);
         });
-    }, [navigate, setButtonDisable, setUser]);
+
+        () => {
+            socket.off("JoinRoom");
+            socket.off("error");
+        }
+    }, []);
 
     return (
         <DefaultScreen>
@@ -100,7 +108,13 @@ const SigninScreen = () => {
                         disabled={roomId === "" || name === "" || buttonDisable}
                         onClick={() => {
                             socket.connect();
-                            socket.emit("JoinRoom", { name, roomId });
+                            const player: Player = {
+                                hand: {}, // doesnt matter
+                                name,
+                                roomId,
+                                roomLeader: false, // doesnt matter
+                            }
+                            socket.emit("JoinRoom", player);
                             setButtonDisable(true);
                         }}
                         style={{

@@ -1,164 +1,67 @@
 import { useEffect, useState } from "react";
 import DefaultScreen from "../components/DefaultScreen";
-import Setting from "../components/Setting";
+import Configuration from "../components/Configuration";
 import { socket } from "../socket/Socket";
-import useUser, { Iuser } from "../atom/userAtom";
-import PlayerIcon from "../components/PlayerIcon";
+import { useGameState, useUser } from "../atom/userAtom";
 import { useNavigate, useParams } from "react-router-dom";
-import { BoardProps } from "../components/Board";
-import { BOARD } from "./GameScreen";
-import { CardProps } from "../components/Card";
-
-const Suite = ["spade", "club", "diamond", "heart"];
-
-const createRegularDeckObject = () => {
-    const object: CardProps["card"][] = [];
-    for (let i = 1; i <= 10; i++) {
-        for (const s of Suite) {
-            const card: CardProps["card"] = {
-                sides: 4,
-                rotate: 0,
-                color: "white",
-                id: `card${i}${s}`,
-                name: `${i} ${s}`,
-                parent: "stack1",
-                zIndex: 1,
-                width: 50,
-                height: 65,
-                top: 0,
-                left: 0,
-                disabled: false,
-                isHidden: false,
-            };
-            object.push(card);
-        }
-    }
-    for (const s of Suite) {
-        const card: CardProps["card"] = {
-            sides: 4,
-            rotate: 0,
-            color: "white",
-            id: `card${"jack"}${s}`,
-            name: `${"jack"} ${s}`,
-            parent: "stack1",
-            zIndex: 1,
-            width: 50,
-            height: 65,
-            top: 0,
-            left: 0,
-            disabled: false,
-            isHidden: false,
-        };
-        object.push(card);
-    }
-    for (const s of Suite) {
-        const card: CardProps["card"] = {
-            sides: 4,
-            rotate: 0,
-            color: "white",
-            id: `card${"queen"}${s}`,
-            name: `${"queen"} ${s}`,
-            parent: "stack1",
-            zIndex: 1,
-            width: 50,
-            height: 65,
-            top: 0,
-            left: 0,
-            disabled: false,
-            isHidden: false,
-        };
-        object.push(card);
-    }
-    for (const s of Suite) {
-        const card: CardProps["card"] = {
-            sides: 4,
-            rotate: 0,
-            color: "white",
-            id: `card${"king"}${s}`,
-            name: `${"king"} ${s}`,
-            parent: "stack1",
-            zIndex: 1,
-            width: 50,
-            height: 65,
-            top: 0,
-            left: 0,
-            disabled: false,
-            isHidden: false,
-        };
-        object.push(card);
-    }
-
-    return object;
-};
-
-type ISetting = {
-    [BOARD]: BoardProps["items"];
-    window: {
-        width: number;
-        height: number;
-    };
-};
-
-const setting: ISetting = {
-    [BOARD]: {
-        stack1: {
-            id: "stack1",
-            name: "stack1",
-            parent: BOARD,
-            data: [...createRegularDeckObject()],
-            rotate: 0,
-            zIndex: 1,
-            width: 50,
-            height: 70,
-            top: 50,
-            left: 50,
-            disabled: false,
-            isHidden: false,
-        },
-    },
-    window: {
-        width: 1300,
-        height: 700,
-    },
-};
+import PlayerIconList from "../components/PlayerIconList";
+import { Room } from "../../../server/src/interfaces/gameStateInterface";
 
 const CreateGameScreen = () => {
     const { user } = useUser();
-    if (!user) throw Error("User Not Found");
-    const [players, setPlayers] = useState<Iuser[]>([user]);
+    const { gameStates, setGameStates } = useGameState();
+    if (!user || !gameStates) throw Error("User || Game States Not found");
     const navigate = useNavigate();
     const { roomId } = useParams();
-
+    if (!roomId) {
+        return <>error</>
+    }
     const [settingValue, setSettingValue] = useState<string>(
-        JSON.stringify(setting, undefined, 2)
+        JSON.stringify(gameStates.setting, undefined, 4)
     );
 
-    useEffect(() => {
-        socket.on("SomeOneJoin", ({ name, socketId }) => {
-            socket.emit("SomeOneJoin2", players);
-            const newPlayers: Iuser[] = [...players, { name, socketId }];
-            setPlayers(newPlayers);
-            // let new player know who is in the room
-            if (user.roomLeader) {
-                socket.emit("CurrentPlayers", {
-                    players: newPlayers,
-                    to: socketId,
-                });
-            }
-        });
+    const [boardStateValue, setBoardStateValue] = useState<string>(
+        JSON.stringify(gameStates.board, undefined, 4)
+    )
 
-        // get previous players
-        socket.on("CurrentPlayers", ({ players }) => {
-            setPlayers(players);
+    useEffect(() => {
+        socket.on("SomeOneJoin", (players) => {
+            setGameStates((prevState) => {
+                if (!prevState) return prevState;
+                else return {
+                    ...prevState,
+                    players
+                }
+            })
         });
 
         // start game
-        socket.on("StartGame", ({ roomId, players, setting }) => {
-            navigate("/game/" + roomId, { state: setting });
+        socket.on("StartGame", ({ roomId, gameState }) => {
+            setGameStates(gameState);
+            navigate("/game/" + roomId, { state: gameState.setting });
         });
 
+        // const storedRoomId = localStorage.getItem("roomId");
+        // const localUser = localStorage.getItem("user");
+        // const storedUser = localUser && JSON.parse(localUser);
+        // if (storedRoomId && storedUser) {
+        //     socket.emit("RejoinRoom", { roomId: storedRoomId, user: storedUser });
+        // }
+
         // socket.emit()
-    }, [navigate, players, user.roomLeader]);
+        () => {
+            socket.off("SomeOneJoin");
+            socket.off("CurrentPlayers");
+            socket.off("StartGame");
+            // socket.off("RejoinRoom");
+        }
+    }, []);
+
+
+    useEffect(() => {
+        localStorage.setItem("roomId", roomId);
+        localStorage.setItem("user", JSON.stringify(user));
+    }, [roomId, user]);
 
     return (
         <DefaultScreen>
@@ -166,33 +69,23 @@ const CreateGameScreen = () => {
                 style={{
                     display: "flex",
                     gap: "30px",
-                    flexDirection: "column",
                 }}
             >
-                <div
-                    style={{
-                        display: "flex",
-                        gap: "5px",
-                    }}
-                >
-                    {players.map((player) => (
-                        <PlayerIcon
-                            key={player.socketId}
-                            name={player.name}
-                            socketId={player.socketId}
-                        />
-                    ))}
-                </div>
-                <Setting
+                <PlayerIconList players={gameStates.players} />
+                <Configuration
                     settingValue={settingValue}
                     setSettingValue={setSettingValue}
+                    boardState={boardStateValue}
+                    setBoardState={setBoardStateValue}
+                    isRoomLeader={user.roomLeader}
                     startGame={() => {
                         if (!user.roomLeader) return;
-
+                        const setting: Room["setting"] = JSON.parse(settingValue);
+                        const boardState: Room["board"] = JSON.parse(boardStateValue);
                         socket.emit("StartGame", {
                             roomId,
-                            players,
-                            setting: JSON.parse(settingValue),
+                            boardState: boardState,
+                            setting: setting,
                         });
 
                         navigate("/game/" + roomId);

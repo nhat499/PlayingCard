@@ -98,9 +98,9 @@ const ChatBox = () => {
                     flexDirection: "column",
                 }}
             >
-                {messages.map((message) => (
+                {messages.map((message, index) => (
                     <div
-                        key={message.id}
+                        key={index}
                         style={{
                             alignSelf: message.sender === "user" ? "flex-end" : "flex-start",
                             backgroundColor: message.sender === "user" ? "#007bff" : "#ddd",

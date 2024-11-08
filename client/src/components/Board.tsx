@@ -3,14 +3,13 @@ import Stack, { StackProps } from "./Stack";
 import Card, { CardProps } from "./Card";
 import { socket } from "../socket/Socket";
 import { useEffect } from "react";
+import { gameObj, Room } from "../../../server/src/interfaces/gameStateInterface";
 
 export type BoardProps = {
-    items: { [key: string]: CardProps["card"] | StackProps["stack"] };
-    setItems: React.Dispatch<React.SetStateAction<{
-        [key: string]: CardProps["card"] | StackProps["stack"]
-    }>>;
+    items: Room["board"];
+    setItems: React.Dispatch<React.SetStateAction<Room["board"]>>;
     isDragging: boolean;
-    size: { width: number; height: number };
+    size: Room["setting"]["window"];
 };
 
 const Board = ({ items, setItems, isDragging, size }: BoardProps) => {
@@ -70,7 +69,7 @@ const Board = ({ items, setItems, isDragging, size }: BoardProps) => {
                             boxShadow: isDragging ? "0 4px 10px rgba(0, 0, 0, 0.3)" : "none", // Shadow effect during drag
                         }}
                     >
-                        {item.id.startsWith("card") && (
+                        {item.id.startsWith(gameObj.ITEM) && (
                             <Card
                                 key={key}
                                 card={item as CardProps["card"]}
@@ -82,7 +81,7 @@ const Board = ({ items, setItems, isDragging, size }: BoardProps) => {
                                 }
                             />
                         )}
-                        {item.id.startsWith("stack") && (
+                        {item.id.startsWith(gameObj.STACK) && (
                             <Stack
                                 key={key}
                                 stack={item as StackProps["stack"]}

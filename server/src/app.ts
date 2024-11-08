@@ -9,6 +9,8 @@ import http from "http";
 import { Server } from "socket.io";
 import cors from "cors";
 import nanoid from "nanoid-esm";
+import { gameObj, GameStates, Player } from "./interfaces/gameStateInterface";
+import regularDeck from "./presetGame/regularDeck";
 
 // const express = require('express');
 // const http = require("http");
@@ -31,6 +33,8 @@ const io = new Server<
   },
 });
 
+const gameStates: GameStates = {};
+
 io.on("connection", (socket) => {
   console.log("user connected: ", socket.id);
 
@@ -38,24 +42,42 @@ io.on("connection", (socket) => {
     const roomId: string = nanoid(5);
     console.log("on create room:", name, roomId);
     socket.join(roomId);
-    socket.emit("roomId", {
-      roomId,
+    const playerOne: Player = {
+      hand: {},
       name,
+      roomId: roomId,
       socketId: socket.id,
-      roomLeader: true,
-    });
+      roomLeader: true
+    }
+
+    gameStates[roomId] = {
+      board: { [`${regularDeck.id}`]: regularDeck },
+      players: [playerOne],
+      setting: {
+        window: {
+          width: 1300,
+          height: 800,
+        },
+      },
+    }
+    socket.emit("JoinRoom", playerOne, gameStates[roomId]);
   });
 
-  socket.on("JoinRoom", async ({ name, roomId }) => {
-    const listOfRooms = io.of("/").adapter.rooms;
-    if (!listOfRooms.get(roomId)) {
+  socket.on("JoinRoom", async ({ hand, name, roomId, roomLeader }) => {
+    if (!gameStates[roomId]) {
       socket.emit("error", { message: "wrong room" });
       return;
     }
-
+    const player: Player = {
+      hand: {},
+      name,
+      roomId,
+      roomLeader: false
+    }
+    gameStates[roomId].players.push(player);
     // i join room
     await socket.join(roomId);
-    socket.emit("roomId", { roomId, socketId: socket.id, name });
+    socket.emit("JoinRoom", player, gameStates[roomId]);
 
     // const clients = io.sockets.adapter.rooms.get(roomId);
     // console.log("i am all Socket:", clients);
@@ -63,22 +85,23 @@ io.on("connection", (socket) => {
     // let everyone know I join
     socket.broadcast
       .to(roomId)
-      .emit("SomeOneJoin", { name, socketId: socket.id });
-  });
-
-  // sent list of current players
-  socket.on("CurrentPlayers", ({ players, to }) => {
-    socket.to(to).emit("CurrentPlayers", { players });
+      .emit("SomeOneJoin", gameStates[roomId].players);
   });
 
   // let other know the roomLeader has started the game
-  socket.on("StartGame", ({ roomId, players, setting }) => {
+  socket.on("StartGame", ({ roomId, boardState, setting }) => {
     // socket.broadcast.to(roomId).emit("StartGame", { roomId, players, boardData });
-    io.in(roomId).emit("StartGame", { roomId, players, setting });
+    gameStates[roomId].board = boardState;
+    if (setting) {
+      gameStates[roomId].setting = setting;
+    }
+
+    io.in(roomId).emit("StartGame", { roomId, gameState: gameStates[roomId] });
   });
 
   socket.on("DropOnBoard", ({ item, roomId, boardItem }) => {
     // socket.broadcast.to(roomId).emit("DropOnBoard", { item, roomId });\
+    console.log("dropping on board");
     io.in(roomId).emit("DropOnBoard", { item, roomId, boardItem });
   });
 
@@ -101,7 +124,7 @@ io.on("connection", (socket) => {
 
   socket.on("DropFromStack", ({ item, roomId, stackId }) => {
     // send all in room
-    io.in(roomId).emit("DropFromStack2", { item, roomId, stackId });
+    io.in(roomId).emit("DropFromStack", { item, roomId, stackId });
   });
 
   socket.on("ShuffleStack", ({ roomId, stackId, stackData }) => {
