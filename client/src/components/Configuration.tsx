@@ -28,18 +28,16 @@ const Configuration = ({
         >
             <div
                 style={{
-                    backgroundColor: "whitesmoke",
                     display: "flex",
-                    gap: "30px"
+                    gap: "30px",
                 }}
             >
-
                 <textarea
                     style={{
                         resize: "none",
                         minWidth: "400px",
                         minHeight: "600px",
-                        fontSize: "18px"
+                        fontSize: "18px",
                     }}
                     disabled={!isRoomLeader}
                     value={boardState}
@@ -53,7 +51,7 @@ const Configuration = ({
                         resize: "none",
                         minWidth: "400px",
                         minHeight: "600px",
-                        fontSize: "18px"
+                        fontSize: "18px",
                     }}
                     disabled={!isRoomLeader}
                     value={settingValue}
@@ -61,7 +59,6 @@ const Configuration = ({
                         setSettingValue(e.target.value);
                     }}
                 />
-
             </div>
             {isRoomLeader && <button onClick={startGame}>Start game</button>}
         </div>

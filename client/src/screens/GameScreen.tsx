@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Board, { BoardProps } from "../components/Board";
+import Board from "../components/Board";
 import Hand from "../components/Hand";
 import {
     DndContext,
@@ -7,183 +7,89 @@ import {
     DragMoveEvent,
     DragStartEvent,
 } from "@dnd-kit/core";
-import { DraggableProps } from "../components/Draggable";
 import { socket } from "../socket/Socket";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import AddItemPopup from "../components/AddItemPopup";
-import { CardProps } from "../components/Card";
-import { StackProps } from "../components/Stack";
 import ChatBox from "../components/ChatBox";
-import { useGameState } from "../atom/userAtom";
-import { Room } from "../../../server/src/interfaces/gameStateInterface";
-
-export const BOARD = "Board";
-export const HAND = "Hand";
+import { useGameState, useUser } from "../atom/userAtom";
+import {
+    gameObj,
+    Item,
+    Player,
+    Room,
+    Stack,
+} from "../../../server/src/interfaces/gameStateInterface";
 
 function GameScreen() {
     const [highestZIndex, setHighestZIndex] = useState<number>(2);
     const { roomId } = useParams();
-    const { gameStates, setGameStates } = useGameState();
-    if (!gameStates) {
-        return <>error</>
+    const { gameStates } = useGameState();
+    const { user } = useUser();
+    if (!gameStates || !roomId || !user) {
+        throw Error("User || roomId States Not found");
     }
-    console.log("i am gameStates:", gameStates);
-    // const { state } = useLocation();
-    const [isDragging, setIsDragging] = useState<boolean>(false);
     const [boardItem, setBoardItem] = useState<Room["board"]>(gameStates.board);
-    const [handItem, setHandItem] = useState<DraggableProps["item"][]>([]);
-    // const [boardSize, setBoardSize] = useState({
-    //     width: gameStates.setting.window.width,
-    //     height: gameStates.setting.window.height,
-    // });
+    const [handItem, setHandItem] = useState<Player["hand"]>({});
     const [openAddItemPopup, setOpenAddItemPopup] = useState<boolean>(false);
 
     function handleDragEnd(event: DragEndEvent) {
-        // setIsDragging(false);
-        const { active, over, delta, activatorEvent, collisions } = event;
-        const item = active.data.current as CardProps["card"] | undefined;
-        if (!item) return;
-        // if (over && over.id === item.id) {
-        //     // drag over itself
-        //     return;
-        // }
-        if (over && over.id === BOARD) {
-            const newBoardItems = { ...boardItem };
-            let updateItem = newBoardItems[item.id];
-            const previousParent = item.parent;
+        const { active, over, delta } = event;
+        const item = active.data.current as Item | Stack | undefined;
+        if (!item || !user || !over) return;
+        if (over.id === gameObj.BOARD) {
+            let updateItem = boardItem[item.id];
+
             // if item is already on the board;
             if (updateItem) {
                 updateItem.left += delta.x;
                 updateItem.top += delta.y;
             } else {
                 // item is not already on the board;
-                // updateItem.left = 10;
-                // updateItem.top = 10;
                 updateItem = { ...item };
                 updateItem.top = 300;
                 updateItem.left = 200;
             }
-            updateItem.parent = BOARD;
+
             socket.emit("DropOnBoard", {
                 item: updateItem,
-                roomId,
-                boardItem: newBoardItems,
+                player: user,
             });
-
-            if (previousParent === HAND) {
-                const newHanditem = handItem.filter(
-                    (curr) => curr.id !== item.id
-                );
-                setHandItem(newHanditem);
-            } else if (previousParent.startsWith("stack")) {
-                socket.emit("DropFromStack", {
-                    item: item,
-                    roomId,
-                    stackId: item.parent,
-                });
-                // previousParent is a stack
-                // remove item from stack
-                // add to board
-            }
-        } else if (over && over.id === HAND && !item.id.startsWith("stack")) {
-            // delete from broad
-            if (item.parent === BOARD) {
-                socket.emit("DropFromBoard", {
-                    item: item,
-                    roomId,
-                    boardItem: boardItem,
-                });
-            } else if (item.parent.startsWith("stack")) {
-                // delete from stack
-                socket.emit("DropFromStack", {
-                    item: item,
-                    roomId,
-                    stackId: item.parent,
-                });
-            }
-            // setBoardItem((currItem) => {
-            //     delete currItem[item.id];
-            //     return currItem;
-            // });
-            // add to hand
-            setHandItem((currHandItem) => {
-                // check if exists
-                const index = currHandItem.findIndex(
-                    (curr) => curr.id === item.id
-                );
-                // item.left =
-                //     activatorEvent.target?.getBoundingClientRect().left -
-                //     over.rect.left;
-
-                // item.top =
-                //     activatorEvent.target?.getBoundingClientRect().top -
-                //     over.rect.top;
-
-                item.parent = HAND;
-                if (index === -1) {
-                    // else add
-                    item.left = 10;
-                    item.top = 10;
-                    currHandItem.push(item);
-                } else {
+        } else if (
+            over.id === gameObj.HAND &&
+            !("data" in item) // stack have data field
+        ) {
+            if (!handItem[item.id]) {
+                // add to hand
+                socket.emit("DropOnHand", { item, player: user });
+            } else {
+                // move in hand
+                setHandItem((currHandItem) => {
                     item.left += delta.x;
                     item.top += delta.y;
-                    currHandItem[index] = { ...item };
-                }
-                return currHandItem;
-            });
-        } else if (over && over.id) {
-            // drop over some object/stack
-
-            // socket.emit("AddToStack", {
-            //     item: item,
-            //     roomId,
-            //     stackId: over.id,
-            // });
-            if (over.id.toString().startsWith("stack")) {
-                // setBoardItem((currItem) => {
-                //     const stackItem = structuredClone(currItem[over.id]);
-                //     if (stackItem.data) {
-                //         stackItem.data.push(item);
-                //     } else {
-                //         stackItem.data = [item];
-                //     }
-                //     currItem[over.id] = stackItem;
-                //     return { ...currItem };
-                // });
-
-                socket.emit("AddToStack", {
-                    item: item,
-                    roomId,
-                    stackId: over.id,
+                    currHandItem[item.id] = { ...item };
+                    return currHandItem;
                 });
-                if (item.parent === BOARD) {
-                    socket.emit("DropFromBoard", {
-                        item: item,
-                        roomId,
-                        boardItem: boardItem,
-                    });
-                }
-                if (item.parent === HAND) {
-                    const newHanditem = handItem.filter(
-                        (curr) => curr.id !== item.id
-                    );
-                    setHandItem(newHanditem);
-                }
+            }
+        } else if (over.id.toString() && !("data" in item)) {
+            if (over.id.toString().startsWith(gameObj.STACK)) {
+                socket.emit("DropOnStack", {
+                    item,
+                    player: user,
+                    stackId: over.id.toString(),
+                });
             }
         }
     }
 
     function handleDragStart(event: DragStartEvent) {
-        // setIsDragging(true);
         const { active } = event;
-        const item = active.data.current as CardProps["card"] | undefined;
+        const item = active.data.current as Item | undefined;
         if (!item) return;
 
         if (
             boardItem[item.id] &&
             item.zIndex < highestZIndex &&
-            !item.id.startsWith("stack")
+            !item.id.startsWith(gameObj.STACK)
         ) {
             item.zIndex = highestZIndex;
             setBoardItem((currBoardItem) => {
@@ -196,7 +102,7 @@ function GameScreen() {
 
     function handleDragMove(event: DragMoveEvent) {
         const updateItem = { ...event.active.data.current };
-        if (updateItem && event.over?.id === "Board") {
+        if (updateItem && event.over?.id === gameObj.BOARD) {
             updateItem.transform = `translate3d(${event.delta.x}px, ${event.delta.y}px, 0)`;
             socket.emit("OnBoardDrag", {
                 item: updateItem,
@@ -207,21 +113,32 @@ function GameScreen() {
     }
 
     useEffect(() => {
-        socket.on("DropOnBoard", ({ item, roomId, boardItem }) => {
-            console.log("client recived drop");
-            setBoardItem((currBoardItem) => {
-                item.transform = undefined;
-                currBoardItem[item.id] = item;
-                return { ...currBoardItem };
+        socket.on("BoardUpdate", ({ item, player, board }) => {
+            setBoardItem(board);
+        });
+
+        socket.on("AddToHand", ({ item, player }) => {
+            setHandItem((prevItem) => {
+                const newItem = { ...prevItem };
+                newItem[item.id] = item;
+                return newItem;
             });
         });
 
-        socket.on("DropFromBoard", ({ item, roomId, boardItem }) => {
-            setBoardItem((currItem) => {
-                delete currItem[item.id];
-                return { ...currItem };
+        socket.on("RemoveFromHand", ({ item }) => {
+            setHandItem((prevItem) => {
+                const newItem = { ...prevItem };
+                delete newItem[item.id];
+                return newItem;
             });
         });
+
+        // socket.on("DropFromBoard", ({ item, roomId, boardItem }) => {
+        //     setBoardItem((currItem) => {
+        //         delete currItem[item.id];
+        //         return { ...currItem };
+        //     });
+        // });
 
         socket.on("OnBoardDrag", ({ item, roomId, boardItem }) => {
             setBoardItem((currItem) => {
@@ -230,48 +147,44 @@ function GameScreen() {
             });
         });
 
-        socket.on("AddToStack", ({ item, roomId, stackId }) => {
-            setBoardItem((currItem) => {
-                const stackItem = structuredClone(
-                    currItem[stackId]
-                ) as StackProps["stack"];
-                const stackArr = stackItem.data;
-                item.parent = stackId;
-                if (stackArr && stackArr.length > 0) {
-                    if (stackArr[stackArr.length - 1].id !== item.id) {
-                        stackItem.data.push(item);
-                    }
-                } else {
-                    stackItem.data = [item];
-                }
-                currItem[stackId] = stackItem;
-                return { ...currItem };
-            });
-        });
+        // socket.on("AddToStack", ({ item, roomId, stackId }) => {
+        //     setBoardItem((currItem) => {
+        //         const stackItem = structuredClone(currItem[stackId]) as Stack;
+        //         const stackArr = stackItem.data;
+        //         item.parent = stackId;
+        //         if (stackArr && stackArr.length > 0) {
+        //             if (stackArr[stackArr.length - 1].id !== item.id) {
+        //                 stackItem.data.push(item);
+        //             }
+        //         } else {
+        //             stackItem.data = [item];
+        //         }
+        //         currItem[stackId] = stackItem;
+        //         return { ...currItem };
+        //     });
+        // });
 
-        socket.on("DropFromStack", ({ item, roomId, stackId }) => {
-            setBoardItem((currItem) => {
-                const stackItem = structuredClone(
-                    currItem[stackId]
-                ) as StackProps["stack"];
-                const stackArr = stackItem.data;
-                if (stackArr && stackArr.length > 0) {
-                    if (stackArr[stackArr.length - 1].id === item.id) {
-                        stackArr.pop();
-                    }
-                }
-                currItem[stackId] = stackItem;
-                return { ...currItem };
-            });
-        });
+        // socket.on("DropFromStack", ({ item, roomId, stackId }) => {
+        //     setBoardItem((currItem) => {
+        //         const stackItem = structuredClone(currItem[stackId]) as Stack;
+        //         const stackArr = stackItem.data;
+        //         if (stackArr && stackArr.length > 0) {
+        //             if (stackArr[stackArr.length - 1].id === item.id) {
+        //                 stackArr.pop();
+        //             }
+        //         }
+        //         currItem[stackId] = stackItem;
+        //         return { ...currItem };
+        //     });
+        // });
 
         return () => {
             console.log("disconnection?");
-            socket.off("DropFromStack");
-            socket.off("AddToStack");
+            socket.off("BoardUpdate");
+            socket.off("AddToHand");
+            socket.off("RemoveFromHand");
             socket.off("OnBoardDrag");
-            socket.off("DropFromBoard");
-            socket.off("DropOnBoard");
+            // socket.off("DropOnBoard");
         };
     }, []);
 
@@ -302,22 +215,17 @@ function GameScreen() {
                         gap: "10px", // Increased gap for better spacing
                         borderRadius: "12px", // Rounded corners for a modern touch
                         boxShadow: "0 6px 15px rgba(0, 0, 0, 0.1)", // Subtle shadow for depth
-                        overflow: "hidden"
+                        overflow: "hidden",
                     }}
                 >
                     <Board
                         size={gameStates.setting.window}
                         items={boardItem}
                         setItems={setBoardItem}
-                        isDragging={isDragging}
+                        // isDragging={isDragging}
                     />
 
-
-                    <Hand
-                        cards={handItem}
-                        setItems={setHandItem}
-                    />
-
+                    <Hand cards={handItem} setItems={setHandItem} />
                 </div>
 
                 <div
@@ -329,7 +237,7 @@ function GameScreen() {
                         borderRadius: "12px", // Rounded corners for a modern touch
                         display: "flex",
                         flexDirection: "column",
-                        justifyContent: "space-between"
+                        justifyContent: "space-between",
                         // overflow: "hidden"
                     }}
                 >
@@ -338,7 +246,7 @@ function GameScreen() {
                         setOpen={setOpenAddItemPopup}
                         setBoardItem={setBoardItem}
                     />
-                    {!openAddItemPopup &&
+                    {!openAddItemPopup && (
                         <button
                             style={{
                                 padding: "8px 16px",
@@ -352,16 +260,16 @@ function GameScreen() {
                                 boxShadow: "0 2px 5px rgba(0, 123, 255, 0.2)",
                                 transition: "background-color 0.2s",
                             }}
-                            onClick={() => setOpenAddItemPopup(true)}>
+                            onClick={() => setOpenAddItemPopup(true)}
+                        >
                             Add Item
-                        </button>}
+                        </button>
+                    )}
 
                     <ChatBox />
                 </div>
-
             </div>
-
-        </DndContext >
+        </DndContext>
     );
 }
 

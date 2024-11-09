@@ -9,30 +9,30 @@ import { Room } from "../../../server/src/interfaces/gameStateInterface";
 
 const CreateGameScreen = () => {
     const { user } = useUser();
-    const { gameStates, setGameStates } = useGameState();
-    if (!user || !gameStates) throw Error("User || Game States Not found");
-    const navigate = useNavigate();
     const { roomId } = useParams();
-    if (!roomId) {
-        return <>error</>
-    }
+    const { gameStates, setGameStates } = useGameState();
+    if (!user || !gameStates || !roomId)
+        throw Error("User || Game States Not found");
+    const navigate = useNavigate();
+
     const [settingValue, setSettingValue] = useState<string>(
         JSON.stringify(gameStates.setting, undefined, 4)
     );
 
     const [boardStateValue, setBoardStateValue] = useState<string>(
         JSON.stringify(gameStates.board, undefined, 4)
-    )
+    );
 
     useEffect(() => {
         socket.on("SomeOneJoin", (players) => {
             setGameStates((prevState) => {
                 if (!prevState) return prevState;
-                else return {
-                    ...prevState,
-                    players
-                }
-            })
+                else
+                    return {
+                        ...prevState,
+                        players,
+                    };
+            });
         });
 
         // start game
@@ -49,14 +49,13 @@ const CreateGameScreen = () => {
         // }
 
         // socket.emit()
-        () => {
+        return () => {
             socket.off("SomeOneJoin");
             socket.off("CurrentPlayers");
             socket.off("StartGame");
             // socket.off("RejoinRoom");
-        }
-    }, []);
-
+        };
+    });
 
     useEffect(() => {
         localStorage.setItem("roomId", roomId);
@@ -80,8 +79,10 @@ const CreateGameScreen = () => {
                     isRoomLeader={user.roomLeader}
                     startGame={() => {
                         if (!user.roomLeader) return;
-                        const setting: Room["setting"] = JSON.parse(settingValue);
-                        const boardState: Room["board"] = JSON.parse(boardStateValue);
+                        const setting: Room["setting"] =
+                            JSON.parse(settingValue);
+                        const boardState: Room["board"] =
+                            JSON.parse(boardStateValue);
                         socket.emit("StartGame", {
                             roomId,
                             boardState: boardState,

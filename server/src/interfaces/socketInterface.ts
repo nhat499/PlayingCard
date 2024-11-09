@@ -1,4 +1,4 @@
-import { GameStates, Player, Room } from "./gameStateInterface";
+import { Item, Message, Player, Room, Stack } from "./gameStateInterface";
 
 export interface ServerToClientEvents {
   noArg: () => void;
@@ -16,13 +16,31 @@ export interface ServerToClientEvents {
   CurrentPlayers: ({ players }: { players: IUser[] }) => void;
 
   // server let non roomleader knows to start the game
-  StartGame: ({ roomId, gameState }: { roomId: string, gameState: Room }) => void;
+  StartGame: ({
+    roomId,
+    gameState,
+  }: {
+    roomId: string;
+    gameState: Room;
+  }) => void;
 
-  // let all(including myself) know drop a card on the board
-  DropOnBoard: ({ item, roomId, boardItem }: IDragDropItem) => void;
+  // let all(including myself) board has been changed
+  BoardUpdate: ({
+    board,
+    item,
+    player,
+    message,
+  }: EveryOneMoveItemAction) => void;
 
+  AddToHand: ({ item, player }: { item: Item; player: Player }) => void;
+
+  Message: ({ message, player }: { message: string; player: Player }) => void;
+
+  ////not yet fix ////
   // let all(include myself) people know I took an item on the board
   DropFromBoard: ({ item, roomId, boardItem }: IDragDropItem) => void;
+
+  RemoveFromHand: ({ item }: { item: Item }) => void;
 
   // let other know i am dragging
   OnBoardDrag: ({ item, roomId, boardItem }: IDragDropItem) => void;
@@ -52,13 +70,24 @@ export interface ClientToServerEvents {
   CurrentPlayers: ({ players, to }) => void;
 
   // room leader let room know the game has started
-  StartGame: (
-    { roomId, boardState, setting }:
-      { roomId: string, boardState: Room["board"], setting: Room["setting"] }
-  ) => void;
+  StartGame: ({
+    roomId,
+    boardState,
+    setting,
+  }: {
+    roomId: string;
+    boardState: Room["board"];
+    setting: Room["setting"];
+  }) => void;
 
   // a user drop a item on the board
-  DropOnBoard: ({ item, roomId }: IDragDropItem) => void;
+  DropOnBoard: ({ item, player }: MoveItemAction) => void;
+
+  // a user took a card
+  DropOnHand: ({ item, player }: MoveItemAction) => void;
+
+  // a user drop an item on a stack
+  DropOnStack: ({ item, player, stackId }: MoveItemOnStack) => void;
 
   // a user took an item
   DropFromBoard: ({ item, roomId, boardItem }: IDragDropItem) => void;
@@ -66,9 +95,15 @@ export interface ClientToServerEvents {
   // a user is dragging
   OnBoardDrag: ({ item, roomId, boardItem }: IDragDropItem) => void;
 
-  // a user drop an item on a stack
-  AddToStack: ({ item, roomId, stackId }: MoveItem) => void;
+  SendMessage: ({
+    message,
+    player,
+  }: {
+    message: string;
+    player: Player;
+  }) => void;
 
+  //////////NOT YET WORK ON/////////
   // a user drop an item from a stack
   DropFromStack: ({ item, roomId, stackId }: MoveItem) => void;
 
@@ -82,8 +117,24 @@ export interface ClientToServerEvents {
   FlipCard: ({ roomId, itemId, value }) => void;
 }
 
+export type MoveItemAction = {
+  item: Item | Stack;
+  player: Player;
+};
 
+export type MoveItemOnStack = {
+  item: Item;
+  player: Player;
+  stackId: string;
+};
 
+// socket Actions
+export type EveryOneMoveItemAction = {
+  item: Item | Stack;
+  board: Room["board"];
+  player: Player;
+  message: string;
+};
 
 export interface MoveItem {
   item: IDragDropItem["item"];

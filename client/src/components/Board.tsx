@@ -1,20 +1,24 @@
 import { useDroppable } from "@dnd-kit/core";
-import Stack, { StackProps } from "./Stack";
+import ItemStack, { StackProps } from "./Stack";
 import Card, { CardProps } from "./Card";
 import { socket } from "../socket/Socket";
 import { useEffect } from "react";
-import { gameObj, Room } from "../../../server/src/interfaces/gameStateInterface";
+import {
+    gameObj,
+    Item,
+    Room,
+    Stack,
+} from "../../../server/src/interfaces/gameStateInterface";
 
 export type BoardProps = {
     items: Room["board"];
     setItems: React.Dispatch<React.SetStateAction<Room["board"]>>;
-    isDragging: boolean;
     size: Room["setting"]["window"];
 };
 
-const Board = ({ items, setItems, isDragging, size }: BoardProps) => {
+const Board = ({ items, setItems, size }: BoardProps) => {
     const { setNodeRef } = useDroppable({
-        id: "Board",
+        id: gameObj.BOARD,
     });
 
     const setAttribute = (
@@ -55,7 +59,7 @@ const Board = ({ items, setItems, isDragging, size }: BoardProps) => {
                 // overflow: "hidden",
             }}
         >
-            {Object.entries(items).map(([key, item], index) => {
+            {Object.entries(items).map(([key, item]) => {
                 return (
                     <div
                         key={key}
@@ -64,15 +68,16 @@ const Board = ({ items, setItems, isDragging, size }: BoardProps) => {
                             zIndex: item.zIndex,
                             top: item.top,
                             left: item.left,
-                            transform: isDragging ? "scale(1.05)" : "scale(1)", // Slight scaling effect when dragging
-                            transition: "transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out", // Smooth transitions
-                            boxShadow: isDragging ? "0 4px 10px rgba(0, 0, 0, 0.3)" : "none", // Shadow effect during drag
+                            // transform: isDragging ? "scale(1.05)" : "scale(1)", // Slight scaling effect when dragging
+                            transition:
+                                "transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out", // Smooth transitions
+                            // boxShadow: isDragging ? "0 4px 10px rgba(0, 0, 0, 0.3)" : "none", // Shadow effect during drag
                         }}
                     >
                         {item.id.startsWith(gameObj.ITEM) && (
                             <Card
                                 key={key}
-                                card={item as CardProps["card"]}
+                                card={item as Item}
                                 setAttribute={(id, key, value) =>
                                     setItems((currItems) => {
                                         currItems[id][key] = value;
@@ -82,9 +87,9 @@ const Board = ({ items, setItems, isDragging, size }: BoardProps) => {
                             />
                         )}
                         {item.id.startsWith(gameObj.STACK) && (
-                            <Stack
+                            <ItemStack
                                 key={key}
-                                stack={item as StackProps["stack"]}
+                                stack={item as Stack}
                                 setAttribute={(id, key, value) =>
                                     setItems((currItems) => {
                                         currItems[id][key] = value;

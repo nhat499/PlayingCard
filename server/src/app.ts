@@ -11,6 +11,11 @@ import cors from "cors";
 import nanoid from "nanoid-esm";
 import { gameObj, GameStates, Player } from "./interfaces/gameStateInterface";
 import regularDeck from "./presetGame/regularDeck";
+import {
+  removeFromBoard,
+  removeFromHand,
+  removeFromStack,
+} from "./stateFunction";
 
 // const express = require('express');
 // const http = require("http");
@@ -47,8 +52,8 @@ io.on("connection", (socket) => {
       name,
       roomId: roomId,
       socketId: socket.id,
-      roomLeader: true
-    }
+      roomLeader: true,
+    };
 
     gameStates[roomId] = {
       board: { [`${regularDeck.id}`]: regularDeck },
@@ -56,14 +61,14 @@ io.on("connection", (socket) => {
       setting: {
         window: {
           width: 1300,
-          height: 800,
+          height: 700,
         },
       },
-    }
+    };
     socket.emit("JoinRoom", playerOne, gameStates[roomId]);
   });
 
-  socket.on("JoinRoom", async ({ hand, name, roomId, roomLeader }) => {
+  socket.on("JoinRoom", async ({ name, roomId }) => {
     if (!gameStates[roomId]) {
       socket.emit("error", { message: "wrong room" });
       return;
@@ -72,8 +77,8 @@ io.on("connection", (socket) => {
       hand: {},
       name,
       roomId,
-      roomLeader: false
-    }
+      roomLeader: false,
+    };
     gameStates[roomId].players.push(player);
     // i join room
     await socket.join(roomId);
@@ -83,9 +88,7 @@ io.on("connection", (socket) => {
     // console.log("i am all Socket:", clients);
 
     // let everyone know I join
-    socket.broadcast
-      .to(roomId)
-      .emit("SomeOneJoin", gameStates[roomId].players);
+    socket.broadcast.to(roomId).emit("SomeOneJoin", gameStates[roomId].players);
   });
 
   // let other know the roomLeader has started the game
@@ -99,12 +102,119 @@ io.on("connection", (socket) => {
     io.in(roomId).emit("StartGame", { roomId, gameState: gameStates[roomId] });
   });
 
-  socket.on("DropOnBoard", ({ item, roomId, boardItem }) => {
-    // socket.broadcast.to(roomId).emit("DropOnBoard", { item, roomId });\
-    console.log("dropping on board");
-    io.in(roomId).emit("DropOnBoard", { item, roomId, boardItem });
+  socket.on("DropOnBoard", ({ item, player }) => {
+    const roomId = player.roomId;
+
+    if ("data" in item || item.parent.startsWith(gameObj.STACK)) {
+      // remove from stack
+      if (!removeFromStack({ gameStates, item, roomId })) return;
+    } else if (item.parent.startsWith(gameObj.HAND)) {
+      // remove from hand
+      removeFromHand({ gameStates, item, player, roomId });
+      socket.emit("RemoveFromHand", { item });
+    }
+
+    // add to board
+    item.parent = gameObj.BOARD;
+    gameStates[roomId].board[item.id] = item;
+
+    io.in(roomId).emit("BoardUpdate", {
+      board: gameStates[roomId].board,
+      item,
+      player,
+      message: `Drop ${item.name} on Board`,
+    });
+
+    io.in(roomId).emit("Message", {
+      player,
+      message: `Drop ${item.name} on Board`,
+    });
   });
 
+  socket.on("DropOnHand", ({ item, player }) => {
+    const roomId = player.roomId;
+    if ("data" in item) {
+      // item is a stack, do nothing;
+      return;
+    }
+
+    if (item.parent === gameObj.BOARD) {
+      // remove from board
+      if (!removeFromBoard({ gameStates, item, roomId })) return;
+    } else if (item.parent.startsWith(gameObj.STACK)) {
+      // remove from stacks
+      if (!removeFromStack({ gameStates, item, roomId })) return;
+    }
+
+    item.parent = gameObj.HAND;
+    item.top = 0;
+    item.left = 0;
+    const players = gameStates[roomId].players;
+    const index = players.findIndex(
+      (curr) => curr.socketId === player.socketId
+    );
+    players[index].hand[item.id] = item;
+
+    // update board state for every in room
+    io.in(roomId).emit("BoardUpdate", {
+      board: gameStates[roomId].board,
+      item: item,
+      player,
+      message: `Add ${item.name} to Hand`,
+    });
+
+    // add to sender's hand
+    socket.emit("AddToHand", { item, player });
+
+    io.in(roomId).emit("Message", {
+      player,
+      message: `Add ${item.name} to Hand`,
+    });
+  });
+
+  socket.on("DropOnStack", ({ item, player, stackId }) => {
+    // send all in room
+    const roomId = player.roomId;
+
+    // removes
+    if (item.parent === gameObj.HAND) {
+      // remove from hand
+      removeFromHand({ gameStates, item, player, roomId });
+      socket.emit("RemoveFromHand", { item });
+    } else if (item.parent === gameObj.BOARD) {
+      // remove from board
+      if (!removeFromBoard({ gameStates, item, roomId })) return;
+    } else {
+      // from another stack
+      return;
+    }
+
+    // add to stack
+    const stack = gameStates[roomId].board[stackId];
+    if (stack && "data" in stack) {
+      item.parent = stack.id;
+      stack.data.push(item);
+    }
+
+    io.in(roomId).emit("BoardUpdate", {
+      board: gameStates[roomId].board,
+      item,
+      player,
+      message: `Drop ${item.name} on Stack ${stackId}`,
+    });
+
+    io.in(roomId).emit("Message", {
+      player,
+      message: `Drop ${item.name} on Stack ${stackId}`,
+    });
+  });
+
+  socket.on("SendMessage", ({ player, message }) => {
+    const roomId = player.roomId;
+    socket.broadcast.to(roomId).emit("Message", { player, message });
+  });
+
+  /// blaaankkk
   socket.on("DropFromBoard", ({ item, roomId, boardItem }) => {
     // send all in room
     io.in(roomId).emit("DropFromBoard", { item, roomId, boardItem });
@@ -115,11 +225,6 @@ io.on("connection", (socket) => {
     socket.broadcast
       .to(roomId)
       .emit("OnBoardDrag", { item, roomId, boardItem });
-  });
-
-  socket.on("AddToStack", ({ item, roomId, stackId }) => {
-    // send all in room
-    io.in(roomId).emit("AddToStack", { item, roomId, stackId });
   });
 
   socket.on("DropFromStack", ({ item, roomId, stackId }) => {

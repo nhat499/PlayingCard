@@ -1,16 +1,21 @@
 import { Polygon } from "@html-polygon/react";
 import { useState } from "react";
 import { CardProps } from "./Card";
-import { StackProps } from "./Stack";
 import { socket } from "../socket/Socket";
 import { useParams } from "react-router-dom";
+import {
+    gameObj,
+    Item,
+    Stack,
+} from "../../../server/src/interfaces/gameStateInterface";
+import { useUser } from "../atom/userAtom";
 
 type AddItemPopupProps = {
     open: boolean;
     setOpen: (value: boolean) => void;
     setBoardItem: React.Dispatch<
         React.SetStateAction<{
-            [key: string]: CardProps["card"] | StackProps["stack"];
+            [key: string]: Item | Stack;
         }>
     >;
 };
@@ -25,7 +30,7 @@ const baseItem: CardProps["card"] = {
     left: 0,
     top: 0,
     name: "test",
-    parent: "Board",
+    parent: gameObj.BOARD,
     width: 100,
     zIndex: 0,
     sides: 4,
@@ -33,14 +38,18 @@ const baseItem: CardProps["card"] = {
 
 const AddItemPopup = ({ open, setOpen, setBoardItem }: AddItemPopupProps) => {
     const { roomId } = useParams();
+    const { user, setUser } = useUser();
+    if (!user) {
+        throw Error("User Not found");
+    }
     const [newItemString, setNewItemString] = useState<string>(
         JSON.stringify(baseItem, null, 2)
     );
 
-    let newItem: CardProps["card"] | undefined;
+    let newItem: Item | undefined;
     try {
-        newItem = JSON.parse(newItemString) ?? {};
-    } catch (err) { }
+        newItem = JSON.parse(newItemString) ?? undefined;
+    } catch (err) {}
 
     return (
         open && (
@@ -68,19 +77,20 @@ const AddItemPopup = ({ open, setOpen, setBoardItem }: AddItemPopupProps) => {
                             setNewItemString(e.target.value);
                         }}
                     />
-                    <div style={{
-                        minWidth: "150px",
-                        minHeight: "150px",
-                        border: "1px solid #ced4da",
-                        backgroundColor: "white",
-                        borderRadius: "8px",
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        justifyContent: "space-evenly",
-                    }}>
-                        <div
-                        >
+                    <div
+                        style={{
+                            minWidth: "150px",
+                            minHeight: "150px",
+                            border: "1px solid #ced4da",
+                            backgroundColor: "white",
+                            borderRadius: "8px",
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "space-evenly",
+                        }}
+                    >
+                        <div>
                             {newItem && (
                                 <Polygon
                                     sides={newItem.sides ?? 4}
@@ -91,7 +101,8 @@ const AddItemPopup = ({ open, setOpen, setBoardItem }: AddItemPopupProps) => {
                                     style={{
                                         width: `${newItem.width ?? 0}px`,
                                         height: `${newItem.height ?? 0}px`,
-                                        backgroundColor: newItem.color ?? "white",
+                                        backgroundColor:
+                                            newItem.color ?? "white",
                                         textAlign: "center",
                                         borderRadius: "4px",
                                     }}
@@ -115,7 +126,8 @@ const AddItemPopup = ({ open, setOpen, setBoardItem }: AddItemPopupProps) => {
                                     backgroundColor: "#007bff",
                                     color: "white",
                                     cursor: "pointer",
-                                    boxShadow: "0 2px 5px rgba(0, 123, 255, 0.2)",
+                                    boxShadow:
+                                        "0 2px 5px rgba(0, 123, 255, 0.2)",
                                     transition: "background-color 0.2s",
                                 }}
                                 onClick={() => {
@@ -124,10 +136,9 @@ const AddItemPopup = ({ open, setOpen, setBoardItem }: AddItemPopupProps) => {
                                         socket.emit("DropOnBoard", {
                                             item: {
                                                 ...newItem,
-                                                id: "card" + newItem.id,
+                                                id: `${gameObj.ITEM}-${newItem.id}`,
                                             },
-                                            roomId,
-                                            boardItem: {},
+                                            player: user,
                                         });
                                     }
                                 }}
@@ -139,7 +150,8 @@ const AddItemPopup = ({ open, setOpen, setBoardItem }: AddItemPopupProps) => {
                                     padding: "8px 16px",
                                     borderRadius: "8px",
                                     cursor: "pointer",
-                                    boxShadow: "0 2px 5px rgba(0, 123, 255, 0.2)",
+                                    boxShadow:
+                                        "0 2px 5px rgba(0, 123, 255, 0.2)",
                                     border: "none",
                                     backgroundColor: "#dc3545",
                                     color: "white",

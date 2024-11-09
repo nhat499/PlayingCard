@@ -1,70 +1,53 @@
 import { useState, useEffect, useRef } from "react";
 import { socket } from "../socket/Socket";
-
-type Message = {
-    id: number;
-    text: string;
-    sender: "user" | "other"; // Simple sender type for differentiation
-};
+import { useUser } from "../atom/userAtom";
+import { Message } from "../../../server/src/interfaces/gameStateInterface";
 
 const ChatBox = () => {
     const [messages, setMessages] = useState<Message[]>([]);
+    const { user } = useUser();
     const [input, setInput] = useState<string>("");
     const messageEndRef = useRef<HTMLDivElement | null>(null);
-
+    if (!user) {
+        throw Error("User not found");
+    }
     // Simulate bot response after user sends a message
     const sendMessage = () => {
         if (input.trim()) {
             const newMessage: Message = {
                 id: Date.now(),
-                text: input,
-                sender: "user",
+                text: `${user.name}: ${input}`,
+                user: user.name,
             };
 
+            socket.emit("SendMessage", { message: input, player: user });
             setMessages((prevMessages) => [...prevMessages, newMessage]);
-            setInput(""); // Clear the input field
-
-            // // Simulate a bot response after a delay
-            // setTimeout(() => {
-            //     const botMessage: Message = {
-            //         id: Date.now() + 1,
-            //         text: "Hello! This is a bot response.",
-            //         sender: "bot",
-            //     };
-            //     setMessages((prevMessages) => [...prevMessages, botMessage]);
-            // }, 1000);
+            setInput("");
         }
     };
 
     useEffect(() => {
-        socket.on("DropOnBoard", ({ item, roomId, boardItem }) => {
+        // socket.on("BoardUpdate", ({ message, player }) => {
+        //     const newMessage: Message = {
+        //         id: Date.now(),
+        //         text: `${player.name} ${message}`,
+        //         me: user.socketId === player.socketId,
+        //     };
+        //     setMessages((prevMessages) => [...prevMessages, newMessage]);
+        // });
+        socket.on("Message", ({ message, player }) => {
             const newMessage: Message = {
                 id: Date.now(),
-                text: item.name + " DropOnBoard",
-                sender: "other",
+                text: `${player.name} ${message}`,
+                user: user.name,
             };
             setMessages((prevMessages) => [...prevMessages, newMessage]);
         });
-
-        socket.on("DropFromBoard", ({ item, roomId, boardItem }) => {
-            const newMessage: Message = {
-                id: Date.now(),
-                text: item.name + " DropFromBoard",
-                sender: "other",
-            };
-            setMessages((prevMessages) => [...prevMessages, newMessage]);
-        });
-
-
-        socket.on("AddToStack", ({ item, roomId, stackId }) => {
-            const newMessage: Message = {
-                id: Date.now(),
-                text: item.name + " AddToStack",
-                sender: "other",
-            };
-            setMessages((prevMessages) => [...prevMessages, newMessage]);
-        });
-    }, []);
+        // return () => {
+        //     socket.off("BoardUpdate");
+        //     socket.off("Message");
+        // };
+    });
 
     // Scroll to the latest message
     useEffect(() => {
@@ -72,7 +55,6 @@ const ChatBox = () => {
     }, [messages]);
 
     return (
-
         <div
             style={{
                 margin: "20px",
@@ -102,9 +84,14 @@ const ChatBox = () => {
                     <div
                         key={index}
                         style={{
-                            alignSelf: message.sender === "user" ? "flex-end" : "flex-start",
-                            backgroundColor: message.sender === "user" ? "#007bff" : "#ddd",
-                            color: message.sender === "user" ? "white" : "black",
+                            alignSelf:
+                                message.user === user.name
+                                    ? "flex-end"
+                                    : "flex-start",
+                            backgroundColor:
+                                message.user === user.name ? "#007bff" : "#ddd",
+                            color:
+                                message.user === user.name ? "white" : "black",
                             borderRadius: "20px",
                             padding: "8px 15px",
                             margin: "5px 0",
@@ -162,7 +149,6 @@ const ChatBox = () => {
                 </button>
             </div>
         </div>
-
     );
 };
 

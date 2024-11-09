@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import DefaultScreen from "../components/DefaultScreen";
 import { socket } from "../socket/Socket";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useGameState, useUser } from "../atom/userAtom";
 import { Player } from "../../../server/src/interfaces/gameStateInterface";
 
@@ -17,22 +17,25 @@ const SigninScreen = () => {
     const [buttonDisable, setButtonDisable] = useState(false);
 
     useEffect(() => {
-        socket.on("JoinRoom", ({ hand, name, roomId, roomLeader, socketId }, gameState) => {
-            setUser({ name, socketId, roomLeader, hand, roomId });
-            setGameStates(gameState)
-            navigate("/room/" + roomId);
-        });
+        socket.on(
+            "JoinRoom",
+            ({ hand, name, roomId, roomLeader, socketId }, gameState) => {
+                setUser({ name, socketId, roomLeader, hand, roomId });
+                setGameStates(gameState);
+                navigate("/room/" + roomId);
+            }
+        );
 
         socket.on("error", ({ message }) => {
             console.log("error mesage:", message);
             setButtonDisable(false);
         });
 
-        () => {
+        return () => {
             socket.off("JoinRoom");
             socket.off("error");
-        }
-    }, []);
+        };
+    });
 
     return (
         <DefaultScreen>
@@ -40,11 +43,10 @@ const SigninScreen = () => {
                 style={{
                     display: "flex",
                     flexDirection: "column",
-                    gap: "15px",
+                    gap: "20px",
                     maxWidth: "400px",
                     margin: "0 auto",
-                    padding: "20px",
-                    backgroundColor: "#f1f3f5",
+                    padding: "40px",
                     borderRadius: "12px",
                     boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
                 }}
@@ -95,9 +97,15 @@ const SigninScreen = () => {
                             padding: "10px",
                             borderRadius: "8px",
                             border: "none",
-                            backgroundColor: name === "" || buttonDisable ? "#d6d6d6" : "#007bff",
+                            backgroundColor:
+                                name === "" || buttonDisable
+                                    ? "#d6d6d6"
+                                    : "#007bff",
                             color: "white",
-                            cursor: name === "" || buttonDisable ? "not-allowed" : "pointer",
+                            cursor:
+                                name === "" || buttonDisable
+                                    ? "not-allowed"
+                                    : "pointer",
                             boxShadow: "0 2px 5px rgba(0, 123, 255, 0.2)",
                             transition: "background-color 0.2s",
                         }}
@@ -113,7 +121,7 @@ const SigninScreen = () => {
                                 name,
                                 roomId,
                                 roomLeader: false, // doesnt matter
-                            }
+                            };
                             socket.emit("JoinRoom", player);
                             setButtonDisable(true);
                         }}
@@ -122,9 +130,15 @@ const SigninScreen = () => {
                             padding: "10px",
                             borderRadius: "8px",
                             border: "none",
-                            backgroundColor: roomId === "" || name === "" || buttonDisable ? "#d6d6d6" : "#28a745",
+                            backgroundColor:
+                                roomId === "" || name === "" || buttonDisable
+                                    ? "#d6d6d6"
+                                    : "#28a745",
                             color: "white",
-                            cursor: roomId === "" || name === "" || buttonDisable ? "not-allowed" : "pointer",
+                            cursor:
+                                roomId === "" || name === "" || buttonDisable
+                                    ? "not-allowed"
+                                    : "pointer",
                             boxShadow: "0 2px 5px rgba(40, 167, 69, 0.2)",
                             transition: "background-color 0.2s",
                         }}
@@ -133,7 +147,6 @@ const SigninScreen = () => {
                     </button>
                 </div>
             </div>
-
         </DefaultScreen>
     );
 };

@@ -1,17 +1,22 @@
 import { DraggableProps } from "./Draggable";
 import { useDroppable } from "@dnd-kit/core";
-import { BoardProps } from "./Board";
 import Card, { CardProps } from "./Card";
+import {
+    gameObj,
+    Item,
+    Player,
+} from "../../../server/src/interfaces/gameStateInterface";
 
 export type HandProps = {
-    cards: DraggableProps["item"][];
-    setItems: (value: React.SetStateAction<DraggableProps["item"][]>) => void;
+    cards: Player["hand"];
+    setItems: (value: React.SetStateAction<Player["hand"]>) => void;
 };
 
 const Hand = ({ cards, setItems }: HandProps) => {
     const { setNodeRef } = useDroppable({
-        id: "Hand",
+        id: gameObj.HAND,
     });
+
     return (
         <div
             ref={setNodeRef}
@@ -27,7 +32,7 @@ const Hand = ({ cards, setItems }: HandProps) => {
                 border: "5px solid #a7c7dc", // Light border to frame the board
             }}
         >
-            {cards.map((item) => (
+            {Object.entries(cards).map(([, item]) => (
                 <div
                     key={item.id}
                     style={{
@@ -37,9 +42,9 @@ const Hand = ({ cards, setItems }: HandProps) => {
                         left: item.left ?? 0,
                     }}
                 >
-                    {item.id.startsWith("card") && (
+                    {item.id.startsWith(gameObj.ITEM) && (
                         <Card
-                            card={item as CardProps["card"]}
+                            card={item as Item}
                             setAttribute={(id, key, value) =>
                                 setItems((currItems) => {
                                     currItems[id][key] = value;
