@@ -36,20 +36,13 @@ export interface ServerToClientEvents {
 
   Message: ({ message, player }: { message: string; player: Player }) => void;
 
-  ////not yet fix ////
-  // let all(include myself) people know I took an item on the board
-  DropFromBoard: ({ item, roomId, boardItem }: IDragDropItem) => void;
-
   RemoveFromHand: ({ item }: { item: Item }) => void;
 
   // let other know i am dragging
-  OnBoardDrag: ({ item, roomId, boardItem }: IDragDropItem) => void;
+  OnBoardDrag: ({ item, player }: { item: Item | Stack, player: Player }) => void;
 
   // let other know I add to a stack
   AddToStack: ({ item, roomId, stackId }: MoveItem) => void;
-
-  // let other know I drop an item from a stack
-  DropFromStack: ({ item, roomId, stackId }: MoveItem) => void;
 
   // let other know i shuffle stack
   ShuffleStack: ({
@@ -107,11 +100,8 @@ export interface ClientToServerEvents {
   // a user drop an item on a stack
   DropOnStack: ({ item, player, stackId }: MoveItemOnStack) => void;
 
-  // a user took an item
-  DropFromBoard: ({ item, roomId, boardItem }: IDragDropItem) => void;
-
   // a user is dragging
-  OnBoardDrag: ({ item, roomId, boardItem }: IDragDropItem) => void;
+  OnBoardDrag: ({ item, player }: { item: Item | Stack, player: Player }) => void;
 
   SendMessage: ({
     message,
@@ -122,8 +112,6 @@ export interface ClientToServerEvents {
   }) => void;
 
   //////////NOT YET WORK ON/////////
-  // a user drop an item from a stack
-  DropFromStack: ({ item, roomId, stackId }: MoveItem) => void;
 
   // a user shuffle a stack
   ShuffleStack: ({ player, stack }: { player: Player; stack: Stack }) => void;

@@ -155,9 +155,10 @@ const Stack = ({ stack }: StackProps) => {
                                 // justifyContent: "center",
                             }}
                         >
-                            {stack.data?.map((item) => {
+                            {/* {stack.data?.map((item) => {
                                 return <Card key={item.id} card={item} />;
-                            })}
+                            })} */}
+                            {stack.data.length > 0 && <Card card={stack.data[stack.data.length - 1]} />}
                         </div>
                     </div>
                 )}

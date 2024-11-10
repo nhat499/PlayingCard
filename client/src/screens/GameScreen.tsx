@@ -102,13 +102,12 @@ function GameScreen() {
     }
 
     function handleDragMove(event: DragMoveEvent) {
-        const updateItem = { ...event.active.data.current };
-        if (updateItem && event.over?.id === gameObj.BOARD) {
+        const updateItem = { ...event.active.data.current } as Item | Stack;
+        if (user && updateItem && event.over?.id === gameObj.BOARD) {
             updateItem.transform = `translate3d(${event.delta.x}px, ${event.delta.y}px, 0)`;
             socket.emit("OnBoardDrag", {
                 item: updateItem,
-                roomId,
-                boardItem: boardItem,
+                player: user
             });
         }
     }
@@ -134,50 +133,12 @@ function GameScreen() {
             });
         });
 
-        // socket.on("DropFromBoard", ({ item, roomId, boardItem }) => {
-        //     setBoardItem((currItem) => {
-        //         delete currItem[item.id];
-        //         return { ...currItem };
-        //     });
-        // });
-
-        socket.on("OnBoardDrag", ({ item, roomId, boardItem }) => {
+        socket.on("OnBoardDrag", ({ item, player }) => {
             setBoardItem((currItem) => {
                 currItem[item.id] = item;
                 return { ...currItem };
             });
         });
-
-        // socket.on("AddToStack", ({ item, roomId, stackId }) => {
-        //     setBoardItem((currItem) => {
-        //         const stackItem = structuredClone(currItem[stackId]) as Stack;
-        //         const stackArr = stackItem.data;
-        //         item.parent = stackId;
-        //         if (stackArr && stackArr.length > 0) {
-        //             if (stackArr[stackArr.length - 1].id !== item.id) {
-        //                 stackItem.data.push(item);
-        //             }
-        //         } else {
-        //             stackItem.data = [item];
-        //         }
-        //         currItem[stackId] = stackItem;
-        //         return { ...currItem };
-        //     });
-        // });
-
-        // socket.on("DropFromStack", ({ item, roomId, stackId }) => {
-        //     setBoardItem((currItem) => {
-        //         const stackItem = structuredClone(currItem[stackId]) as Stack;
-        //         const stackArr = stackItem.data;
-        //         if (stackArr && stackArr.length > 0) {
-        //             if (stackArr[stackArr.length - 1].id === item.id) {
-        //                 stackArr.pop();
-        //             }
-        //         }
-        //         currItem[stackId] = stackItem;
-        //         return { ...currItem };
-        //     });
-        // });
 
         return () => {
             console.log("disconnection?");
@@ -197,11 +158,6 @@ function GameScreen() {
         >
             <div
                 style={{
-                    // display: "flex",
-                    // flexDirection: "column",
-                    // background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
-                    // alignItems: "flex-end",
-                    // justifyContent: "center",
                     display: "grid",
                     gridTemplateColumns: "3fr 1fr",
                     gap: "10px",
@@ -223,7 +179,7 @@ function GameScreen() {
                         size={gameStates.setting.window}
                         items={boardItem}
                         setItems={setBoardItem}
-                        // isDragging={isDragging}
+                    // isDragging={isDragging}
                     />
 
                     <Hand cards={handItem} setItems={setHandItem} />

@@ -107,16 +107,18 @@ io.on("connection", (socket) => {
 
   socket.on("DropOnBoard", ({ item, player }) => {
     const roomId = player.roomId;
-
-    if (item.parent.startsWith(gameObj.STACK)) {
+    const itemParent = gameStates[roomId].board[item.parent];
+    if (item.parent.startsWith(gameObj.STACK) && "data" in itemParent) {
       // remove from stack
       if (!removeFromStack({ gameStates, item, roomId })) return;
+      // io.in(roomId).emit("RemoveFromStack", { player, stack: itemParent })
     } else if (!("data" in item) && item.parent.startsWith(gameObj.HAND)) {
       // remove from hand
       removeFromHand({ gameStates, item, player, roomId });
       socket.emit("RemoveFromHand", { item });
     }
 
+    // here
     // add to board
     item.parent = gameObj.BOARD;
     gameStates[roomId].board[item.id] = item;
@@ -217,7 +219,6 @@ io.on("connection", (socket) => {
     //   message: `Drop ${item.name} on Stack ${stackId}`,
     // });
   });
-  //// here
 
   socket.on("SendMessage", ({ player, message }) => {
     const roomId = player.roomId;
@@ -235,24 +236,6 @@ io.on("connection", (socket) => {
     });
 
     io.in(roomId).emit("Message", { player, message: "flip stack" });
-  });
-
-  /// blaaankkk
-  socket.on("DropFromBoard", ({ item, roomId, boardItem }) => {
-    // send all in room
-    io.in(roomId).emit("DropFromBoard", { item, roomId, boardItem });
-  });
-
-  socket.on("OnBoardDrag", ({ item, roomId, boardItem }) => {
-    // socket.broadcast.to(roomId).emit("DropOnBoard", { item, roomId });
-    socket.broadcast
-      .to(roomId)
-      .emit("OnBoardDrag", { item, roomId, boardItem });
-  });
-
-  socket.on("DropFromStack", ({ item, roomId, stackId }) => {
-    // send all in room
-    io.in(roomId).emit("DropFromStack", { item, roomId, stackId });
   });
 
   socket.on("ShuffleStack", ({ player, stack }) => {
@@ -288,6 +271,32 @@ io.on("connection", (socket) => {
 
     io.emit("Message", { player, message: "flip stack" });
   });
+
+  let update = false;
+
+  socket.on("OnBoardDrag", ({ item, player }) => {
+    // socket.broadcast.to(roomId).emit("DropOnBoard", { item, roomId });
+    const roomId = player.roomId;
+    socket.broadcast
+      .to(roomId)
+      .emit("OnBoardDrag", { item, player });
+
+    // test another aciton while i am dragging
+    // if (!update) {
+    //   update = true;
+    //   setTimeout(() => {
+    //     console.log("board updates");
+    //     io.in(roomId).emit("BoardUpdate", {
+    //       board: gameStates[roomId].board,
+    //       item,
+    //       player,
+    //       message: `Drop ${item.name} on Board`,
+    //     });
+
+    //   }, 5000)
+    // }
+  });
+
 });
 
 server.listen(3000, () => {
