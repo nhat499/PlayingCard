@@ -1,6 +1,6 @@
 import { useDroppable } from "@dnd-kit/core";
-import ItemStack, { StackProps } from "./Stack";
-import Card, { CardProps } from "./Card";
+import ItemStack from "./Stack";
+import Card from "./Card";
 import { socket } from "../socket/Socket";
 import { useEffect } from "react";
 import {
@@ -21,29 +21,40 @@ const Board = ({ items, setItems, size }: BoardProps) => {
         id: gameObj.BOARD,
     });
 
-    const setAttribute = (
-        id: string,
-        key: string,
-        value: string | number | boolean
-    ) => {
-        setItems((currItems) => {
-            currItems[id][key] = value;
-            return { ...currItems };
-        });
-    };
+    // const setAttribute = (
+    //     id: string,
+    //     key: string,
+    //     value: string | number | boolean
+    // ) => {
+    //     setItems((currItems) => {
+    //         currItems[id][key] = value;
+    //         return { ...currItems };
+    //     });
+    // };
 
     useEffect(() => {
-        socket.on("FlipCard", ({ roomId, itemId, value }) => {
-            setAttribute(itemId, "isHidden", value);
+        socket.on("FlipCard", ({ board, player }) => {
+            // setAttribute(itemId, "isHidden", value);
+            setItems(board);
+            // emit message?
         });
 
-        socket.on("ShuffleStack", ({ roomId, stackId, stackData }) => {
-            setAttribute(stackId, "data", stackData);
+        socket.on("ShuffleStack", ({ player, board }) => {
+            // setAttribute(stackId, "data", stackData);
+            setItems(board);
+            // emit message?
         });
 
-        socket.on("FlipStack", ({ roomId, stackId, stackData }) => {
-            setAttribute(stackId, "data", stackData);
+        socket.on("FlipStack", ({ player, board }) => {
+            // setAttribute(stackId, "data", stackData);
+            setItems(board);
         });
+
+        return () => {
+            socket.off("FlipCard");
+            socket.off("ShuffleStack");
+            socket.off("FlipStack");
+        };
     }, []);
 
     return (

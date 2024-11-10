@@ -16,7 +16,7 @@ export const removeFromStack = ({
 }) => {
   const stack = gameStates[roomId].board[item.parent];
 
-  if ("data" in stack && Array.isArray(stack.data)) {
+  if (stack && "data" in stack && Array.isArray(stack.data)) {
     if (stack.data[stack.data.length - 1].id === item.id) {
       stack.data.pop();
       return true;
@@ -24,6 +24,7 @@ export const removeFromStack = ({
       return false;
     }
   }
+  return false;
 };
 
 export const removeFromHand = ({
@@ -61,5 +62,24 @@ export const removeFromBoard = ({
     return true;
   } else {
     return false;
+  }
+};
+
+export const shuffle = (array: Item[]) => {
+  let currentIndex = array.length;
+
+  while (currentIndex != 0) {
+    const randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex],
+      array[currentIndex],
+    ];
+  }
+};
+
+export const flipAll = (array: Item[], isHidden: boolean) => {
+  for (const item of array) {
+    item.isHidden = isHidden;
   }
 };

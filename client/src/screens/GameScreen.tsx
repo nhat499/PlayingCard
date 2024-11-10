@@ -28,6 +28,7 @@ function GameScreen() {
     if (!gameStates || !roomId || !user) {
         throw Error("User || roomId States Not found");
     }
+    // console.log("i am gameStates", gameStates.setting.window);
     const [boardItem, setBoardItem] = useState<Room["board"]>(gameStates.board);
     const [handItem, setHandItem] = useState<Player["hand"]>({});
     const [openAddItemPopup, setOpenAddItemPopup] = useState<boolean>(false);

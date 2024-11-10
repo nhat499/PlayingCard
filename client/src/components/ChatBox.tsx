@@ -11,7 +11,6 @@ const ChatBox = () => {
     if (!user) {
         throw Error("User not found");
     }
-    // Simulate bot response after user sends a message
     const sendMessage = () => {
         if (input.trim()) {
             const newMessage: Message = {
@@ -27,26 +26,17 @@ const ChatBox = () => {
     };
 
     useEffect(() => {
-        // socket.on("BoardUpdate", ({ message, player }) => {
-        //     const newMessage: Message = {
-        //         id: Date.now(),
-        //         text: `${player.name} ${message}`,
-        //         me: user.socketId === player.socketId,
-        //     };
-        //     setMessages((prevMessages) => [...prevMessages, newMessage]);
-        // });
         socket.on("Message", ({ message, player }) => {
             const newMessage: Message = {
                 id: Date.now(),
-                text: `${player.name} ${message}`,
-                user: user.name,
+                text: `${player.name}: ${message}`,
+                user: player.name,
             };
             setMessages((prevMessages) => [...prevMessages, newMessage]);
         });
-        // return () => {
-        //     socket.off("BoardUpdate");
-        //     socket.off("Message");
-        // };
+        return () => {
+            socket.off("Message");
+        };
     });
 
     // Scroll to the latest message

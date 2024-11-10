@@ -1,4 +1,4 @@
-import { Item, Message, Player, Room, Stack } from "./gameStateInterface";
+import { Item, Player, Room, Stack } from "./gameStateInterface";
 
 export interface ServerToClientEvents {
   noArg: () => void;
@@ -52,13 +52,31 @@ export interface ServerToClientEvents {
   DropFromStack: ({ item, roomId, stackId }: MoveItem) => void;
 
   // let other know i shuffle stack
-  ShuffleStack: ({ roomId, stackId, stackData }) => void;
+  ShuffleStack: ({
+    player,
+    board,
+  }: {
+    player: Player;
+    board: Room["board"];
+  }) => void;
 
   // let other know i flip stack
-  FlipStack: ({ roomId, stackId, stackData }) => void;
+  FlipStack: ({
+    player,
+    board,
+  }: {
+    player: Player;
+    board: Room["board"];
+  }) => void;
 
   // let other know i flip a Card
-  FlipCard: ({ roomId, itemId, value }) => void;
+  FlipCard: ({
+    player,
+    board,
+  }: {
+    player: Player;
+    board: Room["board"];
+  }) => void;
 }
 
 export interface ClientToServerEvents {
@@ -108,13 +126,13 @@ export interface ClientToServerEvents {
   DropFromStack: ({ item, roomId, stackId }: MoveItem) => void;
 
   // a user shuffle a stack
-  ShuffleStack: ({ roomId, stackId, stackData }) => void;
+  ShuffleStack: ({ player, stack }: { player: Player; stack: Stack }) => void;
 
   // a user flip a stack
-  FlipStack: ({ roomId, stackId, stackData }) => void;
+  FlipStack: ({ player, stack }: { player: Player; stack: Stack }) => void;
 
   // a user flip a Card
-  FlipCard: ({ roomId, itemId, value }) => void;
+  FlipCard: ({ player, item }: { player: Player; item: Item }) => void;
 }
 
 export type MoveItemAction = {

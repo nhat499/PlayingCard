@@ -13,7 +13,7 @@ const Layout = () => {
             {/* Left Sidebar */}
             <nav
                 style={{
-                    width: "250px",
+                    width: "10%",
                     backgroundColor: "#4a5568",
                     display: "flex",
                     flexDirection: "column",
@@ -51,8 +51,12 @@ const Layout = () => {
                         boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
                         transition: "background-color 0.3s",
                     }}
-                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#1a202c"}
-                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#2d3748"}
+                    onMouseOver={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#1a202c")
+                    }
+                    onMouseOut={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#2d3748")
+                    }
                 >
                     Settings
                 </button>
@@ -79,7 +83,9 @@ const Layout = () => {
                         textAlign: "center",
                     }}
                 >
-                    <h2 style={{ color: "#333", marginBottom: "20px" }}>Playing Cards</h2>
+                    <h2 style={{ color: "#333", marginBottom: "20px" }}>
+                        Playing Cards
+                    </h2>
                     {/* Add a form or input components here */}
                     <Outlet />
                 </div>

@@ -2,8 +2,8 @@ import { useState } from "react";
 import Draggable, { item } from "./Draggable";
 import DraggableOptions from "./DraggableOptions";
 import { socket } from "../socket/Socket";
-import { useParams } from "react-router-dom";
 import { Polygon } from "@html-polygon/react";
+import { useUser } from "../atom/userAtom";
 
 export type CardProps = {
     card: item & {
@@ -21,9 +21,11 @@ export type CardProps = {
 };
 
 const Card = ({ card, setAttribute }: CardProps) => {
-    const { roomId } = useParams();
+    const { user } = useUser();
     const [openDialog, setOpenDialog] = useState(false);
-
+    if (!user) {
+        throw Error("user not found");
+    }
     return (
         <div
             style={{
@@ -37,14 +39,19 @@ const Card = ({ card, setAttribute }: CardProps) => {
                 setOpenDialog(true);
             }}
         >
-
             {setAttribute && (
                 <DraggableOptions
                     openDialog={openDialog}
                     setOpenDialog={setOpenDialog}
                     zIndex={card.zIndex + 1}
                 >
-                    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                    <div
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "8px",
+                        }}
+                    >
                         <button
                             style={{
                                 padding: "8px 16px",
@@ -55,8 +62,12 @@ const Card = ({ card, setAttribute }: CardProps) => {
                                 cursor: "pointer",
                                 transition: "all 0.3s ease",
                             }}
-                            onClick={(e) => {
-                                setAttribute(card.id, "disabled", !card.disabled);
+                            onClick={() => {
+                                setAttribute(
+                                    card.id,
+                                    "disabled",
+                                    !card.disabled
+                                );
                                 setOpenDialog(false);
                             }}
                         >
@@ -72,11 +83,10 @@ const Card = ({ card, setAttribute }: CardProps) => {
                                 cursor: "pointer",
                                 transition: "all 0.3s ease",
                             }}
-                            onClick={(e) => {
+                            onClick={() => {
                                 socket.emit("FlipCard", {
-                                    roomId,
-                                    itemId: card.id,
-                                    value: !card.isHidden,
+                                    player: user,
+                                    item: card,
                                 });
                                 setOpenDialog(false);
                             }}
@@ -102,18 +112,20 @@ const Card = ({ card, setAttribute }: CardProps) => {
                             height: `${card.height + 30}px`,
                             backgroundColor: card.color ?? "white",
                             textAlign: "center",
-                            opacity: isDragging ? 0.5 : 1
+                            opacity: isDragging ? 0.5 : 1,
                         }}
                     >
-                        <div style={{
-                            wordWrap: "normal",
-                            overflowWrap: "break-word",
-                            textOverflow: "ellipsis",
-                            // overflow: "visible",
-                            padding: "5px",
-                            fontSize: "16px",
-                            height: "100%", // Center text vertically
-                        }}>
+                        <div
+                            style={{
+                                wordWrap: "normal",
+                                overflowWrap: "break-word",
+                                textOverflow: "ellipsis",
+                                // overflow: "visible",
+                                padding: "5px",
+                                fontSize: "16px",
+                                height: "100%", // Center text vertically
+                            }}
+                        >
                             {card.isHidden ? "hidden" : card.name}
                         </div>
                     </Polygon>

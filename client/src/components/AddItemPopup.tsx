@@ -2,7 +2,6 @@ import { Polygon } from "@html-polygon/react";
 import { useState } from "react";
 import { CardProps } from "./Card";
 import { socket } from "../socket/Socket";
-import { useParams } from "react-router-dom";
 import {
     gameObj,
     Item,
@@ -36,9 +35,8 @@ const baseItem: CardProps["card"] = {
     sides: 4,
 };
 
-const AddItemPopup = ({ open, setOpen, setBoardItem }: AddItemPopupProps) => {
-    const { roomId } = useParams();
-    const { user, setUser } = useUser();
+const AddItemPopup = ({ open, setOpen }: AddItemPopupProps) => {
+    const { user } = useUser();
     if (!user) {
         throw Error("User Not found");
     }

@@ -12,9 +12,11 @@ import nanoid from "nanoid-esm";
 import { gameObj, GameStates, Player } from "./interfaces/gameStateInterface";
 import regularDeck from "./presetGame/regularDeck";
 import {
+  flipAll,
   removeFromBoard,
   removeFromHand,
   removeFromStack,
+  shuffle,
 } from "./stateFunction";
 
 // const express = require('express');
@@ -78,6 +80,7 @@ io.on("connection", (socket) => {
       name,
       roomId,
       roomLeader: false,
+      socketId: socket.id,
     };
     gameStates[roomId].players.push(player);
     // i join room
@@ -105,10 +108,10 @@ io.on("connection", (socket) => {
   socket.on("DropOnBoard", ({ item, player }) => {
     const roomId = player.roomId;
 
-    if ("data" in item || item.parent.startsWith(gameObj.STACK)) {
+    if (item.parent.startsWith(gameObj.STACK)) {
       // remove from stack
       if (!removeFromStack({ gameStates, item, roomId })) return;
-    } else if (item.parent.startsWith(gameObj.HAND)) {
+    } else if (!("data" in item) && item.parent.startsWith(gameObj.HAND)) {
       // remove from hand
       removeFromHand({ gameStates, item, player, roomId });
       socket.emit("RemoveFromHand", { item });
@@ -124,11 +127,17 @@ io.on("connection", (socket) => {
       player,
       message: `Drop ${item.name} on Board`,
     });
-
-    io.in(roomId).emit("Message", {
-      player,
-      message: `Drop ${item.name} on Board`,
-    });
+    if ("data" in item) {
+      io.in(roomId).emit("Message", {
+        player,
+        message: `Drop ${item.name} on Board`,
+      });
+    } else {
+      io.in(roomId).emit("Message", {
+        player,
+        message: `Drop ${item.isHidden ? "hidden" : item.name} on Board`,
+      });
+    }
   });
 
   socket.on("DropOnHand", ({ item, player }) => {
@@ -160,7 +169,7 @@ io.on("connection", (socket) => {
       board: gameStates[roomId].board,
       item: item,
       player,
-      message: `Add ${item.name} to Hand`,
+      message: ``,
     });
 
     // add to sender's hand
@@ -168,7 +177,7 @@ io.on("connection", (socket) => {
 
     io.in(roomId).emit("Message", {
       player,
-      message: `Add ${item.name} to Hand`,
+      message: `Add ${item.isHidden ? "hidden" : item.name} to Hand`,
     });
   });
 
@@ -200,18 +209,32 @@ io.on("connection", (socket) => {
       board: gameStates[roomId].board,
       item,
       player,
-      message: `Drop ${item.name} on Stack ${stackId}`,
+      message: ``,
     });
 
-    io.in(roomId).emit("Message", {
-      player,
-      message: `Drop ${item.name} on Stack ${stackId}`,
-    });
+    // io.in(roomId).emit("Message", {
+    //   player,
+    //   message: `Drop ${item.name} on Stack ${stackId}`,
+    // });
   });
+  //// here
 
   socket.on("SendMessage", ({ player, message }) => {
     const roomId = player.roomId;
-    socket.broadcast.to(roomId).emit("Message", { player, message });
+    io.in(roomId).emit("Message", { player, message });
+  });
+
+  socket.on("FlipCard", ({ player, item }) => {
+    const roomId = player.roomId;
+    item.isHidden = !item.isHidden;
+    gameStates[roomId].board[item.id] = item;
+
+    io.in(roomId).emit("FlipCard", {
+      player,
+      board: gameStates[roomId].board,
+    });
+
+    io.in(roomId).emit("Message", { player, message: "flip stack" });
   });
 
   /// blaaankkk
@@ -232,16 +255,38 @@ io.on("connection", (socket) => {
     io.in(roomId).emit("DropFromStack", { item, roomId, stackId });
   });
 
-  socket.on("ShuffleStack", ({ roomId, stackId, stackData }) => {
-    io.in(roomId).emit("ShuffleStack", { roomId, stackId, stackData });
+  socket.on("ShuffleStack", ({ player, stack }) => {
+    const roomId = player.roomId;
+
+    const gameStack = gameStates[roomId].board[stack.id];
+    if ("data" in gameStack) {
+      shuffle(gameStack.data);
+    } else {
+      return;
+    }
+
+    io.in(roomId).emit("ShuffleStack", {
+      player,
+      board: gameStates[roomId].board,
+    });
+    io.emit("Message", { player, message: "shuffle stack" });
   });
 
-  socket.on("FlipStack", ({ roomId, stackId, stackData }) => {
-    io.in(roomId).emit("FlipStack", { roomId, stackId, stackData });
-  });
+  socket.on("FlipStack", ({ player, stack }) => {
+    const roomId = player.roomId;
+    const gameStack = gameStates[roomId].board[stack.id];
+    if ("data" in gameStack) {
+      flipAll(gameStack.data, !gameStack.data[0].isHidden);
+    } else {
+      return;
+    }
 
-  socket.on("FlipCard", ({ roomId, itemId, value }) => {
-    io.in(roomId).emit("FlipCard", { roomId, itemId, value });
+    io.in(roomId).emit("FlipStack", {
+      player,
+      board: gameStates[roomId].board,
+    });
+
+    io.emit("Message", { player, message: "flip stack" });
   });
 });
 

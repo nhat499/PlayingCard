@@ -1,4 +1,4 @@
-import { gameObj, Item, Room, Stack } from "../interfaces/gameStateInterface";
+import { gameObj, Item, Stack } from "../interfaces/gameStateInterface";
 
 const Suite = ["spade", "club", "diamond", "heart"];
 

@@ -1,6 +1,5 @@
-import { DraggableProps } from "./Draggable";
 import { useDroppable } from "@dnd-kit/core";
-import Card, { CardProps } from "./Card";
+import Card from "./Card";
 import {
     gameObj,
     Item,

@@ -5,6 +5,7 @@ import { socket } from "../socket/Socket";
 import DraggableOptions from "./DraggableOptions";
 import { useParams } from "react-router-dom";
 import Card, { CardProps } from "./Card";
+import { useUser } from "../atom/userAtom";
 
 export type StackProps = {
     stack: item & { data: CardProps["card"][]; width: number; height: number };
@@ -15,27 +16,32 @@ export type StackProps = {
     ) => void;
 };
 
-function shuffle(array: CardProps["card"][]) {
-    let currentIndex = array.length;
+// function shuffle(array: CardProps["card"][]) {
+//     let currentIndex = array.length;
 
-    while (currentIndex != 0) {
-        const randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex--;
-        [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
-    }
-}
+//     while (currentIndex != 0) {
+//         const randomIndex = Math.floor(Math.random() * currentIndex);
+//         currentIndex--;
+//         [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+//     }
+// }
 
-function flipAll(array: CardProps["card"][], isHidden: boolean) {
-    for (const item of array) {
-        item.isHidden = isHidden;
-    }
-}
+// function flipAll(array: CardProps["card"][], isHidden: boolean) {
+//     for (const item of array) {
+//         item.isHidden = isHidden;
+//     }
+// }
 
 const Stack = ({ stack }: StackProps) => {
     const { setNodeRef: setDropRef } = useDroppable({
         id: stack.id,
     });
-    const { roomId } = useParams();
+
+    const { user } = useUser();
+
+    if (!user) {
+        throw Error("user Not found");
+    }
     const [openDialog, setOpenDialog] = useState(false);
 
     return (
@@ -56,14 +62,25 @@ const Stack = ({ stack }: StackProps) => {
                 setOpenDialog={setOpenDialog}
                 zIndex={stack.zIndex + 1}
             >
-                <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                <div
+                    style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "8px",
+                    }}
+                >
                     <button
                         onClick={() => {
-                            shuffle(stack.data);
+                            // shuffle(stack.data);
+                            // socket.emit("ShuffleStack", {
+                            //     roomId,
+                            //     stackId: stack.id,
+                            //     stackData: stack.data,
+                            // });
+
                             socket.emit("ShuffleStack", {
-                                roomId,
-                                stackId: stack.id,
-                                stackData: stack.data,
+                                player: user,
+                                stack,
                             });
                             setOpenDialog(false);
                         }}
@@ -83,11 +100,16 @@ const Stack = ({ stack }: StackProps) => {
                     <button
                         onClick={() => {
                             if (stack.data.length < 1) return;
-                            flipAll(stack.data, !stack.data[0].isHidden);
+                            // flipAll(stack.data, !stack.data[0].isHidden);
+                            // socket.emit("FlipStack", {
+                            //     roomId,
+                            //     stackId: stack.id,
+                            //     stackData: stack.data,
+                            // });
+
                             socket.emit("FlipStack", {
-                                roomId,
-                                stackId: stack.id,
-                                stackData: stack.data,
+                                player: user,
+                                stack,
                             });
                             setOpenDialog(false);
                         }}
@@ -134,12 +156,7 @@ const Stack = ({ stack }: StackProps) => {
                             }}
                         >
                             {stack.data?.map((item) => {
-                                return (
-                                    <Card
-                                        key={item.id}
-                                        card={item}
-                                    />
-                                );
+                                return <Card key={item.id} card={item} />;
                             })}
                         </div>
                     </div>

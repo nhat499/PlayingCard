@@ -38,22 +38,14 @@ const CreateGameScreen = () => {
         // start game
         socket.on("StartGame", ({ roomId, gameState }) => {
             setGameStates(gameState);
-            navigate("/game/" + roomId, { state: gameState.setting });
+            navigate("/game/" + roomId);
         });
-
-        // const storedRoomId = localStorage.getItem("roomId");
-        // const localUser = localStorage.getItem("user");
-        // const storedUser = localUser && JSON.parse(localUser);
-        // if (storedRoomId && storedUser) {
-        //     socket.emit("RejoinRoom", { roomId: storedRoomId, user: storedUser });
-        // }
 
         // socket.emit()
         return () => {
             socket.off("SomeOneJoin");
             socket.off("CurrentPlayers");
             socket.off("StartGame");
-            // socket.off("RejoinRoom");
         };
     });
 
@@ -88,8 +80,6 @@ const CreateGameScreen = () => {
                             boardState: boardState,
                             setting: setting,
                         });
-
-                        navigate("/game/" + roomId);
                     }}
                 />
             </div>
