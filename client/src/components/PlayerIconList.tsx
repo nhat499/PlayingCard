@@ -20,7 +20,6 @@ const PlayerIconList = ({ players }: PlayerIconListProps) => {
                     <PlayerIcon
                         key={player.socketId}
                         name={player.name}
-                        socketId={player.socketId}
                     />
                 ))}
             </div>

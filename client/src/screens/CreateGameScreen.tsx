@@ -44,7 +44,6 @@ const CreateGameScreen = () => {
         // socket.emit()
         return () => {
             socket.off("SomeOneJoin");
-            socket.off("CurrentPlayers");
             socket.off("StartGame");
         };
     });

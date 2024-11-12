@@ -113,11 +113,11 @@ function GameScreen() {
     }
 
     useEffect(() => {
-        socket.on("BoardUpdate", ({ item, player, board }) => {
+        socket.on("BoardUpdate", ({ board }) => {
             setBoardItem(board);
         });
 
-        socket.on("AddToHand", ({ item, player }) => {
+        socket.on("AddToHand", ({ item }) => {
             setHandItem((prevItem) => {
                 const newItem = { ...prevItem };
                 newItem[item.id] = item;
@@ -133,7 +133,7 @@ function GameScreen() {
             });
         });
 
-        socket.on("OnBoardDrag", ({ item, player }) => {
+        socket.on("OnBoardDrag", ({ item }) => {
             setBoardItem((currItem) => {
                 currItem[item.id] = item;
                 return { ...currItem };
@@ -182,7 +182,7 @@ function GameScreen() {
                     // isDragging={isDragging}
                     />
 
-                    <Hand cards={handItem} setItems={setHandItem} />
+                    <Hand cards={handItem} />
                 </div>
 
                 <div

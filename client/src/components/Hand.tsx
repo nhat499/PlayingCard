@@ -8,10 +8,9 @@ import {
 
 export type HandProps = {
     cards: Player["hand"];
-    setItems: (value: React.SetStateAction<Player["hand"]>) => void;
 };
 
-const Hand = ({ cards, setItems }: HandProps) => {
+const Hand = ({ cards }: HandProps) => {
     const { setNodeRef } = useDroppable({
         id: gameObj.HAND,
     });
@@ -44,12 +43,7 @@ const Hand = ({ cards, setItems }: HandProps) => {
                     {item.id.startsWith(gameObj.ITEM) && (
                         <Card
                             card={item as Item}
-                            setAttribute={(id, key, value) =>
-                                setItems((currItems) => {
-                                    currItems[id][key] = value;
-                                    return currItems;
-                                })
-                            }
+                            disableOptions={false}
                         />
                     )}
                 </div>

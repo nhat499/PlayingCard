@@ -1,6 +1,5 @@
-import { Iuser } from "../atom/userAtom";
 
-const PlayerIcon = ({ name, socketId }: Iuser) => {
+const PlayerIcon = ({ name }: { name: string }) => {
     return (
         <div
             style={{

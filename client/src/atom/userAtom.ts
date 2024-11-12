@@ -3,11 +3,6 @@ import {
     Player,
     Room,
 } from "../../../server/src/interfaces/gameStateInterface";
-// export interface Iuser {
-//     name: string;
-//     socketId: string;
-//     roomLeader?: boolean;
-// }
 
 export const userAtom = atom<Player>();
 

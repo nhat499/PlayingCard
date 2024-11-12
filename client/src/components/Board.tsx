@@ -33,20 +33,22 @@ const Board = ({ items, setItems, size }: BoardProps) => {
     // };
 
     useEffect(() => {
-        socket.on("FlipCard", ({ board, player }) => {
-            // setAttribute(itemId, "isHidden", value);
+        socket.on("FlipCard", ({ board }) => {
             setItems(board);
             // emit message?
         });
 
-        socket.on("ShuffleStack", ({ player, board }) => {
-            // setAttribute(stackId, "data", stackData);
+        socket.on("LockCard", ({ board }) => {
             setItems(board);
             // emit message?
         });
 
-        socket.on("FlipStack", ({ player, board }) => {
-            // setAttribute(stackId, "data", stackData);
+        socket.on("ShuffleStack", ({ board }) => {
+            setItems(board);
+            // emit message?
+        });
+
+        socket.on("FlipStack", ({ board }) => {
             setItems(board);
         });
 
@@ -89,24 +91,14 @@ const Board = ({ items, setItems, size }: BoardProps) => {
                             <Card
                                 key={key}
                                 card={item as Item}
-                                setAttribute={(id, key, value) =>
-                                    setItems((currItems) => {
-                                        currItems[id][key] = value;
-                                        return currItems;
-                                    })
-                                }
+                                disableOptions={false}
                             />
                         )}
                         {item.id.startsWith(gameObj.STACK) && (
                             <ItemStack
                                 key={key}
                                 stack={item as Stack}
-                                setAttribute={(id, key, value) =>
-                                    setItems((currItems) => {
-                                        currItems[id][key] = value;
-                                        return currItems;
-                                    })
-                                }
+
                             />
                         )}
                     </div>

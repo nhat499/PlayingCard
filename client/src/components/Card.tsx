@@ -4,6 +4,7 @@ import DraggableOptions from "./DraggableOptions";
 import { socket } from "../socket/Socket";
 import { Polygon } from "@html-polygon/react";
 import { useUser } from "../atom/userAtom";
+import { gameObj } from "../../../server/src/interfaces/gameStateInterface";
 
 export type CardProps = {
     card: item & {
@@ -13,14 +14,10 @@ export type CardProps = {
         isHidden: boolean;
         sides: number;
     };
-    setAttribute?: (
-        itemId: string,
-        key: string,
-        value: string | number | boolean
-    ) => void;
+    disableOptions: boolean;
 };
 
-const Card = ({ card, setAttribute }: CardProps) => {
+const Card = ({ card, disableOptions }: CardProps) => {
     const { user } = useUser();
     const [openDialog, setOpenDialog] = useState(false);
     if (!user) {
@@ -39,63 +36,64 @@ const Card = ({ card, setAttribute }: CardProps) => {
                 setOpenDialog(true);
             }}
         >
-            {setAttribute && (
-                <DraggableOptions
-                    openDialog={openDialog}
-                    setOpenDialog={setOpenDialog}
-                    zIndex={card.zIndex + 1}
+
+            {!disableOptions && <DraggableOptions
+                openDialog={openDialog}
+                setOpenDialog={setOpenDialog}
+                zIndex={card.zIndex + 1}
+            >
+                <div
+                    style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "8px",
+                    }}
                 >
-                    <div
+                    <button
                         style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: "8px",
+                            padding: "8px 16px",
+                            backgroundColor: "#28a745",
+                            color: "#fff",
+                            border: "none",
+                            borderRadius: "5px",
+                            cursor: "pointer",
+                            transition: "all 0.3s ease",
+                        }}
+                        onClick={() => {
+                            socket.emit("LockCard", {
+                                player: user,
+                                item: card,
+                            });
+                            setOpenDialog(false);
                         }}
                     >
-                        <button
-                            style={{
-                                padding: "8px 16px",
-                                backgroundColor: "#28a745",
-                                color: "#fff",
-                                border: "none",
-                                borderRadius: "5px",
-                                cursor: "pointer",
-                                transition: "all 0.3s ease",
-                            }}
-                            onClick={() => {
-                                setAttribute(
-                                    card.id,
-                                    "disabled",
-                                    !card.disabled
-                                );
-                                setOpenDialog(false);
-                            }}
-                        >
-                            {card.disabled ? "unlock" : "lock"}
-                        </button>
-                        <button
-                            style={{
-                                padding: "8px 16px",
-                                backgroundColor: "#007bff",
-                                color: "#fff",
-                                border: "none",
-                                borderRadius: "5px",
-                                cursor: "pointer",
-                                transition: "all 0.3s ease",
-                            }}
-                            onClick={() => {
+                        {card.disabled ? "unlock" : "lock"}
+                    </button>
+                    <button
+                        style={{
+                            padding: "8px 16px",
+                            backgroundColor: "#007bff",
+                            color: "#fff",
+                            border: "none",
+                            borderRadius: "5px",
+                            cursor: "pointer",
+                            transition: "all 0.3s ease",
+                        }}
+                        onClick={() => {
+                            if (card.parent === gameObj.BOARD) {
                                 socket.emit("FlipCard", {
                                     player: user,
                                     item: card,
                                 });
-                                setOpenDialog(false);
-                            }}
-                        >
-                            flip
-                        </button>
-                    </div>
-                </DraggableOptions>
-            )}
+                            }
+                            card.isHidden = !card.isHidden;
+                            setOpenDialog(false);
+                        }}
+                    >
+                        flip
+                    </button>
+                </div>
+            </DraggableOptions>}
             <Draggable
                 item={{
                     ...card,

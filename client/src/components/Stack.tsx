@@ -3,34 +3,12 @@ import Draggable, { item } from "./Draggable";
 import { useState } from "react";
 import { socket } from "../socket/Socket";
 import DraggableOptions from "./DraggableOptions";
-import { useParams } from "react-router-dom";
 import Card, { CardProps } from "./Card";
 import { useUser } from "../atom/userAtom";
 
 export type StackProps = {
     stack: item & { data: CardProps["card"][]; width: number; height: number };
-    setAttribute: (
-        itemId: string,
-        key: string,
-        value: string | number | boolean | item[]
-    ) => void;
 };
-
-// function shuffle(array: CardProps["card"][]) {
-//     let currentIndex = array.length;
-
-//     while (currentIndex != 0) {
-//         const randomIndex = Math.floor(Math.random() * currentIndex);
-//         currentIndex--;
-//         [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
-//     }
-// }
-
-// function flipAll(array: CardProps["card"][], isHidden: boolean) {
-//     for (const item of array) {
-//         item.isHidden = isHidden;
-//     }
-// }
 
 const Stack = ({ stack }: StackProps) => {
     const { setNodeRef: setDropRef } = useDroppable({
@@ -49,7 +27,6 @@ const Stack = ({ stack }: StackProps) => {
             style={{
                 position: "relative",
                 cursor: "pointer",
-                // width: stack.width, // Add some spacing around the stack
             }}
             onContextMenu={(e) => {
                 e.preventDefault();
@@ -158,7 +135,11 @@ const Stack = ({ stack }: StackProps) => {
                             {/* {stack.data?.map((item) => {
                                 return <Card key={item.id} card={item} />;
                             })} */}
-                            {stack.data.length > 0 && <Card card={stack.data[stack.data.length - 1]} />}
+                            {stack.data.length > 0 &&
+                                <Card
+                                    card={stack.data[stack.data.length - 1]}
+                                    disableOptions={true}
+                                />}
                         </div>
                     </div>
                 )}
