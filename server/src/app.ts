@@ -18,26 +18,35 @@ import {
   removeFromStack,
   shuffle,
 } from "./stateFunction";
-
+import path from "path";
+import dotenv from "dotenv"
+dotenv.config();
 // const express = require('express');
 // const http = require("http");
 // const { Server } = require("socket.io");
 // const cors = require("cors");
-
 const app = express();
 const server = http.createServer(app);
 
-app.use(cors());
+app.use(cors(
+  // { origin: "*" }
+  { origin: ["http://localhost:3000", process.env.ORIGIN] }
+));
 
+// // Serve static files from the React app
+app.use(express.static(path.join(__dirname, './../../client/dist')));
 const io = new Server<
   ClientToServerEvents,
   ServerToClientEvents,
   InterServerEvents,
   SocketData
 >(server, {
-  cors: {
-    origin: "http://localhost:5173",
-  },
+  // cors: { origin: ["http://localhost:5173"] },
+  // cors: { origin: "*" }
+  // cors: { origin: ["https://3270-71-231-24-229.ngrok-free.app", "https://myapp.loca.lt", "http://localhost:3000"] },
+  cors: { origin: ["http://localhost:5173", "http://localhost:3000", process.env.ORIGIN] },
+  // path: "/api/socket.io", // Match client path here
+  transports: ["websocket", "polling"]
 });
 
 const gameStates: GameStates = {};
@@ -227,15 +236,33 @@ io.on("connection", (socket) => {
 
   socket.on("FlipCard", ({ player, item }) => {
     const roomId = player.roomId;
-    item.isHidden = !item.isHidden;
-    gameStates[roomId].board[item.id] = item;
+    if (item.parent === gameObj.BOARD) {
+      item.isHidden = !item.isHidden;
+      gameStates[roomId].board[item.id] = item;
 
-    io.in(roomId).emit("FlipCard", {
-      player,
-      board: gameStates[roomId].board,
-    });
+      io.in(roomId).emit("FlipCard", {
+        player,
+        board: gameStates[roomId].board,
+      });
 
-    io.in(roomId).emit("Message", { player, message: "flip stack" });
+      io.in(roomId).emit("Message", { player, message: "flip card" });
+    }
+  });
+
+  socket.on("LockCard", ({ player, item }) => {
+    const roomId = player.roomId;
+    if (item.parent === gameObj.BOARD) {
+
+      item.disabled = !item.disabled;
+      gameStates[roomId].board[item.id] = item;
+
+      io.in(roomId).emit("LockCard", {
+        player,
+        board: gameStates[roomId].board,
+      });
+
+      io.in(roomId).emit("Message", { player, message: "lock card" });
+    }
   });
 
   socket.on("ShuffleStack", ({ player, stack }) => {
@@ -272,7 +299,8 @@ io.on("connection", (socket) => {
     io.emit("Message", { player, message: "flip stack" });
   });
 
-  let update = false;
+  // // test another aciton while i am dragging
+  // let update = false;
 
   socket.on("OnBoardDrag", ({ item, player }) => {
     // socket.broadcast.to(roomId).emit("DropOnBoard", { item, roomId });
@@ -299,10 +327,9 @@ io.on("connection", (socket) => {
 
 });
 
-server.listen(3000, () => {
-  console.log("server running at http://localhost:3000");
+server.listen(3000, "0.0.0.0", () => {
+  console.log("Server running at http://localhost:3000");
 });
-
 // // sending to sender-client only
 // socket.emit('message', "this is a test");
 
