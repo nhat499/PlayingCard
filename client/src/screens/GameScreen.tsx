@@ -34,6 +34,7 @@ function GameScreen() {
     const [openAddItemPopup, setOpenAddItemPopup] = useState<boolean>(false);
     const [isItemDrag, setIsItemDrag] = useState(false);
     const [boardPosition, setBoardPosition] = useState({ x: 0, y: 0 });
+    const [boardScale, setBoardScale] = useState(1);;
 
     function handleDragEnd(event: DragEndEvent) {
         console.log("i am being drag");
@@ -109,7 +110,7 @@ function GameScreen() {
     function handleDragMove(event: DragMoveEvent) {
         const updateItem = { ...event.active.data.current } as Item | Stack;
         if (user && updateItem && event.over?.id === gameObj.BOARD) {
-            updateItem.transform = `translate3d(${event.delta.x}px, ${event.delta.y}px, 0)`;
+            updateItem.transform = `translate3d(${event.delta.x}px, ${event.delta.y}px, 0) scale(${boardScale})`;
             socket.emit("OnBoardDrag", {
                 item: updateItem,
                 player: user
@@ -146,12 +147,10 @@ function GameScreen() {
         });
 
         return () => {
-            console.log("disconnection?");
             socket.off("BoardUpdate");
             socket.off("AddToHand");
             socket.off("RemoveFromHand");
             socket.off("OnBoardDrag");
-            // socket.off("DropOnBoard");
         };
     }, []);
 
@@ -187,6 +186,8 @@ function GameScreen() {
                         items={boardItem}
                         setItems={setBoardItem}
                         itemDragging={isItemDrag}
+                        boardScale={boardScale}
+                        setBoardScale={setBoardScale}
                     // isDragging={isDragging}
                     />
 
