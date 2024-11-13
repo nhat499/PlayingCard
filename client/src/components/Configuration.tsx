@@ -37,7 +37,7 @@ const Configuration = ({
                         resize: "none",
                         minWidth: "400px",
                         minHeight: "600px",
-                        fontSize: "18px",
+                        fontSize: "16px",
                     }}
                     disabled={!isRoomLeader}
                     value={boardState}
@@ -51,7 +51,7 @@ const Configuration = ({
                         resize: "none",
                         minWidth: "400px",
                         minHeight: "600px",
-                        fontSize: "18px",
+                        fontSize: "16px",
                     }}
                     disabled={!isRoomLeader}
                     value={settingValue}

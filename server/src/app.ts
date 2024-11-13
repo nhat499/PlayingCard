@@ -21,10 +21,6 @@ import {
 import path from "path";
 import dotenv from "dotenv"
 dotenv.config();
-// const express = require('express');
-// const http = require("http");
-// const { Server } = require("socket.io");
-// const cors = require("cors");
 const app = express();
 const server = http.createServer(app);
 
@@ -41,22 +37,15 @@ const io = new Server<
   InterServerEvents,
   SocketData
 >(server, {
-  // cors: { origin: ["http://localhost:5173"] },
-  // cors: { origin: "*" }
-  // cors: { origin: ["https://3270-71-231-24-229.ngrok-free.app", "https://myapp.loca.lt", "http://localhost:3000"] },
   cors: { origin: ["http://localhost:5173", "http://localhost:3000", process.env.ORIGIN] },
-  // path: "/api/socket.io", // Match client path here
   transports: ["websocket", "polling"]
 });
 
 const gameStates: GameStates = {};
 
 io.on("connection", (socket) => {
-  console.log("user connected: ", socket.id);
-
   socket.on("CreateRoom", ({ name }) => {
     const roomId: string = nanoid(5);
-    console.log("on create room:", name, roomId);
     socket.join(roomId);
     const playerOne: Player = {
       hand: {},
@@ -71,8 +60,8 @@ io.on("connection", (socket) => {
       players: [playerOne],
       setting: {
         window: {
-          width: 1300,
-          height: 700,
+          width: 700,
+          height: 500,
         },
       },
     };

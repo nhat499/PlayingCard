@@ -1,6 +1,5 @@
 import { Polygon } from "@html-polygon/react";
 import { useState } from "react";
-import { CardProps } from "./Card";
 import { socket } from "../socket/Socket";
 import {
     gameObj,
@@ -19,20 +18,20 @@ type AddItemPopupProps = {
     >;
 };
 
-const baseItem: CardProps["card"] = {
+const baseItem: Item | Stack = {
+    sides: 4,
     color: "white",
-    disabled: false,
+    width: 100,
     height: 100,
+    name: "test",
     id: "cardNew",
     isHidden: false,
-    rotate: 0,
     left: 0,
     top: 0,
-    name: "test",
-    parent: gameObj.BOARD,
-    width: 100,
     zIndex: 0,
-    sides: 4,
+    rotate: 0,
+    disabled: false,
+    parent: gameObj.BOARD,
 };
 
 const AddItemPopup = ({ open, setOpen }: AddItemPopupProps) => {
@@ -47,7 +46,7 @@ const AddItemPopup = ({ open, setOpen }: AddItemPopupProps) => {
     let newItem: Item | undefined;
     try {
         newItem = JSON.parse(newItemString) ?? undefined;
-    } catch (err) {}
+    } catch (err) { }
 
     return (
         open && (
@@ -55,7 +54,8 @@ const AddItemPopup = ({ open, setOpen }: AddItemPopupProps) => {
                 style={{
                     borderRadius: "10px",
                     padding: "20px",
-                    maxWidth: "800px",
+                    // maxWidth: "800px",
+                    overflowAnchor: "auto"
                 }}
             >
                 <div style={{ display: "flex", gap: "15px" }}>
@@ -77,8 +77,8 @@ const AddItemPopup = ({ open, setOpen }: AddItemPopupProps) => {
                     />
                     <div
                         style={{
-                            minWidth: "150px",
-                            minHeight: "150px",
+                            // minWidth: "150px",
+                            // minHeight: "150px",
                             border: "1px solid #ced4da",
                             backgroundColor: "white",
                             borderRadius: "8px",

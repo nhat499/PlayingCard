@@ -54,35 +54,36 @@ const CreateGameScreen = () => {
     }, [roomId, user]);
 
     return (
-        <DefaultScreen>
-            <div
-                style={{
-                    display: "flex",
-                    gap: "30px",
+
+        <div
+            style={{
+                display: "flex",
+                justifyContent: "center",
+                gap: "30px",
+            }}
+        >
+            <PlayerIconList players={gameStates.players} />
+            <Configuration
+                settingValue={settingValue}
+                setSettingValue={setSettingValue}
+                boardState={boardStateValue}
+                setBoardState={setBoardStateValue}
+                isRoomLeader={user.roomLeader}
+                startGame={() => {
+                    if (!user.roomLeader) return;
+                    const setting: Room["setting"] =
+                        JSON.parse(settingValue);
+                    const boardState: Room["board"] =
+                        JSON.parse(boardStateValue);
+                    socket.emit("StartGame", {
+                        roomId,
+                        boardState: boardState,
+                        setting: setting,
+                    });
                 }}
-            >
-                <PlayerIconList players={gameStates.players} />
-                <Configuration
-                    settingValue={settingValue}
-                    setSettingValue={setSettingValue}
-                    boardState={boardStateValue}
-                    setBoardState={setBoardStateValue}
-                    isRoomLeader={user.roomLeader}
-                    startGame={() => {
-                        if (!user.roomLeader) return;
-                        const setting: Room["setting"] =
-                            JSON.parse(settingValue);
-                        const boardState: Room["board"] =
-                            JSON.parse(boardStateValue);
-                        socket.emit("StartGame", {
-                            roomId,
-                            boardState: boardState,
-                            setting: setting,
-                        });
-                    }}
-                />
-            </div>
-        </DefaultScreen>
+            />
+        </div>
+
     );
 };
 

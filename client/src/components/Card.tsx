@@ -2,9 +2,10 @@ import { useState } from "react";
 import Draggable, { item } from "./Draggable";
 import DraggableOptions from "./DraggableOptions";
 import { socket } from "../socket/Socket";
-import { Polygon } from "@html-polygon/react";
+// import { Polygon } from "@html-polygon/react";
 import { useUser } from "../atom/userAtom";
 import { gameObj } from "../../../server/src/interfaces/gameStateInterface";
+import Polygon from "./Polygon";
 
 export type CardProps = {
     card: item & {
@@ -99,20 +100,7 @@ const Card = ({ card, disableOptions }: CardProps) => {
                     ...card,
                 }}
                 Children={(isDragging) => (
-                    <Polygon
-                        sides={card.sides}
-                        rotate={card.rotate}
-                        borderColor="#a3c9f1"
-                        borderWidth={1}
-                        stable
-                        style={{
-                            width: `${card.width + 20}px`,
-                            height: `${card.height + 30}px`,
-                            backgroundColor: card.color ?? "white",
-                            textAlign: "center",
-                            opacity: isDragging ? 0.5 : 1,
-                        }}
-                    >
+                    <Polygon height={card.height + 40} sides={4} width={card.width + 40}>
                         <div
                             style={{
                                 wordWrap: "normal",
@@ -127,6 +115,34 @@ const Card = ({ card, disableOptions }: CardProps) => {
                             {card.isHidden ? "hidden" : card.name}
                         </div>
                     </Polygon>
+                    // <Polygon
+                    //     sides={card.sides}
+                    //     rotate={card.rotate}
+                    //     borderColor="#a3c9f1"
+                    //     borderWidth={1}
+                    //     stable
+                    //     style={{
+                    //         width: `${card.width + 20}px`,
+                    //         height: `${card.height + 30}px`,
+                    //         backgroundColor: card.color ?? "white",
+                    //         textAlign: "center",
+                    //         opacity: isDragging ? 0.5 : 1,
+                    //     }}
+                    // >
+                    //     <div
+                    //         style={{
+                    //             wordWrap: "normal",
+                    //             overflowWrap: "break-word",
+                    //             textOverflow: "ellipsis",
+                    //             // overflow: "visible",
+                    //             padding: "5px",
+                    //             fontSize: "16px",
+                    //             height: "100%", // Center text vertically
+                    //         }}
+                    //     >
+                    //         {card.isHidden ? "hidden" : card.name}
+                    //     </div>
+                    // </Polygon>
                 )}
             />
         </div>

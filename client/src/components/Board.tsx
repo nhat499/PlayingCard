@@ -2,7 +2,7 @@ import { useDroppable } from "@dnd-kit/core";
 import ItemStack from "./Stack";
 import Card from "./Card";
 import { socket } from "../socket/Socket";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
     gameObj,
     Item,
@@ -21,31 +21,22 @@ const Board = ({ items, setItems, size }: BoardProps) => {
         id: gameObj.BOARD,
     });
 
-    // const setAttribute = (
-    //     id: string,
-    //     key: string,
-    //     value: string | number | boolean
-    // ) => {
-    //     setItems((currItems) => {
-    //         currItems[id][key] = value;
-    //         return { ...currItems };
-    //     });
-    // };
+    const [boardPosition, setBoardPosition] = useState({ x: 0, y: 0 });
+    const [cursorPosBefore, setCursorPosBefore] = useState({ x: 0, y: 0 });
+    const [isDragging, setIsDragging] = useState(false);
 
+    // socket events
     useEffect(() => {
         socket.on("FlipCard", ({ board }) => {
             setItems(board);
-            // emit message?
         });
 
         socket.on("LockCard", ({ board }) => {
             setItems(board);
-            // emit message?
         });
 
         socket.on("ShuffleStack", ({ board }) => {
             setItems(board);
-            // emit message?
         });
 
         socket.on("FlipStack", ({ board }) => {
@@ -56,54 +47,81 @@ const Board = ({ items, setItems, size }: BoardProps) => {
             socket.off("FlipCard");
             socket.off("ShuffleStack");
             socket.off("FlipStack");
+            socket.off("LockCard");
         };
     }, []);
 
+    const handleMouseDown = (e: React.MouseEvent) => {
+        setCursorPosBefore({ x: e.clientX, y: e.clientY });
+        setIsDragging(true);
+    };
+
+    const handleMouseMove = (e: React.MouseEvent) => {
+        if (!isDragging) return;
+
+        const deltaX = e.clientX - cursorPosBefore.x;
+        const deltaY = e.clientY - cursorPosBefore.y;
+
+        setBoardPosition({
+            x: boardPosition.x + deltaX,
+            y: boardPosition.y + deltaY,
+        });
+
+        // Update the cursor position for next move calculation
+        setCursorPosBefore({ x: e.clientX, y: e.clientY });
+    };
+
+    const handleMouseUp = () => {
+        setIsDragging(false);
+    };
+
     return (
         <div
-            ref={setNodeRef}
             style={{
+                minHeight: `${size.height}px`,
+                minWidth: `${size.width}px`,
+                border: "5px solid #a7c7dc",
+                overflow: "hidden",
+                backgroundColor: "#e6f7ff",
+                borderRadius: "12px",
+                cursor: isDragging ? "grabbing" : "grab",
                 position: "relative",
-                height: `${size.height}px`,
-                backgroundColor: "#e6f7ff", // Light gradient for a modern touch
-                borderRadius: "12px", // Rounded corners for a softer look
-                padding: "10px",
-                border: "5px solid #a7c7dc", // Light border to frame the board
-                // overflow: "hidden",
-            }}
-        >
-            {Object.entries(items).map(([key, item]) => {
-                return (
-                    <div
-                        key={key}
-                        style={{
-                            position: "absolute",
-                            zIndex: item.zIndex,
-                            top: item.top,
-                            left: item.left,
-                            // transform: isDragging ? "scale(1.05)" : "scale(1)", // Slight scaling effect when dragging
-                            transition:
-                                "transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out", // Smooth transitions
-                            // boxShadow: isDragging ? "0 4px 10px rgba(0, 0, 0, 0.3)" : "none", // Shadow effect during drag
-                        }}
-                    >
-                        {item.id.startsWith(gameObj.ITEM) && (
-                            <Card
-                                key={key}
-                                card={item as Item}
-                                disableOptions={false}
-                            />
-                        )}
-                        {item.id.startsWith(gameObj.STACK) && (
-                            <ItemStack
-                                key={key}
-                                stack={item as Stack}
 
-                            />
-                        )}
-                    </div>
-                );
-            })}
+            }}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp} // Stop dragging if mouse leaves the area
+        >
+            <div
+                ref={setNodeRef}
+                style={{
+                    position: "relative",
+                    left: `${boardPosition.x}px`, // Apply left position to move the board
+                    top: `${boardPosition.y}px`, // Apply top position to move the board
+                }}
+            >
+                {Object.entries(items).map(([key, item]) => {
+                    return (
+                        <div
+                            key={key}
+                            style={{
+                                position: "absolute",
+                                zIndex: item.zIndex,
+                                top: item.top,
+                                left: item.left,
+                            }}
+                        >
+                            {item.id.startsWith(gameObj.ITEM) && (
+                                <Card key={key} card={item as Item} disableOptions={false} />
+                            )}
+                            {item.id.startsWith(gameObj.STACK) && (
+                                <ItemStack key={key} stack={item as Stack} />
+                            )}
+                        </div>
+                    );
+                })}
+            </div>
         </div>
     );
 };

@@ -38,116 +38,114 @@ const SigninScreen = () => {
     });
 
     return (
-        <DefaultScreen>
+        <div
+            style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "20px",
+                maxWidth: "400px",
+                margin: "auto",
+                padding: "40px",
+                borderRadius: "12px",
+                boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
+            }}
+        >
+            <input
+                value={name}
+                placeholder="Name"
+                onChange={(e) => setName(e.target.value)}
+                style={{
+                    padding: "10px",
+                    borderRadius: "8px",
+                    border: "1px solid #ced4da",
+                    outline: "none",
+                    fontSize: "16px",
+                    boxShadow: "inset 0 1px 3px rgba(0, 0, 0, 0.1)",
+                }}
+            />
+            <input
+                value={roomId}
+                placeholder="Room ID"
+                onChange={(e) => setRoomId(e.target.value)}
+                style={{
+                    padding: "10px",
+                    borderRadius: "8px",
+                    border: "1px solid #ced4da",
+                    outline: "none",
+                    fontSize: "16px",
+                    boxShadow: "inset 0 1px 3px rgba(0, 0, 0, 0.1)",
+                }}
+            />
+
             <div
                 style={{
                     display: "flex",
-                    flexDirection: "column",
-                    gap: "20px",
-                    maxWidth: "400px",
-                    margin: "0 auto",
-                    padding: "40px",
-                    borderRadius: "12px",
-                    boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
+                    justifyContent: "space-between",
+                    gap: "10px",
                 }}
             >
-                <input
-                    value={name}
-                    placeholder="Name"
-                    onChange={(e) => setName(e.target.value)}
+                <button
+                    disabled={name === "" || buttonDisable}
+                    onClick={() => {
+                        socket.connect();
+                        socket.emit("CreateRoom", { name });
+                        setButtonDisable(true);
+                    }}
                     style={{
+                        flex: "1",
                         padding: "10px",
                         borderRadius: "8px",
-                        border: "1px solid #ced4da",
-                        outline: "none",
-                        fontSize: "16px",
-                        boxShadow: "inset 0 1px 3px rgba(0, 0, 0, 0.1)",
-                    }}
-                />
-                <input
-                    value={roomId}
-                    placeholder="Room ID"
-                    onChange={(e) => setRoomId(e.target.value)}
-                    style={{
-                        padding: "10px",
-                        borderRadius: "8px",
-                        border: "1px solid #ced4da",
-                        outline: "none",
-                        fontSize: "16px",
-                        boxShadow: "inset 0 1px 3px rgba(0, 0, 0, 0.1)",
-                    }}
-                />
-
-                <div
-                    style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        gap: "10px",
+                        border: "none",
+                        backgroundColor:
+                            name === "" || buttonDisable
+                                ? "#d6d6d6"
+                                : "#007bff",
+                        color: "white",
+                        cursor:
+                            name === "" || buttonDisable
+                                ? "not-allowed"
+                                : "pointer",
+                        boxShadow: "0 2px 5px rgba(0, 123, 255, 0.2)",
+                        transition: "background-color 0.2s",
                     }}
                 >
-                    <button
-                        disabled={name === "" || buttonDisable}
-                        onClick={() => {
-                            socket.connect();
-                            socket.emit("CreateRoom", { name });
-                            setButtonDisable(true);
-                        }}
-                        style={{
-                            flex: "1",
-                            padding: "10px",
-                            borderRadius: "8px",
-                            border: "none",
-                            backgroundColor:
-                                name === "" || buttonDisable
-                                    ? "#d6d6d6"
-                                    : "#007bff",
-                            color: "white",
-                            cursor:
-                                name === "" || buttonDisable
-                                    ? "not-allowed"
-                                    : "pointer",
-                            boxShadow: "0 2px 5px rgba(0, 123, 255, 0.2)",
-                            transition: "background-color 0.2s",
-                        }}
-                    >
-                        Create Room
-                    </button>
-                    <button
-                        disabled={roomId === "" || name === "" || buttonDisable}
-                        onClick={() => {
-                            socket.connect();
-                            const player: Player = {
-                                hand: {}, // doesnt matter
-                                name,
-                                roomId,
-                                roomLeader: false, // doesnt matter
-                            };
-                            socket.emit("JoinRoom", player);
-                            setButtonDisable(true);
-                        }}
-                        style={{
-                            flex: "1",
-                            padding: "10px",
-                            borderRadius: "8px",
-                            border: "none",
-                            backgroundColor:
-                                roomId === "" || name === "" || buttonDisable
-                                    ? "#d6d6d6"
-                                    : "#28a745",
-                            color: "white",
-                            cursor:
-                                roomId === "" || name === "" || buttonDisable
-                                    ? "not-allowed"
-                                    : "pointer",
-                            boxShadow: "0 2px 5px rgba(40, 167, 69, 0.2)",
-                            transition: "background-color 0.2s",
-                        }}
-                    >
-                        Join Room
-                    </button>
-                </div>
+                    Create Room
+                </button>
+                <button
+                    disabled={roomId === "" || name === "" || buttonDisable}
+                    onClick={() => {
+                        socket.connect();
+                        const player: Player = {
+                            hand: {}, // doesnt matter
+                            name,
+                            roomId,
+                            roomLeader: false, // doesnt matter
+                        };
+                        socket.emit("JoinRoom", player);
+                        setButtonDisable(true);
+                    }}
+                    style={{
+                        flex: "1",
+                        padding: "10px",
+                        borderRadius: "8px",
+                        border: "none",
+                        backgroundColor:
+                            roomId === "" || name === "" || buttonDisable
+                                ? "#d6d6d6"
+                                : "#28a745",
+                        color: "white",
+                        cursor:
+                            roomId === "" || name === "" || buttonDisable
+                                ? "not-allowed"
+                                : "pointer",
+                        boxShadow: "0 2px 5px rgba(40, 167, 69, 0.2)",
+                        transition: "background-color 0.2s",
+                    }}
+                >
+                    Join Room
+                </button>
             </div>
-        </DefaultScreen>
+        </div>
     );
 };
 

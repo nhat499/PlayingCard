@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from 'react';
 import { socket } from "../socket/Socket";
 import { useUser } from "../atom/userAtom";
 import { Message } from "../../../server/src/interfaces/gameStateInterface";
@@ -8,19 +8,14 @@ const ChatBox = () => {
     const { user } = useUser();
     const [input, setInput] = useState<string>("");
     const messageEndRef = useRef<HTMLDivElement | null>(null);
+
     if (!user) {
         throw Error("User not found");
     }
+
     const sendMessage = () => {
         if (input.trim()) {
-            const newMessage: Message = {
-                id: Date.now(),
-                text: `${user.name}: ${input}`,
-                user: user.name,
-            };
-
             socket.emit("SendMessage", { message: input, player: user });
-            setMessages((prevMessages) => [...prevMessages, newMessage]);
             setInput("");
         }
     };
@@ -29,7 +24,7 @@ const ChatBox = () => {
         socket.on("Message", ({ message, player }) => {
             const newMessage: Message = {
                 id: Date.now(),
-                text: `${player.name}: ${message}`,
+                text: `${message}`,
                 user: player.name,
             };
             setMessages((prevMessages) => [...prevMessages, newMessage]);
@@ -41,7 +36,9 @@ const ChatBox = () => {
 
     // Scroll to the latest message
     useEffect(() => {
-        messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        if (messageEndRef.current) {
+            messageEndRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+        }
     }, [messages]);
 
     return (
@@ -64,43 +61,56 @@ const ChatBox = () => {
             <div
                 style={{
                     flex: 1,
+                    overflowY: "auto",  // Enable scrolling for the chat box
                     padding: "10px",
-                    overflowY: "auto",
                     display: "flex",
                     flexDirection: "column",
                 }}
             >
-                {messages.map((message, index) => (
+                {messages.map((message) => (
                     <div
-                        key={index}
+                        key={message.id}
                         style={{
                             alignSelf:
-                                message.user === user.name
-                                    ? "flex-end"
-                                    : "flex-start",
-                            backgroundColor:
-                                message.user === user.name ? "#007bff" : "#ddd",
-                            color:
-                                message.user === user.name ? "white" : "black",
-                            borderRadius: "20px",
-                            padding: "8px 15px",
-                            margin: "5px 0",
+                                message.user === user.name ? "flex-end" : "flex-start",
                             maxWidth: "80%",
-                            wordWrap: "break-word",
-                        }}
-                    >
-                        {message.text}
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "flex-start"
+                        }}>
+                        <sub
+                            style={{
+                                marginTop: "10px",
+                                marginLeft: "10px"
+                            }}
+                        >{message.user != user.name && message.user}</sub>
+                        <div
+                            style={{
+                                backgroundColor:
+                                    message.user === user.name ? "#007bff" : "#ddd",
+                                color: message.user === user.name ? "white" : "black",
+                                padding: "5px 15px",
+                                borderRadius: "20px",
+                                // margin: "5px 0",
+                                textAlign: "left",
+                                wordWrap: "break-word",
+                            }}
+                        >
+                            {message.text}
+                        </div>
+
                     </div>
                 ))}
-                <div ref={messageEndRef} />
+                <div ref={messageEndRef} /> {/* This is the element you're scrolling to */}
             </div>
 
             {/* Input Box */}
             <div
                 style={{
                     display: "flex",
+                    alignItems: "center",
                     borderTop: "1px solid #ddd",
-                    padding: "10px",
+                    // padding: "0 0px 0 0",
                     backgroundColor: "#fff",
                 }}
             >
@@ -112,10 +122,12 @@ const ChatBox = () => {
                     style={{
                         flex: 1,
                         padding: "10px",
-                        border: "1px solid #ddd",
+                        // border: "1px solid #ddd",
+                        border: "none",
+                        outline: "none",
                         borderRadius: "20px",
-                        fontSize: "16px",
-                        marginRight: "10px",
+                        fontSize: "20px",
+                        margin: "0px 10px 0 10px",
                     }}
                     placeholder="Type a message..."
                 />
@@ -126,8 +138,8 @@ const ChatBox = () => {
                         color: "white",
                         border: "none",
                         borderRadius: "50%",
-                        width: "40px",
-                        height: "40px",
+                        width: "30px",
+                        height: "30px",
                         fontSize: "20px",
                         cursor: "pointer",
                         display: "flex",

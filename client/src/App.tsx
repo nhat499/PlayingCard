@@ -16,8 +16,6 @@ const App = () => {
                         element={<CreateGameScreen />}
                     />
                     <Route path="/game/:roomId" element={<GameScreen />} />
-                    {/* <Route path="contact" element={<Contact />} />
-                    <Route path="*" element={<NoPage />} /> */}
                 </Route>
             </Routes>
         </BrowserRouter>

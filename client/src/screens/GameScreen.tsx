@@ -34,10 +34,12 @@ function GameScreen() {
     const [openAddItemPopup, setOpenAddItemPopup] = useState<boolean>(false);
 
     function handleDragEnd(event: DragEndEvent) {
+        console.log("i am being drag");
         const { active, over, delta } = event;
         const item = active.data.current as Item | Stack | undefined;
         if (!item || !user || !over) return;
         if (over.id === gameObj.BOARD) {
+
             let updateItem = boardItem[item.id];
 
             // if item is already on the board;
@@ -159,7 +161,7 @@ function GameScreen() {
             <div
                 style={{
                     display: "grid",
-                    gridTemplateColumns: "3fr 1fr",
+                    gridTemplateColumns: "4fr 1fr",
                     gap: "10px",
                     overflow: "hidden",
                 }}
@@ -168,11 +170,11 @@ function GameScreen() {
                     style={{
                         display: "flex",
                         flexDirection: "column",
-                        width: "100%",
+                        // width: "100%",
                         gap: "10px", // Increased gap for better spacing
                         borderRadius: "12px", // Rounded corners for a modern touch
                         boxShadow: "0 6px 15px rgba(0, 0, 0, 0.1)", // Subtle shadow for depth
-                        overflow: "hidden",
+                        overflowAnchor: "auto"
                     }}
                 >
                     <Board
@@ -189,13 +191,14 @@ function GameScreen() {
                     style={{
                         // width: "100%",
                         // maxHeight: "parent",
+                        display: "flex",
                         backgroundColor: "#e6f7ff", // Soft light blue
                         border: "5px solid #a7c7dc", // Light border to frame the board
                         borderRadius: "12px", // Rounded corners for a modern touch
-                        display: "flex",
                         flexDirection: "column",
                         justifyContent: "space-between",
                         // overflow: "hidden"
+                        // overflowAnchor: "auto"
                     }}
                 >
                     <AddItemPopup

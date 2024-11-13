@@ -8,6 +8,7 @@ const Layout = () => {
                 minHeight: "100vh",
                 background: "linear-gradient(135deg, #8e9eab 0%, #eef2f3 100%)",
                 fontFamily: "'Poppins', sans-serif",
+                overflow: "hidden",
             }}
         >
             {/* Left Sidebar */}
@@ -75,7 +76,6 @@ const Layout = () => {
                 <div
                     style={{
                         width: "90%",
-                        // maxWidth: "500px",
                         backgroundColor: "#ffffff",
                         borderRadius: "15px",
                         boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
