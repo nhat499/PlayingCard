@@ -46,7 +46,7 @@ const ChatBox = () => {
             style={{
                 margin: "20px",
                 maxHeight: "450px",
-                minHeight: "350px",
+                minHeight: "100px",
                 border: "1px solid #ddd",
                 borderRadius: "8px",
                 display: "flex",

@@ -32,6 +32,8 @@ function GameScreen() {
     const [boardItem, setBoardItem] = useState<Room["board"]>(gameStates.board);
     const [handItem, setHandItem] = useState<Player["hand"]>({});
     const [openAddItemPopup, setOpenAddItemPopup] = useState<boolean>(false);
+    const [isItemDrag, setIsItemDrag] = useState(false);
+    const [boardPosition, setBoardPosition] = useState({ x: 0, y: 0 });
 
     function handleDragEnd(event: DragEndEvent) {
         console.log("i am being drag");
@@ -44,8 +46,8 @@ function GameScreen() {
 
             // if item is already on the board;
             if (updateItem) {
-                updateItem.left += delta.x;
-                updateItem.top += delta.y;
+                updateItem.left = updateItem.left + delta.x;
+                updateItem.top = updateItem.top + delta.y;
             } else {
                 // item is not already on the board;
                 updateItem = { ...item };
@@ -82,13 +84,14 @@ function GameScreen() {
                 });
             }
         }
+        setIsItemDrag(false);
     }
 
     function handleDragStart(event: DragStartEvent) {
         const { active } = event;
         const item = active.data.current as Item | undefined;
         if (!item) return;
-
+        setIsItemDrag(true);
         if (
             boardItem[item.id] &&
             item.zIndex < highestZIndex &&
@@ -179,8 +182,11 @@ function GameScreen() {
                 >
                     <Board
                         size={gameStates.setting.window}
+                        boardPosition={boardPosition}
+                        setBoardPosition={setBoardPosition}
                         items={boardItem}
                         setItems={setBoardItem}
+                        itemDragging={isItemDrag}
                     // isDragging={isDragging}
                     />
 
