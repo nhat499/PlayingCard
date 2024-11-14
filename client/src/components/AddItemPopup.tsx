@@ -1,4 +1,4 @@
-import { Polygon } from "@html-polygon/react";
+// import { Polygon } from "@html-polygon/react";
 import { useState } from "react";
 import { socket } from "../socket/Socket";
 import {
@@ -7,6 +7,7 @@ import {
     Stack,
 } from "../../../server/src/interfaces/gameStateInterface";
 import { useUser } from "../atom/userAtom";
+import Polygon from "./Polygon";
 
 type AddItemPopupProps = {
     open: boolean;
@@ -92,18 +93,10 @@ const AddItemPopup = ({ open, setOpen }: AddItemPopupProps) => {
                             {newItem && (
                                 <Polygon
                                     sides={newItem.sides ?? 4}
-                                    borderColor="black"
-                                    borderWidth={1}
-                                    stable
                                     rotate={newItem.rotate ?? 0}
-                                    style={{
-                                        width: `${newItem.width ?? 0}px`,
-                                        height: `${newItem.height ?? 0}px`,
-                                        backgroundColor:
-                                            newItem.color ?? "white",
-                                        textAlign: "center",
-                                        borderRadius: "4px",
-                                    }}
+                                    height={newItem.height}
+                                    width={newItem.width}
+
                                 >
                                     {newItem.name}
                                 </Polygon>

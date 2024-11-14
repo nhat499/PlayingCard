@@ -100,12 +100,13 @@ const Card = ({ card, disableOptions }: CardProps) => {
                     ...card,
                 }}
                 Children={(isDragging) => (
-                    <Polygon height={card.height + 40} sides={4} width={card.width + 40}>
+                    <Polygon height={card.height + 30} sides={card.sides} width={card.width + 30} rotate={card.rotate} >
                         <div
                             style={{
                                 wordWrap: "normal",
                                 overflowWrap: "break-word",
                                 textOverflow: "ellipsis",
+                                // backgroundColor: 'lightblue',
                                 // overflow: "visible",
                                 padding: "5px",
                                 fontSize: "16px",

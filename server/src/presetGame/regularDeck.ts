@@ -8,7 +8,7 @@ const createRegularDeckObject = () => {
     for (const s of Suite) {
       const card: Item = {
         sides: 4,
-        rotate: 0,
+        rotate: 45,
         color: "white",
         id: `${gameObj.ITEM}${i}${s}`,
         name: `${i} ${s}`,
@@ -27,7 +27,7 @@ const createRegularDeckObject = () => {
   for (const s of Suite) {
     const card: Item = {
       sides: 4,
-      rotate: 0,
+      rotate: 45,
       color: "white",
       id: `${gameObj.ITEM}${"jack"}${s}`,
       name: `${"jack"} ${s}`,
@@ -45,7 +45,7 @@ const createRegularDeckObject = () => {
   for (const s of Suite) {
     const card: Item = {
       sides: 4,
-      rotate: 0,
+      rotate: 45,
       color: "white",
       id: `${gameObj.ITEM}${"queen"}${s}`,
       name: `${"queen"} ${s}`,
@@ -63,7 +63,7 @@ const createRegularDeckObject = () => {
   for (const s of Suite) {
     const card: Item = {
       sides: 4,
-      rotate: 0,
+      rotate: 45,
       color: "white",
       id: `${gameObj.ITEM}${"king"}${s}`,
       name: `${"king"} ${s}`,
@@ -85,7 +85,7 @@ const regularDeck: Stack = {
   id: `${gameObj.STACK}-regularDeck`,
   name: "regularDeck",
   parent: gameObj.BOARD,
-  rotate: 0,
+  rotate: 45,
   zIndex: 1,
   width: 50,
   height: 70,

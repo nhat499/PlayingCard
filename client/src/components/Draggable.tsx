@@ -21,7 +21,7 @@ export type DraggableProps = {
 };
 
 const Draggable = ({ item, Children }: DraggableProps) => {
-    const { attributes, listeners, setNodeRef, transform, isDragging, active, activatorEvent, node } =
+    const { attributes, listeners, setNodeRef, transform, isDragging } =
         useDraggable({
             id: item.id,
             data: item,
@@ -46,6 +46,7 @@ const Draggable = ({ item, Children }: DraggableProps) => {
                 style={{
                     position: "absolute",
                     cursor: "move",
+                    ...(item.transform || isDragging ? { opacity: 0.7 } : {}),
                     ...style,
                 }}
                 {...listeners}
