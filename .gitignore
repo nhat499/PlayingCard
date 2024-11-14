@@ -2,7 +2,7 @@
 node_modules/
 
 # Ignore dist directory
-/dist/
+server/dist/*
 
 # Ignore .env file
 .env

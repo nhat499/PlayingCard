@@ -39,24 +39,31 @@ const ChatBox = () => {
         if (messageEndRef.current) {
             messageEndRef.current.scrollIntoView({
                 behavior: "smooth",
-                block: "end",
+                block: "nearest",
             });
         }
     }, [messages]);
 
     return (
         <div
+            tabIndex={1}
             style={{
-                maxHeight: "500px",
-                minHeight: "400px",
-                border: "1px solid #ddd",
+                maxHeight: "550px",
+                minHeight: "200px",
                 borderRadius: "8px",
                 display: "flex",
                 flexDirection: "column",
-                backgroundColor: "#f9f9f9",
+                backgroundColor: "whitesmoke",
                 boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
                 overflow: "hidden",
+                opacity: "0.7",
                 position: "relative",
+            }}
+            onFocus={(e) => {
+                e.currentTarget.style.opacity = "0.9";
+            }}
+            onBlur={(e) => {
+                e.currentTarget.style.opacity = "0.7";
             }}
         >
             {/* Chat Messages */}
@@ -112,7 +119,7 @@ const ChatBox = () => {
                         </div>
                     </div>
                 ))}
-                <div ref={messageEndRef} />{" "}
+                <div ref={messageEndRef} />
                 {/* This is the element you're scrolling to */}
             </div>
 
@@ -123,8 +130,8 @@ const ChatBox = () => {
                     width: "100%",
                     alignItems: "center",
                     justifyContent: "space-around",
-                    borderTop: "1px solid #ddd",
-                    backgroundColor: "#fff",
+                    borderTop: "1px solid gray",
+                    backgroundColor: "whitesmoke",
                 }}
             >
                 <input
@@ -137,6 +144,7 @@ const ChatBox = () => {
                         padding: "10px",
                         border: "none",
                         outline: "none",
+                        backgroundColor: "whitesmoke",
                         // borderRadius: "20px",
                         fontSize: "18px",
                         // margin: "0px 10px 0 10px",

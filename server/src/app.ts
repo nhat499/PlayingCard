@@ -9,8 +9,12 @@ import http from "http";
 import { Server } from "socket.io";
 import cors from "cors";
 import nanoid from "nanoid-esm";
-import { gameObj, GameStates, Item, Player } from "./interfaces/gameStateInterface";
-import regularDeck from "./presetGame/regularDeck";
+import {
+  gameObj,
+  GameStates,
+  Player,
+  Room,
+} from "./interfaces/gameStateInterface";
 import {
   flipAll,
   removeFromBoard,
@@ -19,32 +23,40 @@ import {
   shuffle,
 } from "./stateFunction";
 import path from "path";
-import dotenv from "dotenv"
+import dotenv from "dotenv";
 dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
-app.use(cors(
-  // { origin: "*" }
-  { origin: ["http://localhost:3000", process.env.ORIGIN] }
-));
+app.use(
+  cors(
+    // { origin: "*" }
+    { origin: ["http://localhost:3000", process.env.ORIGIN] }
+  )
+);
 
 // // Serve static files from the React app
-app.use(express.static(path.join(__dirname, './../../client/dist')));
+app.use(express.static(path.join(__dirname, "./../../client/dist")));
 const io = new Server<
   ClientToServerEvents,
   ServerToClientEvents,
   InterServerEvents,
   SocketData
 >(server, {
-  cors: { origin: ["http://localhost:5173", "http://localhost:3000", process.env.ORIGIN] },
-  transports: ["websocket", "polling"]
+  cors: {
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:3000",
+      process.env.ORIGIN,
+    ],
+  },
+  transports: ["websocket", "polling"],
 });
 
 const gameStates: GameStates = {};
 
 io.on("connection", (socket) => {
-  socket.on("CreateRoom", ({ name }) => {
+  socket.on("CreateRoom", async ({ name }) => {
     const roomId: string = nanoid(5);
     socket.join(roomId);
     const playerOne: Player = {
@@ -54,9 +66,11 @@ io.on("connection", (socket) => {
       socketId: socket.id,
       roomLeader: true,
     };
-
+    const importBoard: Room["board"] = (
+      await import("./presetGame/regularDeck.json")
+    ).default;
     gameStates[roomId] = {
-      board: { [`${regularDeck.id}`]: regularDeck },
+      board: importBoard,
       players: [playerOne],
       setting: {
         window: {
@@ -238,7 +252,6 @@ io.on("connection", (socket) => {
   socket.on("LockCard", ({ player, item }) => {
     const roomId = player.roomId;
     if (item.parent === gameObj.BOARD) {
-
       item.disabled = !item.disabled;
       gameStates[roomId].board[item.id] = item;
 
@@ -288,9 +301,7 @@ io.on("connection", (socket) => {
   socket.on("OnBoardDrag", ({ item, player }) => {
     // socket.broadcast.to(roomId).emit("DropOnBoard", { item, roomId });
     const roomId = player.roomId;
-    socket.broadcast
-      .to(roomId)
-      .emit("OnBoardDrag", { item, player });
+    socket.broadcast.to(roomId).emit("OnBoardDrag", { item, player });
   });
 
   socket.on("DealItem", ({ player, stack, amount }) => {
@@ -300,7 +311,8 @@ io.on("connection", (socket) => {
     // if stack is an item, do nothing
     if (!("data" in gameStack)) return;
     // not enough card in stack
-    if (gameStack.data.length - (amount * gameStates[roomId].players.length) < 0) return;
+    if (gameStack.data.length - amount * gameStates[roomId].players.length < 0)
+      return;
 
     for (const currPlayer of gameStates[roomId].players) {
       const newItems: Player["hand"] = {};
@@ -311,22 +323,22 @@ io.on("connection", (socket) => {
       }
       // send list of item to player's hand
       io.to(currPlayer.socketId).emit("ReceiveItem", { newItems });
-
     }
     io.in(roomId).emit("BoardUpdate", {
       board: gameStates[roomId].board,
       item: gameStack,
       message: "",
-      player: player
-    })
-    socket.broadcast.to(roomId).emit("Message", { player, message: `dealt ${amount} item to everyone` });
+      player: player,
+    });
+    socket.broadcast
+      .to(roomId)
+      .emit("Message", { player, message: `dealt ${amount} item to everyone` });
   });
 
   socket.on("disconnect", function () {
     console.log(socket.id, "a user disconnected");
     // io.sockets.emit('user disconnected');
   });
-
 });
 
 server.listen(3000, "0.0.0.0", () => {

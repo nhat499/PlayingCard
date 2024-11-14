@@ -13,7 +13,7 @@ const SubSection = () => {
                 display: "flex",
                 backgroundColor: "#e6f7ff",
                 border: "5px solid #a7c7dc",
-                // borderTop: "5px dashed #a7c7dc",
+                borderTop: "none",
                 borderRadius: "5px",
 
                 flexDirection: "column",
@@ -32,10 +32,7 @@ const SubSection = () => {
                     gridTemplateColumns: "1fr 1fr 1fr 1fr",
                     width: "100%",
                     position: "relative",
-
-                    // top: "-5px",
-                    // borderLeft: "5px solid #a7c7dc",
-                    // borderRight: "5px solid #a7c7dc"
+                    top: -10,
                 }}
             >
                 {tabs.map((value, index) => (
@@ -45,9 +42,13 @@ const SubSection = () => {
                             width: "100%",
                             backgroundColor: "lightblue",
                             border: "none",
+
                             paddingBottom: index === currTab ? "10px" : "0px",
                             height: index === currTab ? "40px" : "30px",
                             translate: index === currTab ? "0 -5px" : "0 5px",
+                            transition: "ease-in-out 0.3s",
+                            fontWeight: index === currTab ? "bolder" : "normal",
+                            borderTopLeftRadius: 10,
                         }}
                         onMouseOver={(e) => {
                             e.currentTarget.style.paddingBottom = "10px";
@@ -56,7 +57,6 @@ const SubSection = () => {
                         }}
                         onMouseLeave={(e) => {
                             if (index !== currTab) {
-
                                 e.currentTarget.style.paddingBottom = "0px";
                                 e.currentTarget.style.height = "30px";
                                 e.currentTarget.style.translate = "0 5px";
