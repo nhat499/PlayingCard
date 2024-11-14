@@ -51,7 +51,7 @@ function GameScreen() {
                 updateItem.top = 300;
                 updateItem.left = 200;
             }
-
+            console.log("emeit dtop on board");
             socket.emit("DropOnBoard", {
                 item: updateItem,
                 player: user,
@@ -115,7 +115,6 @@ function GameScreen() {
     }
 
     useEffect(() => {
-        console.log("useeEffect");
         socket.on("BoardUpdate", ({ board }) => {
             setBoardItem(board);
         });

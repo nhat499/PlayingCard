@@ -318,6 +318,7 @@ io.on("connection", (socket) => {
       const newItems: Player["hand"] = {};
       for (let i = 0; i < amount; i++) {
         const newItem = gameStack.data.pop();
+        newItem.parent = gameObj.HAND;
         newItems[newItem.id] = newItem;
         currPlayer.hand[newItem.id] = newItem;
       }
