@@ -9,8 +9,6 @@ import {
 } from "@dnd-kit/core";
 import { socket } from "../socket/Socket";
 import { useParams } from "react-router-dom";
-import AddItemPopup from "../components/AddItemPopup";
-import ChatBox from "../components/ChatBox";
 import { useBoardScale, useGameState, useUser } from "../atom/userAtom";
 import {
     gameObj,
@@ -33,7 +31,6 @@ function GameScreen() {
     }
     const [boardItem, setBoardItem] = useState<Room["board"]>(gameStates.board);
     const [handItem, setHandItem] = useState<Player["hand"]>({});
-    const [openAddItemPopup, setOpenAddItemPopup] = useState<boolean>(false);
     const [isItemDrag, setIsItemDrag] = useState(false);
     const [boardPosition, setBoardPosition] = useState({ x: 0, y: 0 });
 
@@ -42,7 +39,6 @@ function GameScreen() {
         const item = active.data.current as Item | Stack | undefined;
         if (!item || !user || !over) return;
         if (over.id === gameObj.BOARD) {
-
             let updateItem = boardItem[item.id];
 
             // if item is already on the board;
@@ -113,13 +109,13 @@ function GameScreen() {
             updateItem.transform = `translate3d(${event.delta.x / boardScale}px, ${event.delta.y / boardScale}px, 0)`;
             socket.emit("OnBoardDrag", {
                 item: updateItem,
-                player: user
+                player: user,
             });
         }
     }
 
     useEffect(() => {
-        console.log("useeEffect")
+        console.log("useeEffect");
         socket.on("BoardUpdate", ({ board }) => {
             setBoardItem(board);
         });
@@ -152,8 +148,8 @@ function GameScreen() {
             setHandItem((prevHand) => {
                 const newHand = { ...prevHand, ...newItems };
                 return newHand;
-            })
-        })
+            });
+        });
 
         return () => {
             socket.off("BoardUpdate");
@@ -170,14 +166,14 @@ function GameScreen() {
             onDragStart={handleDragStart}
             onDragMove={handleDragMove}
         >
-            <PlayerIconList
-                players={gameStates.players}
-            />
-            <div style={{
-                display: "grid",
-                gridTemplateColumns: "4fr 1fr",
-                gap: "10px",
-            }}>
+            <PlayerIconList players={gameStates.players} />
+            <div
+                style={{
+                    display: "grid",
+                    gridTemplateColumns: "4fr 1fr",
+                    gap: "10px",
+                }}
+            >
                 <div
                     style={{
                         // display: "grid",
@@ -191,7 +187,7 @@ function GameScreen() {
                             display: "flex",
                             flexDirection: "column",
                             gap: "10px",
-                            overflowAnchor: "auto"
+                            overflowAnchor: "auto",
                         }}
                     >
                         <Board
@@ -207,8 +203,6 @@ function GameScreen() {
 
                         <Hand cards={handItem} />
                     </div>
-
-
                 </div>
                 <SubSection />
             </div>

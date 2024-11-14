@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from "react";
 import { socket } from "../socket/Socket";
 import { useUser } from "../atom/userAtom";
 import { Message } from "../../../server/src/interfaces/gameStateInterface";
@@ -37,7 +37,10 @@ const ChatBox = () => {
     // Scroll to the latest message
     useEffect(() => {
         if (messageEndRef.current) {
-            messageEndRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+            messageEndRef.current.scrollIntoView({
+                behavior: "smooth",
+                block: "end",
+            });
         }
     }, [messages]);
 
@@ -60,7 +63,7 @@ const ChatBox = () => {
             <div
                 style={{
                     flex: 1,
-                    overflowY: "auto",  // Enable scrolling for the chat box
+                    overflowY: "auto", // Enable scrolling for the chat box
                     padding: "10px",
                     display: "flex",
                     flexDirection: "column",
@@ -71,23 +74,33 @@ const ChatBox = () => {
                         key={message.id}
                         style={{
                             alignSelf:
-                                message.user === user.name ? "flex-end" : "flex-start",
+                                message.user === user.name
+                                    ? "flex-end"
+                                    : "flex-start",
                             maxWidth: "80%",
                             display: "flex",
                             flexDirection: "column",
-                            alignItems: "flex-start"
-                        }}>
+                            alignItems: "flex-start",
+                        }}
+                    >
                         <sub
                             style={{
                                 marginTop: "10px",
-                                marginLeft: "10px"
+                                marginLeft: "10px",
                             }}
-                        >{message.user != user.name && message.user}</sub>
+                        >
+                            {message.user != user.name && message.user}
+                        </sub>
                         <div
                             style={{
                                 backgroundColor:
-                                    message.user === user.name ? "#007bff" : "#ddd",
-                                color: message.user === user.name ? "white" : "black",
+                                    message.user === user.name
+                                        ? "#007bff"
+                                        : "#ddd",
+                                color:
+                                    message.user === user.name
+                                        ? "white"
+                                        : "black",
                                 padding: "5px 15px",
                                 borderRadius: "20px",
                                 // margin: "5px 0",
@@ -97,10 +110,10 @@ const ChatBox = () => {
                         >
                             {message.text}
                         </div>
-
                     </div>
                 ))}
-                <div ref={messageEndRef} /> {/* This is the element you're scrolling to */}
+                <div ref={messageEndRef} />{" "}
+                {/* This is the element you're scrolling to */}
             </div>
 
             {/* Input Box */}

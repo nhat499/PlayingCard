@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import DefaultScreen from "../components/DefaultScreen";
 import Configuration from "../components/Configuration";
 import { socket } from "../socket/Socket";
 import { useGameState, useUser } from "../atom/userAtom";
@@ -54,7 +53,6 @@ const CreateGameScreen = () => {
     }, [roomId, user]);
 
     return (
-
         <div
             style={{
                 display: "flex",
@@ -72,8 +70,7 @@ const CreateGameScreen = () => {
                 isRoomLeader={user.roomLeader}
                 startGame={() => {
                     if (!user.roomLeader) return;
-                    const setting: Room["setting"] =
-                        JSON.parse(settingValue);
+                    const setting: Room["setting"] = JSON.parse(settingValue);
                     const boardState: Room["board"] =
                         JSON.parse(boardStateValue);
                     socket.emit("StartGame", {
@@ -84,7 +81,6 @@ const CreateGameScreen = () => {
                 }}
             />
         </div>
-
     );
 };
 

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import DefaultScreen from "../components/DefaultScreen";
 import { socket } from "../socket/Socket";
 import { useNavigate } from "react-router-dom";
 import { useGameState, useUser } from "../atom/userAtom";
