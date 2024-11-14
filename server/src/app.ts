@@ -9,7 +9,7 @@ import http from "http";
 import { Server } from "socket.io";
 import cors from "cors";
 import nanoid from "nanoid-esm";
-import { gameObj, GameStates, Player } from "./interfaces/gameStateInterface";
+import { gameObj, GameStates, Item, Player } from "./interfaces/gameStateInterface";
 import regularDeck from "./presetGame/regularDeck";
 import {
   flipAll,
@@ -285,15 +285,46 @@ io.on("connection", (socket) => {
     io.emit("Message", { player, message: "flip stack" });
   });
 
-  // // test another aciton while i am dragging
-  // let update = false;
-
   socket.on("OnBoardDrag", ({ item, player }) => {
     // socket.broadcast.to(roomId).emit("DropOnBoard", { item, roomId });
     const roomId = player.roomId;
     socket.broadcast
       .to(roomId)
       .emit("OnBoardDrag", { item, player });
+  });
+
+  socket.on("DealItem", ({ player, stack, amount }) => {
+    const roomId = player.roomId;
+    const gameStack = gameStates[roomId].board[stack.id];
+
+    // if stack is an item, do nothing
+    if (!("data" in gameStack)) return;
+    // not enough card in stack
+    if (gameStack.data.length - (amount * gameStates[roomId].players.length) < 0) return;
+
+    for (const currPlayer of gameStates[roomId].players) {
+      const newItems: Player["hand"] = {};
+      for (let i = 0; i < amount; i++) {
+        const newItem = gameStack.data.pop();
+        newItems[newItem.id] = newItem;
+        currPlayer.hand[newItem.id] = newItem;
+      }
+      // send list of item to player's hand
+      io.to(currPlayer.socketId).emit("ReceiveItem", { newItems });
+
+    }
+    io.in(roomId).emit("BoardUpdate", {
+      board: gameStates[roomId].board,
+      item: gameStack,
+      message: "",
+      player: player
+    })
+    socket.broadcast.to(roomId).emit("Message", { player, message: `dealt ${amount} item to everyone` });
+  });
+
+  socket.on("disconnect", function () {
+    console.log(socket.id, "a user disconnected");
+    // io.sockets.emit('user disconnected');
   });
 
 });

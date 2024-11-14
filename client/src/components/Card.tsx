@@ -99,8 +99,8 @@ const Card = ({ card, disableOptions }: CardProps) => {
                 item={{
                     ...card,
                 }}
-                Children={(isDragging) => (
-                    <Polygon height={card.height + 30} sides={card.sides} width={card.width + 30} rotate={card.rotate} >
+                Children={() => (
+                    <Polygon height={card.height + 30} sides={card.sides} width={card.width + 30} rotate={card.rotate} color={card.color}>
                         <div
                             style={{
                                 wordWrap: "normal",

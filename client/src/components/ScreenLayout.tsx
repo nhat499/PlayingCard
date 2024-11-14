@@ -81,12 +81,15 @@ const Layout = () => {
                         boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
                         padding: "30px",
                         textAlign: "center",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        gap: "20px",
                     }}
                 >
-                    <h2 style={{ color: "#333", marginBottom: "20px" }}>
+                    <h2 style={{ color: "#333", margin: "0px" }}>
                         Playing Cards
                     </h2>
-                    {/* Add a form or input components here */}
                     <Outlet />
                 </div>
             </div>

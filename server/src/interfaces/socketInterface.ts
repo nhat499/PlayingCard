@@ -74,6 +74,8 @@ export interface ServerToClientEvents {
     player: Player;
     board: Room["board"];
   }) => void;
+
+  ReceiveItem: ({ newItems }: { newItems: Player["hand"] }) => void;
 }
 
 export interface ClientToServerEvents {
@@ -125,6 +127,8 @@ export interface ClientToServerEvents {
   FlipCard: ({ player, item }: { player: Player; item: Item }) => void;
 
   LockCard: ({ player, item }: { player: Player; item: Item }) => void;
+
+  DealItem: ({ player, amount, stack }: { player: Player; amount: number; stack: Stack }) => void;
 }
 
 export type MoveItemAction = {

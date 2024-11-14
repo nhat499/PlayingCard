@@ -58,8 +58,9 @@ const CreateGameScreen = () => {
         <div
             style={{
                 display: "flex",
+                flexDirection: "column",
                 justifyContent: "center",
-                gap: "30px",
+                gap: "20px",
             }}
         >
             <PlayerIconList players={gameStates.players} />

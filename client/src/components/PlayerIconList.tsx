@@ -12,15 +12,19 @@ const PlayerIconList = ({ players }: PlayerIconListProps) => {
             <div
                 style={{
                     display: "flex",
-                    flexDirection: "column",
+                    justifyContent: "flex-end",
+                    width: "100%",
+                    // flexDirection: "column",
                     gap: "10px",
                 }}
             >
                 {players.map((player) => (
+
                     <PlayerIcon
                         key={player.socketId}
                         name={player.name}
                     />
+
                 ))}
             </div>
         );

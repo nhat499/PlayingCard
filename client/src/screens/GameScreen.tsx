@@ -19,6 +19,8 @@ import {
     Room,
     Stack,
 } from "../../../server/src/interfaces/gameStateInterface";
+import PlayerIconList from "../components/PlayerIconList";
+import SubSection from "../components/subSection";
 
 function GameScreen() {
     const [highestZIndex, setHighestZIndex] = useState<number>(2);
@@ -117,6 +119,7 @@ function GameScreen() {
     }
 
     useEffect(() => {
+        console.log("useeEffect")
         socket.on("BoardUpdate", ({ board }) => {
             setBoardItem(board);
         });
@@ -144,11 +147,20 @@ function GameScreen() {
             });
         });
 
+        socket.on("ReceiveItem", ({ newItems }) => {
+            console.log("i am newItem", { newItems });
+            setHandItem((prevHand) => {
+                const newHand = { ...prevHand, ...newItems };
+                return newHand;
+            })
+        })
+
         return () => {
             socket.off("BoardUpdate");
             socket.off("AddToHand");
             socket.off("RemoveFromHand");
             socket.off("OnBoardDrag");
+            socket.off("ReceiveItem");
         };
     }, []);
 
@@ -158,81 +170,47 @@ function GameScreen() {
             onDragStart={handleDragStart}
             onDragMove={handleDragMove}
         >
-            <div
-                style={{
-                    display: "grid",
-                    gridTemplateColumns: "4fr 1fr",
-                    gap: "10px",
-                    overflow: "hidden",
-                }}
-            >
+            <PlayerIconList
+                players={gameStates.players}
+            />
+            <div style={{
+                display: "grid",
+                gridTemplateColumns: "4fr 1fr",
+                gap: "10px",
+            }}>
                 <div
                     style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        // width: "100%",
-                        gap: "10px", // Increased gap for better spacing
-                        borderRadius: "12px", // Rounded corners for a modern touch
-                        boxShadow: "0 6px 15px rgba(0, 0, 0, 0.1)", // Subtle shadow for depth
-                        overflowAnchor: "auto"
+                        // display: "grid",
+                        // gridTemplateColumns: "4fr 1fr",
+                        // gap: "10px",
+                        overflow: "hidden",
                     }}
                 >
-                    <Board
-                        size={gameStates.setting.window}
-                        boardPosition={boardPosition}
-                        setBoardPosition={setBoardPosition}
-                        items={boardItem}
-                        setItems={setBoardItem}
-                        itemDragging={isItemDrag}
-                        boardScale={boardScale}
-                        setBoardScale={setBoardScale}
-                    // isDragging={isDragging}
-                    />
+                    <div
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "10px",
+                            overflowAnchor: "auto"
+                        }}
+                    >
+                        <Board
+                            size={gameStates.setting.window}
+                            boardPosition={boardPosition}
+                            setBoardPosition={setBoardPosition}
+                            items={boardItem}
+                            setItems={setBoardItem}
+                            itemDragging={isItemDrag}
+                            boardScale={boardScale}
+                            setBoardScale={setBoardScale}
+                        />
 
-                    <Hand cards={handItem} />
+                        <Hand cards={handItem} />
+                    </div>
+
+
                 </div>
-
-                <div
-                    style={{
-                        // width: "100%",
-                        // maxHeight: "parent",
-                        display: "flex",
-                        backgroundColor: "#e6f7ff", // Soft light blue
-                        border: "5px solid #a7c7dc", // Light border to frame the board
-                        borderRadius: "12px", // Rounded corners for a modern touch
-                        flexDirection: "column",
-                        justifyContent: "space-between",
-                        // overflow: "hidden"
-                        // overflowAnchor: "auto"
-                    }}
-                >
-                    <AddItemPopup
-                        open={openAddItemPopup}
-                        setOpen={setOpenAddItemPopup}
-                        setBoardItem={setBoardItem}
-                    />
-                    {!openAddItemPopup && (
-                        <button
-                            style={{
-                                padding: "8px 16px",
-                                margin: "20px",
-                                // width: "70%",
-                                borderRadius: "8px",
-                                border: "none",
-                                backgroundColor: "#007bff",
-                                color: "white",
-                                cursor: "pointer",
-                                boxShadow: "0 2px 5px rgba(0, 123, 255, 0.2)",
-                                transition: "background-color 0.2s",
-                            }}
-                            onClick={() => setOpenAddItemPopup(true)}
-                        >
-                            Add Item
-                        </button>
-                    )}
-
-                    <ChatBox />
-                </div>
+                <SubSection />
             </div>
         </DndContext>
     );

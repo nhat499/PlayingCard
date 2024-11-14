@@ -23,6 +23,9 @@ const Configuration = ({
                 top: "10%",
                 minWidth: "400px",
                 minHeight: "600px",
+                display: "flex",
+                flexDirection: "column",
+                gap: 20
                 // zIndex: 1
             }}
         >
@@ -60,7 +63,24 @@ const Configuration = ({
                     }}
                 />
             </div>
-            {isRoomLeader && <button onClick={startGame}>Start game</button>}
+            {isRoomLeader &&
+                <button
+                    style={{
+                        padding: "8px 16px",
+                        backgroundColor: "#007bff",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: "5px",
+                        cursor: "pointer",
+                        transition: "all 0.3s ease",
+                    }}
+                    onMouseOver={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#004bff")
+                    }
+                    onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#007bff")
+                    }
+                    onClick={startGame}>Start game</button>}
         </div>
     );
 };

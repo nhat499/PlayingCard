@@ -48,13 +48,35 @@ const Stack = ({ stack }: StackProps) => {
                 >
                     <button
                         onClick={() => {
-                            // shuffle(stack.data);
-                            // socket.emit("ShuffleStack", {
+                            if (stack.data.length < 1) return;
+                            // flipAll(stack.data, !stack.data[0].isHidden);
+                            // socket.emit("FlipStack", {
                             //     roomId,
                             //     stackId: stack.id,
                             //     stackData: stack.data,
                             // });
 
+                            socket.emit("DealItem", {
+                                player: user,
+                                amount: 1,
+                                stack
+                            });
+                            setOpenDialog(false);
+                        }}
+                        style={{
+                            padding: "8px 16px",
+                            backgroundColor: "#28a745",
+                            color: "#fff",
+                            border: "none",
+                            borderRadius: "5px",
+                            cursor: "pointer",
+                            transition: "all 0.3s ease",
+                        }}
+                    >
+                        Deal
+                    </button>
+                    <button
+                        onClick={() => {
                             socket.emit("ShuffleStack", {
                                 player: user,
                                 stack,
@@ -111,22 +133,22 @@ const Stack = ({ stack }: StackProps) => {
                 Children={(isDragging) => (
                     <div
                         style={{
-                            position: "relative",
+                            // position: "relative",
                             border: "2px solid #007bff",
                             paddingTop: "5px",
                             borderRadius: "10px",
                             backgroundColor: "white",
                             boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
                             transition: "all 0.2s ease",
-                            opacity: isDragging ? 0.6 : 1,
                         }}
                     >
+                        <div>{stack.data.length}</div>
                         <div
                             ref={!isDragging ? setDropRef : undefined}
                             style={{
-                                width: stack.width + 20,
-                                height: stack.height + 30,
-                                position: "relative",
+                                width: stack.width + 30,
+                                height: stack.height + 20,
+                                // position: "relative",
                                 // display: "flex",
                                 // alignItems: "center",
                                 // justifyContent: "center",

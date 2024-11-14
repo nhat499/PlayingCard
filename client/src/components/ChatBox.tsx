@@ -44,9 +44,8 @@ const ChatBox = () => {
     return (
         <div
             style={{
-                margin: "20px",
-                maxHeight: "450px",
-                minHeight: "100px",
+                maxHeight: "500px",
+                minHeight: "400px",
                 border: "1px solid #ddd",
                 borderRadius: "8px",
                 display: "flex",
@@ -108,9 +107,10 @@ const ChatBox = () => {
             <div
                 style={{
                     display: "flex",
+                    width: "100%",
                     alignItems: "center",
+                    justifyContent: "space-around",
                     borderTop: "1px solid #ddd",
-                    // padding: "0 0px 0 0",
                     backgroundColor: "#fff",
                 }}
             >
@@ -122,12 +122,11 @@ const ChatBox = () => {
                     style={{
                         flex: 1,
                         padding: "10px",
-                        // border: "1px solid #ddd",
                         border: "none",
                         outline: "none",
-                        borderRadius: "20px",
-                        fontSize: "20px",
-                        margin: "0px 10px 0 10px",
+                        // borderRadius: "20px",
+                        fontSize: "18px",
+                        // margin: "0px 10px 0 10px",
                     }}
                     placeholder="Type a message..."
                 />
@@ -138,8 +137,9 @@ const ChatBox = () => {
                         color: "white",
                         border: "none",
                         borderRadius: "50%",
-                        width: "30px",
-                        height: "30px",
+                        // width: "30px",
+                        // height: "30px",
+                        marginRight: "5px",
                         fontSize: "20px",
                         cursor: "pointer",
                         display: "flex",

@@ -1,15 +1,19 @@
+import { memo } from "react";
 
 const PlayerIcon = ({ name }: { name: string }) => {
     return (
         <div
             style={{
-                width: "50px",
-                height: "50px",
-                border: "1px solid gray",
-                borderRadius: "25px",
+                minWidth: "60px",
+                height: "40px",
+                background: "lightblue",
+                border: "2px solid darkBlue",
+                borderRadius: "50%",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
+                fontSize: "16px",
+                color: "darkBlue",
             }}
         >
             {name}
@@ -17,4 +21,4 @@ const PlayerIcon = ({ name }: { name: string }) => {
     );
 };
 
-export default PlayerIcon;
+export default memo(PlayerIcon);

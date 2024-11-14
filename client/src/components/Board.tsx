@@ -101,7 +101,7 @@ const Board = ({
                 minHeight: `${size.height}px`,
                 minWidth: `${size.width}px`,
                 border: "5px solid #a7c7dc",
-                overflow: "hidden",
+                // overflow: "hidden",
                 backgroundColor: "#e6f7ff",
                 borderRadius: "12px",
                 cursor: isDragging ? "grabbing" : "grab",
@@ -132,8 +132,9 @@ const Board = ({
                     position: "absolute",
                     minHeight: `${size.height}px`,
                     minWidth: `${size.width}px`,
-                    background: 'url("https://cdn.dribbble.com/userupload/7866706/file/original-69236f9a34a5cdc9c59d8dc64cdbeb5a.png?resize=1600x1200")',
-                    backgroundRepeat: "round",
+                    // background: 'url("https://img.freepik.com/premium-vector/abstract-signs-pattern-white-background-vector-illustration_716882-534.jpg?semt=ais_hybrid")',
+                    // backgroundRepeat: "repeat",
+                    // backgroundSize: "300px 300px",
                     left: `${boardPosition.x}px`, // Apply left position to move the board
                     top: `${boardPosition.y}px`, // Apply top position to move the board
                     // transition: "",
