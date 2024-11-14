@@ -11,7 +11,7 @@ import { socket } from "../socket/Socket";
 import { useParams } from "react-router-dom";
 import AddItemPopup from "../components/AddItemPopup";
 import ChatBox from "../components/ChatBox";
-import { useGameState, useUser } from "../atom/userAtom";
+import { useBoardScale, useGameState, useUser } from "../atom/userAtom";
 import {
     gameObj,
     Item,
@@ -24,20 +24,18 @@ function GameScreen() {
     const [highestZIndex, setHighestZIndex] = useState<number>(2);
     const { roomId } = useParams();
     const { gameStates } = useGameState();
+    const { boardScale, setBoardScale } = useBoardScale();
     const { user } = useUser();
     if (!gameStates || !roomId || !user) {
         throw Error("User || roomId States Not found");
     }
-    // console.log("i am gameStates", gameStates.setting.window);
     const [boardItem, setBoardItem] = useState<Room["board"]>(gameStates.board);
     const [handItem, setHandItem] = useState<Player["hand"]>({});
     const [openAddItemPopup, setOpenAddItemPopup] = useState<boolean>(false);
     const [isItemDrag, setIsItemDrag] = useState(false);
     const [boardPosition, setBoardPosition] = useState({ x: 0, y: 0 });
-    const [boardScale, setBoardScale] = useState(1);;
 
     function handleDragEnd(event: DragEndEvent) {
-        console.log("i am being drag");
         const { active, over, delta } = event;
         const item = active.data.current as Item | Stack | undefined;
         if (!item || !user || !over) return;
@@ -47,8 +45,8 @@ function GameScreen() {
 
             // if item is already on the board;
             if (updateItem) {
-                updateItem.left = updateItem.left + delta.x;
-                updateItem.top = updateItem.top + delta.y;
+                updateItem.left = updateItem.left + delta.x / boardScale;
+                updateItem.top = updateItem.top + delta.y / boardScale;
             } else {
                 // item is not already on the board;
                 updateItem = { ...item };
@@ -110,7 +108,7 @@ function GameScreen() {
     function handleDragMove(event: DragMoveEvent) {
         const updateItem = { ...event.active.data.current } as Item | Stack;
         if (user && updateItem && event.over?.id === gameObj.BOARD) {
-            updateItem.transform = `translate3d(${event.delta.x}px, ${event.delta.y}px, 0) scale(${boardScale})`;
+            updateItem.transform = `translate3d(${event.delta.x / boardScale}px, ${event.delta.y / boardScale}px, 0)`;
             socket.emit("OnBoardDrag", {
                 item: updateItem,
                 player: user

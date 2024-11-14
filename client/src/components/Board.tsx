@@ -113,7 +113,6 @@ const Board = ({
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
             onWheel={(e) => {
-                console.log(e.deltaY);
                 if (e.deltaY > 0) {
                     // zoom out
                     setBoardScale((prevBoardScale) => {

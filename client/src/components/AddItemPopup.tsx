@@ -130,7 +130,6 @@ const AddItemPopup = ({ open, setOpen }: AddItemPopupProps) => {
                                 }}
                                 onClick={() => {
                                     if (newItem) {
-                                        console.log("test");
                                         socket.emit("DropOnBoard", {
                                             item: {
                                                 ...newItem,

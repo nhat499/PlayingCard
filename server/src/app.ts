@@ -85,9 +85,6 @@ io.on("connection", (socket) => {
     await socket.join(roomId);
     socket.emit("JoinRoom", player, gameStates[roomId]);
 
-    // const clients = io.sockets.adapter.rooms.get(roomId);
-    // console.log("i am all Socket:", clients);
-
     // let everyone know I join
     socket.broadcast.to(roomId).emit("SomeOneJoin", gameStates[roomId].players);
   });
@@ -297,21 +294,6 @@ io.on("connection", (socket) => {
     socket.broadcast
       .to(roomId)
       .emit("OnBoardDrag", { item, player });
-
-    // test another aciton while i am dragging
-    // if (!update) {
-    //   update = true;
-    //   setTimeout(() => {
-    //     console.log("board updates");
-    //     io.in(roomId).emit("BoardUpdate", {
-    //       board: gameStates[roomId].board,
-    //       item,
-    //       player,
-    //       message: `Drop ${item.name} on Board`,
-    //     });
-
-    //   }, 5000)
-    // }
   });
 
 });

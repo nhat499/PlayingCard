@@ -17,3 +17,11 @@ export function useGameState() {
     const [gameStates, setGameStates] = useAtom(gameStateAtom);
     return { gameStates, setGameStates };
 }
+
+
+export const boardScaleAtom = atom<number>(1);
+
+export function useBoardScale() {
+    const [boardScale, setBoardScale] = useAtom(boardScaleAtom);
+    return { boardScale, setBoardScale };
+}
