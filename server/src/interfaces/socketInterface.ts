@@ -115,8 +115,6 @@ export interface ClientToServerEvents {
     player: Player;
   }) => void;
 
-  //////////NOT YET WORK ON/////////
-
   // a user shuffle a stack
   ShuffleStack: ({ player, stack }: { player: Player; stack: Stack }) => void;
 
