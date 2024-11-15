@@ -106,15 +106,35 @@ function GameScreen() {
     function handleDragMove(event: DragMoveEvent) {
         const updateItem = { ...event.active.data.current } as Item | Stack;
         if (user && updateItem && event.over?.id === gameObj.BOARD) {
-            updateItem.transform = `translate3d(${event.delta.x / boardScale}px, ${event.delta.y / boardScale}px, 0)`;
-            socket.emit("OnBoardDrag", {
-                item: updateItem,
-                player: user,
-            });
+            // updateItem.transform = `translate3d(${event.delta.x / boardScale}px, ${event.delta.y / boardScale}px, 0)`;
+
+            // socket.emit("OnBoardDrag", {
+            //     item: updateItem,
+            //     player: user,
+            // });
+            setTimeout(() => {
+                for (let i = 0; i < 300; i++) {
+                    updateItem.transform = `translate3d(${(event.delta.x + 10) / boardScale}px, ${event.delta.y / boardScale}px, 0)`;
+
+                    socket.emit("OnBoardDrag", {
+                        item: updateItem,
+                        player: user,
+                    });
+
+                    socket.emit("DropOnBoard", {
+                        item: updateItem,
+                        player: user,
+                    });
+                }
+            }, 100);
         }
     }
 
     useEffect(() => {
+        // drag event
+
+        // drop event
+
         socket.on("BoardUpdate", ({ board }) => {
             setBoardItem(board);
         });
@@ -143,7 +163,6 @@ function GameScreen() {
         });
 
         socket.on("ReceiveItem", ({ newItems }) => {
-            console.log("i am newItem", { newItems });
             setHandItem((prevHand) => {
                 const newHand = { ...prevHand, ...newItems };
                 return newHand;

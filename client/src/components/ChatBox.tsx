@@ -76,9 +76,10 @@ const ChatBox = () => {
                     flexDirection: "column",
                 }}
             >
-                {messages.map((message) => (
+                {messages.map((message, index) => (
                     <div
-                        key={message.id}
+                        // key={message.id}
+                        key={index}
                         style={{
                             alignSelf:
                                 message.user === user.name

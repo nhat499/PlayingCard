@@ -9,11 +9,7 @@ import http from "http";
 import { Server } from "socket.io";
 import cors from "cors";
 import nanoid from "nanoid-esm";
-import {
-  GameStates,
-  Player,
-  Room,
-} from "./interfaces/gameStateInterface";
+import { GameStates, Player, Room } from "./interfaces/gameStateInterface";
 import path from "path";
 import dotenv from "dotenv";
 import SocketHandler from "./socketHandler";
@@ -21,11 +17,7 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
-app.use(
-  cors(
-    { origin: ["http://localhost:3000", process.env.ORIGIN] }
-  )
-);
+app.use(cors({ origin: ["http://localhost:3000", process.env.ORIGIN] }));
 
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, "./../../client/dist")));
@@ -109,43 +101,43 @@ io.on("connection", (socket) => {
     SH.addEventToQueue({
       type: "DropOnBoard",
       data,
-      socket
-    })
+      socket,
+    });
   });
 
   socket.on("DropOnHand", (data) => {
     SH.addEventToQueue({
       type: "DropOnHand",
       socket,
-      data
-    })
+      data,
+    });
   });
 
   socket.on("DropOnStack", (data) => {
     SH.addEventToQueue({
       type: "DropOnStack",
       socket,
-      data
-    })
+      data,
+    });
   });
 
   socket.on("SendMessage", (data) => {
     SH.addEventToQueue({
       type: "SendMessage",
       data,
-      socket
-    })
+      socket,
+    });
   });
 
   socket.on("FlipCard", (data) => {
-    SH.addEventToQueue({ type: "FlipCard", data, socket })
+    SH.addEventToQueue({ type: "FlipCard", data, socket });
   });
 
   socket.on("LockCard", (data) => {
     SH.addEventToQueue({
       type: "LockCard",
       data,
-      socket
+      socket,
     });
   });
 
@@ -153,30 +145,34 @@ io.on("connection", (socket) => {
     SH.addEventToQueue({
       type: "ShuffleStack",
       data,
-      socket
+      socket,
     });
   });
 
   socket.on("FlipStack", (data) => {
-
     SH.addEventToQueue({
       data,
       type: "FlipStack",
-      socket
-    })
+      socket,
+    });
   });
 
-  socket.on("OnBoardDrag", ({ item, player }) => {
-    const roomId = player.roomId;
-    socket.broadcast.to(roomId).emit("OnBoardDrag", { item, player });
+  socket.on("OnBoardDrag", (data) => {
+    // const roomId = player.roomId;
+    // socket.broadcast.to(roomId).emit("OnBoardDrag", { item, player });
+    SH.addEventToQueue({
+      type: "OnBoardDrag",
+      data,
+      socket,
+    });
   });
 
   socket.on("DealItem", (data) => {
     SH.addEventToQueue({
       type: "DealItem",
       data,
-      socket
-    })
+      socket,
+    });
   });
 
   socket.on("disconnect", () => {
