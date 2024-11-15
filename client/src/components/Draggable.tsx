@@ -2,6 +2,7 @@ import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { ReactNode } from "react";
 import { useBoardScale } from "../atom/userAtom";
+import { gameObj } from "../../../server/src/interfaces/gameStateInterface";
 
 export type item = {
     id: string;
@@ -28,11 +29,19 @@ const Draggable = ({ item, Children }: DraggableProps) => {
             disabled: item.disabled,
         });
     const { boardScale } = useBoardScale();
-    const scaledTransform = transform ? {
-        ...transform,
-        x: transform.x / boardScale,
-        y: transform.y / boardScale
-    } : null;
+    const scaledTransform = transform
+        ? {
+              ...transform,
+              x:
+                  item.parent === gameObj.HAND
+                      ? transform.x
+                      : transform.x / boardScale,
+              y:
+                  item.parent === gameObj.HAND
+                      ? transform.y
+                      : transform.y / boardScale,
+          }
+        : null;
     const style = {
         transform: item.transform
             ? item.transform
