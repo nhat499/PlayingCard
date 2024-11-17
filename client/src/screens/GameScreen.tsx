@@ -143,7 +143,7 @@ function GameScreen() {
         });
 
         socket.on("ReceiveItem", ({ newItems }) => {
-            console.log("i am newItem", { newItems });
+            console.log("i am newItem", newItems);
             setHandItem((prevHand) => {
                 const newHand = { ...prevHand, ...newItems };
                 return newHand;
