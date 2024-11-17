@@ -112,13 +112,6 @@ class SocketHandler {
           callback: event.callback,
         });
         break;
-      case "SendMessage":
-        this.SendMessage({
-          data: event.data as QueueEvent<"SendMessage">["data"],
-          callback: event.callback,
-          socket: event.socket,
-        });
-        break;
       case "FlipCard":
         this.FlipCard({
           data: event.data as QueueEvent<"FlipCard">["data"],
@@ -174,8 +167,9 @@ class SocketHandler {
     const itemParent = this.gameStates[roomId].board[item.parent];
     if (item.parent.startsWith(gameObj.STACK) && "data" in itemParent) {
       // remove from stack
-      if (!removeFromStack({ gameStates: this.gameStates, item, roomId }))
-        return;
+      // if (!removeFromStack({ gameStates: this.gameStates, item, roomId }))
+      //   return;
+      removeFromStack({ gameStates: this.gameStates, item, roomId });
       // io.in(roomId).emit("RemoveFromStack", { player, stack: itemParent })
     } else if (!("data" in item) && item.parent.startsWith(gameObj.HAND)) {
       // remove from hand
@@ -264,12 +258,16 @@ class SocketHandler {
       removeFromHand({ gameStates: this.gameStates, item, player, roomId });
       socket.emit("RemoveFromHand", { item });
     } else if (item.parent === gameObj.BOARD) {
-      // remove from board
-      if (!removeFromBoard({ gameStates: this.gameStates, item, roomId }))
-        return;
+      removeFromBoard({ gameStates: this.gameStates, item, roomId });
     } else {
-      // from another stack
-      return;
+      // remove from current stack
+      const currStack = this.gameStates[roomId].board[item.parent];
+      if (
+        "data" in currStack &&
+        currStack.data[currStack.data.length - 1].id === item.id
+      ) {
+        currStack.data.pop();
+      }
     }
 
     // add to stack

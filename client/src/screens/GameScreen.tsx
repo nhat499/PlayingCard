@@ -51,7 +51,6 @@ function GameScreen() {
                 updateItem.top = 300;
                 updateItem.left = 200;
             }
-            console.log("emeit dtop on board");
             socket.emit("DropOnBoard", {
                 item: updateItem,
                 player: user,
@@ -143,7 +142,6 @@ function GameScreen() {
         });
 
         socket.on("ReceiveItem", ({ newItems }) => {
-            console.log("i am newItem", newItems);
             setHandItem((prevHand) => {
                 const newHand = { ...prevHand, ...newItems };
                 return newHand;

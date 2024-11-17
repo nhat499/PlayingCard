@@ -122,11 +122,12 @@ io.on("connection", (socket) => {
   });
 
   socket.on("SendMessage", (data) => {
-    SH.addEventToQueue({
-      type: "SendMessage",
-      data,
-      socket,
-    });
+    // SH.addEventToQueue({
+    //   type: "SendMessage",
+    //   data,
+    //   socket,
+    // });
+    SH.SendMessage({ data, socket });
   });
 
   socket.on("FlipCard", (data) => {
@@ -159,6 +160,7 @@ io.on("connection", (socket) => {
 
   socket.on("OnBoardDrag", ({ item, player }) => {
     const roomId = player.roomId;
+    item.disabled = true;
     socket.broadcast.to(roomId).emit("OnBoardDrag", { item, player });
   });
 
