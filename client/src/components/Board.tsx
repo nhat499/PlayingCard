@@ -101,7 +101,7 @@ const Board = ({
                 minHeight: `${size.height}px`,
                 minWidth: `${size.width}px`,
                 border: "5px solid #a7c7dc",
-                // overflow: "hidden",
+                ...(!itemDragging ? { overflow: "hidden" } : {}),
                 backgroundColor: "#e6f7ff",
                 borderRadius: "12px",
                 cursor: isDragging ? "grabbing" : "grab",

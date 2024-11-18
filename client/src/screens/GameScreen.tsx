@@ -19,6 +19,7 @@ import {
 } from "../../../server/src/interfaces/gameStateInterface";
 import PlayerIconList from "../components/PlayerIconList";
 import SubSection from "../components/subSection";
+import HandButton from "../components/HandButtons";
 
 function GameScreen() {
     const [highestZIndex, setHighestZIndex] = useState<number>(2);
@@ -222,6 +223,7 @@ function GameScreen() {
                         />
 
                         <Hand cards={handItem} />
+                        <HandButton setHandItem={setHandItem} />
                     </div>
                 </div>
                 <SubSection />

@@ -31,16 +31,16 @@ const Draggable = ({ item, Children }: DraggableProps) => {
     const { boardScale } = useBoardScale();
     const scaledTransform = transform
         ? {
-              ...transform,
-              x:
-                  item.parent === gameObj.HAND
-                      ? transform.x
-                      : transform.x / boardScale,
-              y:
-                  item.parent === gameObj.HAND
-                      ? transform.y
-                      : transform.y / boardScale,
-          }
+            ...transform,
+            x:
+                item.parent === gameObj.HAND
+                    ? transform.x
+                    : transform.x / boardScale,
+            y:
+                item.parent === gameObj.HAND
+                    ? transform.y
+                    : transform.y / boardScale,
+        }
         : null;
     const style = {
         transform: item.transform
@@ -54,7 +54,7 @@ const Draggable = ({ item, Children }: DraggableProps) => {
                 ref={setNodeRef}
                 style={{
                     position: "absolute",
-                    cursor: "move",
+                    cursor: item.disabled ? "auto" : "move",
                     ...(item.transform || isDragging ? { opacity: 0.7 } : {}),
                     ...style,
                 }}

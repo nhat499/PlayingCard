@@ -1,10 +1,15 @@
 import { memo } from "react";
+import { Player } from "../../../server/src/interfaces/gameStateInterface";
 
-const PlayerIcon = ({ name }: { name: string }) => {
+type PlayerIconProps = {
+    player: Player
+}
+
+const PlayerIcon = ({ player }: PlayerIconProps) => {
     return (
         <div
             style={{
-                minWidth: "60px",
+                // minWidth: "60px",
                 height: "40px",
                 background: "lightblue",
                 border: "2px solid darkBlue",
@@ -16,7 +21,7 @@ const PlayerIcon = ({ name }: { name: string }) => {
                 color: "darkBlue",
             }}
         >
-            {name}
+            {player.name}
         </div>
     );
 };
