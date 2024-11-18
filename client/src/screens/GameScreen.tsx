@@ -187,6 +187,11 @@ function GameScreen() {
             onDragStart={handleDragStart}
             onDragMove={handleDragMove}
         >
+            {/* <button
+                onClick={() => {
+                    console.log(gameStates.board);
+                }}
+            >boardStates</button> */}
             <PlayerIconList players={gameStates.players} />
             <div
                 style={{

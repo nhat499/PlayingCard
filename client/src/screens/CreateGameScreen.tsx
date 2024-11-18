@@ -34,6 +34,12 @@ const CreateGameScreen = () => {
             });
         });
 
+        socket.on("LoadPresetBoard", ({ board }) => {
+            setBoardStateValue(
+                JSON.stringify(board, undefined, 4)
+            );
+        })
+
         // start game
         socket.on("StartGame", ({ roomId, gameState }) => {
             setGameStates(gameState);
@@ -44,6 +50,7 @@ const CreateGameScreen = () => {
         return () => {
             socket.off("SomeOneJoin");
             socket.off("StartGame");
+            socket.off("LoadPresetBoard");
         };
     });
 
@@ -62,6 +69,16 @@ const CreateGameScreen = () => {
             }}
         >
             <PlayerIconList players={gameStates.players} />
+            <div>
+                <button onClick={() => {
+                    socket.emit("LoadPresetBoard", { number: 0, player: user })
+                }}>regular</button>
+
+                <button onClick={() => {
+                    socket.emit("LoadPresetBoard", { number: 1, player: user })
+                }}>catan</button>
+
+            </div>
             <Configuration
                 settingValue={settingValue}
                 setSettingValue={setSettingValue}
