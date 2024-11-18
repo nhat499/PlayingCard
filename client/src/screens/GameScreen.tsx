@@ -36,7 +36,6 @@ function GameScreen() {
 
     function handleDragEnd(event: DragEndEvent) {
         const { active, over, delta } = event;
-        console.log(over, active);
         const item = active.data.current as Item | Stack | undefined;
         if (!item || !user || !over) return;
         if (over.id === gameObj.BOARD) {
@@ -143,7 +142,6 @@ function GameScreen() {
         });
 
         socket.on("AddToHand", ({ item }) => {
-            console.log("i am item added to hand", item);
             setHandItem((prevItem) => {
                 const newItem = { ...prevItem };
                 newItem[item.id] = item;

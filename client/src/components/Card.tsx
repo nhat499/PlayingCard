@@ -101,15 +101,6 @@ const Card = ({ card, disableOptions }: CardProps) => {
                     ...card,
                 }}
                 Children={() => (
-                    // <div
-                    //     style={{
-                    //         width: card.width,
-                    //         height: card.height,
-                    //         border: "1px solid black",
-                    //     }}
-                    // >
-                    //     {card.isHidden ? "hidden" : card.name}
-                    // </div>
                     <Polygon
                         height={card.height}
                         sides={card.sides}
@@ -122,11 +113,7 @@ const Card = ({ card, disableOptions }: CardProps) => {
                                 wordWrap: "normal",
                                 overflowWrap: "break-word",
                                 textOverflow: "ellipsis",
-                                // backgroundColor: 'lightblue',
-                                // overflow: "visible",
-                                // padding: "5px",
                                 fontSize: "16px",
-                                // height: "100%", // Center text vertically
                             }}
                         >
                             {card.isHidden ? "hidden" : card.name}
