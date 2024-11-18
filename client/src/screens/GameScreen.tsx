@@ -36,20 +36,50 @@ function GameScreen() {
 
     function handleDragEnd(event: DragEndEvent) {
         const { active, over, delta } = event;
+        console.log(over, active);
         const item = active.data.current as Item | Stack | undefined;
         if (!item || !user || !over) return;
         if (over.id === gameObj.BOARD) {
             let updateItem = boardItem[item.id];
-
+            const stack = gameStates?.board[item.parent];
             // if item is already on the board;
             if (updateItem) {
                 updateItem.left = updateItem.left + delta.x / boardScale;
                 updateItem.top = updateItem.top + delta.y / boardScale;
+            } else if (item.parent.startsWith(gameObj.STACK) && stack) {
+                updateItem = { ...item };
+                updateItem.top = stack.top + delta.y / boardScale;
+                updateItem.left = stack.left + delta.x / boardScale;
             } else {
                 // item is not already on the board;
                 updateItem = { ...item };
-                updateItem.top = 300;
-                updateItem.left = 200;
+                // correct without scale
+                // updateItem.left = updateItem.left - boardPosition.x + delta.x;
+
+                const scaleDeltaX = delta.x / boardScale;
+                const postXScale = boardPosition.x / boardScale;
+                updateItem.left = updateItem.left - postXScale + scaleDeltaX;
+
+                // correct with scale
+                // const deltaY = over.rect.top + delta.y + item.height;
+                // const scaleDeltaY = deltaY / boardScale;
+                // const postYScale = boardPosition.y / boardScale;
+                // updateItem.top = updateItem.top + postYScale + scaleDeltaY;
+
+                // correct without scale
+                // updateItem.top =
+                //     over.rect.bottom -
+                //     over.rect.top +
+                //     delta.y -
+                //     boardPosition.y;
+                // updateItem.top /= boardScale;
+                updateItem.top = delta.y;
+                updateItem.top += over.rect.bottom;
+                updateItem.top -= over.rect.top;
+                updateItem.top -= boardPosition.y;
+                updateItem.top /= boardScale;
+
+                // updateItem.top /= boardScale;
             }
             socket.emit("DropOnBoard", {
                 item: updateItem,
@@ -61,6 +91,8 @@ function GameScreen() {
         ) {
             if (!handItem[item.id]) {
                 // add to hand
+                item.top = 0;
+                item.left = 0;
                 socket.emit("DropOnHand", { item, player: user });
             } else {
                 // move in hand
@@ -119,6 +151,7 @@ function GameScreen() {
         });
 
         socket.on("AddToHand", ({ item }) => {
+            console.log("i am item added to hand", item);
             setHandItem((prevItem) => {
                 const newItem = { ...prevItem };
                 newItem[item.id] = item;

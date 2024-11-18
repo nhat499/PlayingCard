@@ -146,8 +146,8 @@ const Stack = ({ stack }: StackProps) => {
                         <div
                             ref={!isDragging ? setDropRef : undefined}
                             style={{
-                                width: stack.width + 30,
-                                height: stack.height + 20,
+                                width: stack.width,
+                                height: stack.height,
                                 // position: "relative",
                                 // display: "flex",
                                 // alignItems: "center",

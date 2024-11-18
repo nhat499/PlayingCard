@@ -221,8 +221,8 @@ class SocketHandler {
     }
 
     item.parent = gameObj.HAND;
-    item.top = 0;
-    item.left = 0;
+    // item.top = 0;
+    // item.left = 0;
     const players = this.gameStates[roomId].players;
     const index = players.findIndex(
       (curr) => curr.socketId === player.socketId

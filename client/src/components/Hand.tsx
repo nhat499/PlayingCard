@@ -19,13 +19,13 @@ const Hand = ({ cards }: HandProps) => {
         <div
             ref={setNodeRef}
             style={{
-                padding: "10px", // Padding for spacing
+                // padding: "10px", // Padding for spacing
                 backgroundColor: "#e6f7ff", // Subtle blue background for distinction
                 borderRadius: "8px", // Rounded corners for a cohesive design
                 boxShadow: "0 4px 10px rgba(0, 0, 0, 0.08)", // Soft shadow for subtle depth
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
+                // display: "flex",
+                // alignItems: "center",
+                // justifyContent: "center",
                 minHeight: "100px",
                 border: "5px solid #a7c7dc", // Light border to frame the board
             }}
@@ -35,16 +35,12 @@ const Hand = ({ cards }: HandProps) => {
                     key={item.id}
                     style={{
                         position: "relative",
-
-                        top: item.top ?? 0,
-                        left: item.left ?? 0,
+                        top: item.top,
+                        left: item.left,
                     }}
                 >
                     {item.id.startsWith(gameObj.ITEM) && (
-                        <Card
-                            card={item as Item}
-                            disableOptions={false}
-                        />
+                        <Card card={item as Item} disableOptions={false} />
                     )}
                 </div>
             ))}
