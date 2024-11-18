@@ -13,6 +13,8 @@ import { GameStates, Player, Room } from "./interfaces/gameStateInterface";
 import path from "path";
 import dotenv from "dotenv";
 import SocketHandler from "./socketHandler";
+import regularDeck from "./presetGame/regularDeck.json";
+import catan from "./presetGame/catan.json";
 dotenv.config();
 const app = express();
 const server = http.createServer(app);
@@ -39,7 +41,8 @@ const io = new Server<
 });
 
 const gameStates: GameStates = {};
-const SH = new SocketHandler(gameStates, io);
+const PresetBoard = [regularDeck, catan];
+const SH = new SocketHandler(gameStates, io, PresetBoard);
 
 io.on("connection", (socket) => {
   socket.on("CreateRoom", async ({ name }) => {
@@ -52,11 +55,11 @@ io.on("connection", (socket) => {
       socketId: socket.id,
       roomLeader: true,
     };
-    const importBoard: Room["board"] = (
-      await import("./presetGame/regularDeck.json")
-    ).default;
+    // const importBoard: Room["board"] = (
+    //   await import("./presetGame/regularDeck.json")
+    // ).default;
     gameStates[roomId] = {
-      board: importBoard,
+      board: {},
       players: [playerOne],
       setting: {
         window: {
@@ -97,6 +100,13 @@ io.on("connection", (socket) => {
     io.in(roomId).emit("StartGame", { roomId, gameState: gameStates[roomId] });
   });
 
+  socket.on("LoadPresetBoard", (data) => {
+    SH.addEventToQueue({
+      type: "LoadPresetBoard",
+      data,
+      socket,
+    });
+  });
   socket.on("DropOnBoard", (data) => {
     SH.addEventToQueue({
       type: "DropOnBoard",
@@ -122,11 +132,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("SendMessage", (data) => {
-    // SH.addEventToQueue({
-    //   type: "SendMessage",
-    //   data,
-    //   socket,
-    // });
     SH.SendMessage({ data, socket });
   });
 

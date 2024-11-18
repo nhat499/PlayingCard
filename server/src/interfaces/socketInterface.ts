@@ -76,6 +76,8 @@ export interface ServerToClientEvents {
   }) => void;
 
   ReceiveItem: ({ newItems }: { newItems: Player["hand"] }) => void;
+
+  LoadPresetBoard: ({ board }: { board: Room["board"] }) => void;
 }
 
 export interface ClientToServerEvents {
@@ -127,6 +129,8 @@ export interface ClientToServerEvents {
   LockCard: ({ player, item }: { player: Player; item: Item }) => void;
 
   DealItem: ({ player, amount, stack }: { player: Player; amount: number; stack: Stack }) => void;
+
+  LoadPresetBoard: ({ number, player }: { number: number, player: Player }) => void;
 }
 
 export type MoveItemAction = {

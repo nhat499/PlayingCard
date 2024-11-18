@@ -1,5 +1,5 @@
 import { Server, Socket } from "socket.io";
-import { gameObj, GameStates, Player } from "./interfaces/gameStateInterface";
+import { gameObj, GameStates, Player, Room } from "./interfaces/gameStateInterface";
 import {
   ClientToServerEvents,
   InterServerEvents,
@@ -13,6 +13,9 @@ import {
   removeFromStack,
   shuffle,
 } from "./stateFunction";
+
+// import deck from "./presetGame/regularDeck.json";
+// import catan from "./presetGame/catan.json";
 
 type HandlerParams<T extends keyof ClientToServerEvents> = {
   data: Parameters<ClientToServerEvents[T]>[0];
@@ -50,6 +53,7 @@ class SocketHandler {
     InterServerEvents,
     SocketData
   >;
+  presetGames: Room["board"][];
 
   constructor(
     gameStatesObject: GameStates,
@@ -58,12 +62,14 @@ class SocketHandler {
       ServerToClientEvents,
       InterServerEvents,
       SocketData
-    >
+    >,
+    presetGames: Room["board"][]
   ) {
     this.gameStates = gameStatesObject;
     this.eventQueue = [];
     this.isProcessing = false;
     this.io = io;
+    this.presetGames = presetGames
   }
 
   addEventToQueue = ({ type, data, socket }: QueueEvent) => {
@@ -147,6 +153,14 @@ class SocketHandler {
           callback: event.callback,
         });
         break;
+      case "LoadPresetBoard":
+        this.LoadPresetBoard({
+          data: event.data as QueueEvent<"LoadPresetBoard">["data"],
+          socket: event.socket,
+          callback: event.callback,
+        });
+        break;
+
       default:
         console.warn(`Unhandled event type: ${event.type}`);
     }
@@ -406,6 +420,13 @@ class SocketHandler {
       .emit("Message", { player, message: `dealt ${amount} item to everyone` });
     if (callback) callback();
   };
+
+  LoadPresetBoard = ({ data, socket, callback }: HandlerParams<"LoadPresetBoard">) => {
+    const { number, player } = data;
+    const roomId = player.roomId;
+    this.io.in(roomId).emit("LoadPresetBoard", { board: this.presetGames[number] })
+    if (callback) callback();
+  }
 }
 
 export default SocketHandler;
