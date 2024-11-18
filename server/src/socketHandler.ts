@@ -1,5 +1,10 @@
 import { Server, Socket } from "socket.io";
-import { gameObj, GameStates, Player, Room } from "./interfaces/gameStateInterface";
+import {
+  gameObj,
+  GameStates,
+  Player,
+  Room,
+} from "./interfaces/gameStateInterface";
 import {
   ClientToServerEvents,
   InterServerEvents,
@@ -13,9 +18,6 @@ import {
   removeFromStack,
   shuffle,
 } from "./stateFunction";
-
-// import deck from "./presetGame/regularDeck.json";
-// import catan from "./presetGame/catan.json";
 
 type HandlerParams<T extends keyof ClientToServerEvents> = {
   data: Parameters<ClientToServerEvents[T]>[0];
@@ -69,7 +71,7 @@ class SocketHandler {
     this.eventQueue = [];
     this.isProcessing = false;
     this.io = io;
-    this.presetGames = presetGames
+    this.presetGames = presetGames;
   }
 
   addEventToQueue = ({ type, data, socket }: QueueEvent) => {
@@ -166,11 +168,11 @@ class SocketHandler {
     }
   }
 
-  JoinRoom = ({ data, socket, callback }: HandlerParams<"JoinRoom">) => { };
-  CreateRoom = ({ data, socket, callback }: HandlerParams<"CreateRoom">) => { };
-  StartGame = ({ data, socket, callback }: HandlerParams<"StartGame">) => { };
+  JoinRoom = ({ data, socket, callback }: HandlerParams<"JoinRoom">) => {};
+  CreateRoom = ({ data, socket, callback }: HandlerParams<"CreateRoom">) => {};
+  StartGame = ({ data, socket, callback }: HandlerParams<"StartGame">) => {};
   OnBoardDrag = ({ data, socket, callback }: HandlerParams<"OnBoardDrag">) => {
-    const { } = data;
+    const {} = data;
 
     if (callback) callback();
   };
@@ -180,11 +182,7 @@ class SocketHandler {
     const roomId = player.roomId;
     const itemParent = this.gameStates[roomId].board[item.parent];
     if (item.parent.startsWith(gameObj.STACK) && "data" in itemParent) {
-      // remove from stack
-      // if (!removeFromStack({ gameStates: this.gameStates, item, roomId }))
-      //   return;
       removeFromStack({ gameStates: this.gameStates, item, roomId });
-      // io.in(roomId).emit("RemoveFromStack", { player, stack: itemParent })
     } else if (!("data" in item) && item.parent.startsWith(gameObj.HAND)) {
       // remove from hand
       removeFromHand({ gameStates: this.gameStates, item, player, roomId });
@@ -421,12 +419,18 @@ class SocketHandler {
     if (callback) callback();
   };
 
-  LoadPresetBoard = ({ data, socket, callback }: HandlerParams<"LoadPresetBoard">) => {
+  LoadPresetBoard = ({
+    data,
+    socket,
+    callback,
+  }: HandlerParams<"LoadPresetBoard">) => {
     const { number, player } = data;
     const roomId = player.roomId;
-    this.io.in(roomId).emit("LoadPresetBoard", { board: this.presetGames[number] })
+    this.io
+      .in(roomId)
+      .emit("LoadPresetBoard", { board: this.presetGames[number] });
     if (callback) callback();
-  }
+  };
 }
 
 export default SocketHandler;

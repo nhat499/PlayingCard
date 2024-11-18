@@ -18,8 +18,7 @@ const Polygon = ({
     children,
 }: PolygonProps) => {
     const points: string[] = [];
-    const rotateInRadians = (rotate * Math.PI) / 180;
-
+    const rotateInRadians = (45 * Math.PI) / 180;
     // Calculate points for a unit polygon in [-1, 1] coordinate space
     const angle = (2 * Math.PI) / sides;
     for (let i = 0; i < sides; i++) {
@@ -41,7 +40,7 @@ const Polygon = ({
                 height={height}
                 viewBox="-1 -1 2 2" // Unit square
                 style={{
-                    transform: `scale(${width / height}, ${height / width})`,
+                    transform: `rotate(${rotate}deg) scale(${width / height}, ${height / width})`,
                 }}
             >
                 <polygon

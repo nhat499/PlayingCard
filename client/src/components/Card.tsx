@@ -93,6 +93,26 @@ const Card = ({ card, disableOptions }: CardProps) => {
                         >
                             flip
                         </button>
+                        <button
+                            style={{
+                                padding: "8px 16px",
+                                backgroundColor: "bisque",
+                                color: "#fff",
+                                border: "none",
+                                borderRadius: "5px",
+                                cursor: "pointer",
+                                transition: "all 0.3s ease",
+                            }}
+                            onClick={() => {
+                                // socket.emit("LockCard", {
+                                //     player: user,
+                                //     item: card,
+                                // });
+                                // setOpenDialog(false);
+                            }}
+                        >
+                            rotate
+                        </button>
                     </div>
                 </DraggableOptions>
             )}

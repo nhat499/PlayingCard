@@ -67,7 +67,7 @@ const Board = ({
             socket.off("FlipStack");
             socket.off("LockCard");
         };
-    }, []);
+    });
 
     const handleMouseDown = (e: React.MouseEvent) => {
         if (itemDragging) return;

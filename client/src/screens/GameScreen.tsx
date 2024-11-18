@@ -41,12 +41,13 @@ function GameScreen() {
         if (!item || !user || !over) return;
         if (over.id === gameObj.BOARD) {
             let updateItem = boardItem[item.id];
-            const stack = gameStates?.board[item.parent];
+            const stack = boardItem[item.parent];
             // if item is already on the board;
             if (updateItem) {
                 updateItem.left = updateItem.left + delta.x / boardScale;
                 updateItem.top = updateItem.top + delta.y / boardScale;
             } else if (item.parent.startsWith(gameObj.STACK) && stack) {
+                console.log(stack.top);
                 updateItem = { ...item };
                 updateItem.top = stack.top + delta.y / boardScale;
                 updateItem.left = stack.left + delta.x / boardScale;
@@ -76,14 +77,12 @@ function GameScreen() {
                 // add to hand
                 item.top = 0;
 
-
                 // get x cordinates
                 // item.left = 0;
 
                 item.left += delta.x;
                 item.left += boardPosition.x;
                 item.left *= boardScale;
-
 
                 socket.emit("DropOnHand", { item, player: user });
             } else {
@@ -202,9 +201,6 @@ function GameScreen() {
             >
                 <div
                     style={{
-                        // display: "grid",
-                        // gridTemplateColumns: "4fr 1fr",
-                        // gap: "10px",
                         overflow: "hidden",
                     }}
                 >
