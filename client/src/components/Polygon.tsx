@@ -4,46 +4,70 @@ interface PolygonProps {
     sides: number;
     width: number;
     height: number;
-    rotate: number;
+    rotate: number; // Rotation in degrees
     color: CSSProperties["color"];
-    children?: ReactNode
+    children?: ReactNode;
 }
 
-const Polygon = ({ sides, width, height, children, rotate, color = "lightblue" }: PolygonProps) => {
-    const radius = Math.min(width, height) / 2;
-    const centerX = width / 2;
-    const centerY = height / 2;
+const Polygon = ({
+    sides,
+    width,
+    height,
+    rotate,
+    color = "lightblue",
+    children,
+}: PolygonProps) => {
     const points: string[] = [];
-    // angle formula
-    const angle = 2 * Math.PI / sides;
+    const rotateInRadians = (rotate * Math.PI) / 180;
+
+    // Calculate points for a unit polygon in [-1, 1] coordinate space
+    const angle = (2 * Math.PI) / sides;
     for (let i = 0; i < sides; i++) {
-        const x = centerX + radius * Math.sin(i * angle);
-        const y = centerY + radius * Math.cos(i * angle);
-        points.push(`${x}, ${y}`);
+        const x = Math.sin(i * angle + rotateInRadians);
+        const y = Math.cos(i * angle + rotateInRadians);
+        points.push(`${x},${y}`);
     }
 
     return (
-        <div style={{
-            position: "relative",
-        }}>
-            <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} style={{
-                transform: `scale(${width / (radius * 2)}, ${height / (radius * 2)}) rotate(${rotate}deg)`
-            }}>
-                <polygon points={points.join(' ')} fill={color} stroke="black" strokeWidth="1">
-
-
-
-                </polygon>
-            </svg>
-            <div style={{
+        <div
+            style={{
                 position: "relative",
-                top: (-(height * 0.9)),
-                left: width * 0.07,
-                width: width * 0.86
-            }}>
-                {children}
-            </div>
-        </div >
+                width,
+                height,
+            }}
+        >
+            <svg
+                width={width}
+                height={height}
+                viewBox="-1 -1 2 2" // Unit square
+                style={{
+                    transform: `scale(${width / height}, ${height / width})`,
+                }}
+            >
+                <polygon
+                    points={points.join(" ")}
+                    fill={color}
+                    stroke="black"
+                    strokeWidth="0.02"
+                />
+            </svg>
+            {children && (
+                <div
+                    style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                    }}
+                >
+                    {children}
+                </div>
+            )}
+        </div>
     );
 };
 

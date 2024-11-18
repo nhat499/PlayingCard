@@ -59,7 +59,7 @@ const Stack = ({ stack }: StackProps) => {
                             socket.emit("DealItem", {
                                 player: user,
                                 amount: 1,
-                                stack
+                                stack,
                             });
                             setOpenDialog(false);
                         }}
@@ -146,8 +146,8 @@ const Stack = ({ stack }: StackProps) => {
                         <div
                             ref={!isDragging ? setDropRef : undefined}
                             style={{
-                                width: stack.width + 30,
-                                height: stack.height + 20,
+                                width: stack.width,
+                                height: stack.height,
                                 // position: "relative",
                                 // display: "flex",
                                 // alignItems: "center",
@@ -157,11 +157,12 @@ const Stack = ({ stack }: StackProps) => {
                             {/* {stack.data?.map((item) => {
                                 return <Card key={item.id} card={item} />;
                             })} */}
-                            {stack.data.length > 0 &&
+                            {stack.data.length > 0 && (
                                 <Card
                                     card={stack.data[stack.data.length - 1]}
                                     disableOptions={true}
-                                />}
+                                />
+                            )}
                         </div>
                     </div>
                 )}

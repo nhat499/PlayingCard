@@ -19,14 +19,12 @@ const Configuration = ({
         <div
             autoFocus
             style={{
-                // position: "absolute",
                 top: "10%",
                 minWidth: "400px",
                 minHeight: "600px",
                 display: "flex",
                 flexDirection: "column",
                 gap: 20
-                // zIndex: 1
             }}
         >
             <div

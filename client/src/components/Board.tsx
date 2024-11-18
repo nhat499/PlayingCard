@@ -18,7 +18,7 @@ export type BoardProps = {
     boardPosition: {
         x: number;
         y: number;
-    }
+    };
     setBoardPosition: (value: BoardProps["boardPosition"]) => void;
     boardScale: number;
     setBoardScale: React.Dispatch<React.SetStateAction<number>>;
@@ -32,7 +32,7 @@ const Board = ({
     setBoardPosition,
     itemDragging,
     boardScale,
-    setBoardScale
+    setBoardScale,
 }: BoardProps) => {
     const { setNodeRef } = useDroppable({
         id: gameObj.BOARD,
@@ -106,7 +106,6 @@ const Board = ({
                 borderRadius: "12px",
                 cursor: isDragging ? "grabbing" : "grab",
                 position: "relative",
-
             }}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
@@ -117,17 +116,16 @@ const Board = ({
                     // zoom out
                     setBoardScale((prevBoardScale) => {
                         return prevBoardScale - 0.03;
-                    })
+                    });
                 } else {
                     // zoom in
                     setBoardScale((prevBoardScale) => {
                         return prevBoardScale + 0.03;
-                    })
+                    });
                 }
             }}
         >
             <div
-
                 style={{
                     position: "absolute",
                     minHeight: `${size.height}px`,
@@ -139,7 +137,7 @@ const Board = ({
                     top: `${boardPosition.y}px`, // Apply top position to move the board
                     // transition: "",
                     transform: `scale(${boardScale},${boardScale})`,
-                    transformOrigin: "center center"
+                    transformOrigin: "top left",
                 }}
             >
                 {Object.entries(items).map(([key, item]) => {
@@ -154,7 +152,11 @@ const Board = ({
                             }}
                         >
                             {item.id.startsWith(gameObj.ITEM) && (
-                                <Card key={key} card={item as Item} disableOptions={false} />
+                                <Card
+                                    key={key}
+                                    card={item as Item}
+                                    disableOptions={false}
+                                />
                             )}
                             {item.id.startsWith(gameObj.STACK) && (
                                 <ItemStack key={key} stack={item as Stack} />

@@ -40,18 +40,29 @@ function GameScreen() {
         if (!item || !user || !over) return;
         if (over.id === gameObj.BOARD) {
             let updateItem = boardItem[item.id];
-
+            const stack = gameStates?.board[item.parent];
             // if item is already on the board;
             if (updateItem) {
                 updateItem.left = updateItem.left + delta.x / boardScale;
                 updateItem.top = updateItem.top + delta.y / boardScale;
+            } else if (item.parent.startsWith(gameObj.STACK) && stack) {
+                updateItem = { ...item };
+                updateItem.top = stack.top + delta.y / boardScale;
+                updateItem.left = stack.left + delta.x / boardScale;
             } else {
                 // item is not already on the board;
                 updateItem = { ...item };
-                updateItem.top = 300;
-                updateItem.left = 200;
+
+                // get location x
+                updateItem.left += delta.x;
+                updateItem.left -= boardPosition.x;
+                updateItem.left /= boardScale;
+
+                // get location y
+                updateItem.top = over.rect.height + delta.y + 20;
+                updateItem.top -= boardPosition.y;
+                updateItem.top /= boardScale;
             }
-            console.log("emeit dtop on board");
             socket.emit("DropOnBoard", {
                 item: updateItem,
                 player: user,
@@ -62,6 +73,17 @@ function GameScreen() {
         ) {
             if (!handItem[item.id]) {
                 // add to hand
+                item.top = 0;
+
+
+                // get x cordinates
+                // item.left = 0;
+
+                item.left += delta.x;
+                item.left += boardPosition.x;
+                item.left *= boardScale;
+
+
                 socket.emit("DropOnHand", { item, player: user });
             } else {
                 // move in hand
@@ -143,7 +165,6 @@ function GameScreen() {
         });
 
         socket.on("ReceiveItem", ({ newItems }) => {
-            console.log("i am newItem", { newItems });
             setHandItem((prevHand) => {
                 const newHand = { ...prevHand, ...newItems };
                 return newHand;

@@ -20,6 +20,7 @@ const DraggableOptions = ({
                 position: "absolute",
                 zIndex: zIndex,
                 left: "30px",
+                top: "-60px",
                 padding: "20px", // Add some padding
                 border: "none", // Remove default border
                 borderRadius: "8px", // Rounded corners
