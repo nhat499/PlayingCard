@@ -152,11 +152,11 @@ class SocketHandler {
     }
   }
 
-  JoinRoom = ({ data, socket, callback }: HandlerParams<"JoinRoom">) => {};
-  CreateRoom = ({ data, socket, callback }: HandlerParams<"CreateRoom">) => {};
-  StartGame = ({ data, socket, callback }: HandlerParams<"StartGame">) => {};
+  JoinRoom = ({ data, socket, callback }: HandlerParams<"JoinRoom">) => { };
+  CreateRoom = ({ data, socket, callback }: HandlerParams<"CreateRoom">) => { };
+  StartGame = ({ data, socket, callback }: HandlerParams<"StartGame">) => { };
   OnBoardDrag = ({ data, socket, callback }: HandlerParams<"OnBoardDrag">) => {
-    const {} = data;
+    const { } = data;
 
     if (callback) callback();
   };

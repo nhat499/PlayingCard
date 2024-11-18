@@ -53,33 +53,16 @@ function GameScreen() {
             } else {
                 // item is not already on the board;
                 updateItem = { ...item };
-                // correct without scale
-                // updateItem.left = updateItem.left - boardPosition.x + delta.x;
 
-                const scaleDeltaX = delta.x / boardScale;
-                const postXScale = boardPosition.x / boardScale;
-                updateItem.left = updateItem.left - postXScale + scaleDeltaX;
+                // get location x
+                updateItem.left += delta.x;
+                updateItem.left -= boardPosition.x;
+                updateItem.left /= boardScale;
 
-                // correct with scale
-                // const deltaY = over.rect.top + delta.y + item.height;
-                // const scaleDeltaY = deltaY / boardScale;
-                // const postYScale = boardPosition.y / boardScale;
-                // updateItem.top = updateItem.top + postYScale + scaleDeltaY;
-
-                // correct without scale
-                // updateItem.top =
-                //     over.rect.bottom -
-                //     over.rect.top +
-                //     delta.y -
-                //     boardPosition.y;
-                // updateItem.top /= boardScale;
-                updateItem.top = delta.y;
-                updateItem.top += over.rect.bottom;
-                updateItem.top -= over.rect.top;
+                // get location y
+                updateItem.top = over.rect.height + delta.y + 20;
                 updateItem.top -= boardPosition.y;
                 updateItem.top /= boardScale;
-
-                // updateItem.top /= boardScale;
             }
             socket.emit("DropOnBoard", {
                 item: updateItem,
@@ -92,7 +75,16 @@ function GameScreen() {
             if (!handItem[item.id]) {
                 // add to hand
                 item.top = 0;
-                item.left = 0;
+
+
+                // get x cordinates
+                // item.left = 0;
+
+                item.left += delta.x;
+                item.left += boardPosition.x;
+                item.left *= boardScale;
+
+
                 socket.emit("DropOnHand", { item, player: user });
             } else {
                 // move in hand

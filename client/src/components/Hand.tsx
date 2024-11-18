@@ -23,7 +23,7 @@ const Hand = ({ cards }: HandProps) => {
                 backgroundColor: "#e6f7ff", // Subtle blue background for distinction
                 borderRadius: "8px", // Rounded corners for a cohesive design
                 boxShadow: "0 4px 10px rgba(0, 0, 0, 0.08)", // Soft shadow for subtle depth
-                // display: "flex",
+                display: "flex",
                 // alignItems: "center",
                 // justifyContent: "center",
                 minHeight: "100px",
