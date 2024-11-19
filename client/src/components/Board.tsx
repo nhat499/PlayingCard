@@ -9,12 +9,13 @@ import {
     Room,
     Stack,
 } from "../../../server/src/interfaces/gameStateInterface";
+import { useItemAction } from "../atom/userAtom";
 
 export type BoardProps = {
     items: Room["board"];
     setItems: React.Dispatch<React.SetStateAction<Room["board"]>>;
     size: Room["setting"]["window"];
-    itemDragging: boolean;
+    // itemDragging: boolean;
     boardPosition: {
         x: number;
         y: number;
@@ -30,14 +31,14 @@ const Board = ({
     size,
     boardPosition,
     setBoardPosition,
-    itemDragging,
+    // itemDragging,
     boardScale,
     setBoardScale,
 }: BoardProps) => {
     const { setNodeRef } = useDroppable({
         id: gameObj.BOARD,
     });
-
+    const { isItemAction } = useItemAction();
     // const [boardPosition, setBoardPosition] = useState({ x: 0, y: 0 });
     // const [boardScale, setBoardScale] = useState(1);;
     const [cursorPosBefore, setCursorPosBefore] = useState({ x: 0, y: 0 });
@@ -70,7 +71,8 @@ const Board = ({
     });
 
     const handleMouseDown = (e: React.MouseEvent) => {
-        if (itemDragging) return;
+        console.log("i am e:", e);
+        if (isItemAction) return;
         setCursorPosBefore({ x: e.clientX, y: e.clientY });
         setIsDragging(true);
     };
@@ -101,7 +103,7 @@ const Board = ({
                 minHeight: `${size.height}px`,
                 minWidth: `${size.width}px`,
                 border: "5px solid #a7c7dc",
-                ...(!itemDragging ? { overflow: "hidden" } : {}),
+                ...(!isItemAction ? { overflow: "hidden" } : {}),
                 backgroundColor: "#e6f7ff",
                 borderRadius: "12px",
                 cursor: isDragging ? "grabbing" : "grab",

@@ -9,7 +9,12 @@ import {
 } from "@dnd-kit/core";
 import { socket } from "../socket/Socket";
 import { useParams } from "react-router-dom";
-import { useBoardScale, useGameState, useUser } from "../atom/userAtom";
+import {
+    useBoardScale,
+    useGameState,
+    useItemAction,
+    useUser,
+} from "../atom/userAtom";
 import {
     gameObj,
     Item,
@@ -25,6 +30,7 @@ function GameScreen() {
     const [highestZIndex, setHighestZIndex] = useState<number>(2);
     const { roomId } = useParams();
     const { gameStates } = useGameState();
+    const { isItemAction, setIsItemAction } = useItemAction();
     const { boardScale, setBoardScale } = useBoardScale();
     const { user } = useUser();
     if (!gameStates || !roomId || !user) {
@@ -32,7 +38,8 @@ function GameScreen() {
     }
     const [boardItem, setBoardItem] = useState<Room["board"]>(gameStates.board);
     const [handItem, setHandItem] = useState<Player["hand"]>({});
-    const [isItemDrag, setIsItemDrag] = useState(false);
+    // const [isItemDrag, setIsItemDrag] = useState(false);
+
     const [boardPosition, setBoardPosition] = useState({ x: 0, y: 0 });
 
     function handleDragEnd(event: DragEndEvent) {
@@ -106,14 +113,14 @@ function GameScreen() {
                 player: user,
             });
         }
-        setIsItemDrag(false);
+        setIsItemAction(false);
     }
 
     function handleDragStart(event: DragStartEvent) {
         const { active } = event;
         const item = active.data.current as Item | undefined;
         if (!item) return;
-        setIsItemDrag(true);
+        setIsItemAction(true);
         if (
             boardItem[item.id] &&
             item.zIndex < highestZIndex &&
@@ -222,7 +229,7 @@ function GameScreen() {
                             setBoardPosition={setBoardPosition}
                             items={boardItem}
                             setItems={setBoardItem}
-                            itemDragging={isItemDrag}
+                            // itemDragging={isItemDrag}
                             boardScale={boardScale}
                             setBoardScale={setBoardScale}
                         />

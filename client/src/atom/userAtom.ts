@@ -24,3 +24,10 @@ export function useBoardScale() {
     const [boardScale, setBoardScale] = useAtom(boardScaleAtom);
     return { boardScale, setBoardScale };
 }
+
+export const itemAction = atom<boolean>(false);
+
+export function useItemAction() {
+    const [isItemAction, setIsItemAction] = useAtom(itemAction);
+    return { isItemAction, setIsItemAction };
+}

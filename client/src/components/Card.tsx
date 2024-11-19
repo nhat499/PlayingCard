@@ -2,8 +2,7 @@ import { useState } from "react";
 import Draggable, { item } from "./Draggable";
 import DraggableOptions from "./DraggableOptions";
 import { socket } from "../socket/Socket";
-// import { Polygon } from "@html-polygon/react";
-import { useUser } from "../atom/userAtom";
+import { useItemAction, useUser } from "../atom/userAtom";
 import { gameObj } from "../../../server/src/interfaces/gameStateInterface";
 import Polygon from "./Polygon";
 
@@ -20,7 +19,10 @@ export type CardProps = {
 
 const Card = ({ card, disableOptions }: CardProps) => {
     const { user } = useUser();
+    const { setIsItemAction } = useItemAction();
     const [openDialog, setOpenDialog] = useState(false);
+    const [isRotate, setIsRotating] = useState(false);
+    const [sliderValue, setSliderValue] = useState(card.rotate);
     if (!user) {
         throw Error("user not found");
     }
@@ -29,7 +31,7 @@ const Card = ({ card, disableOptions }: CardProps) => {
             style={{
                 position: "relative",
                 cursor: "pointer",
-                transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                // transition: "transform 0.3s ease, box-shadow 0.3s ease",
                 marginBottom: "10px", // Add spacing between cards
             }}
             onContextMenu={(e) => {
@@ -96,25 +98,45 @@ const Card = ({ card, disableOptions }: CardProps) => {
                         <button
                             style={{
                                 padding: "8px 16px",
-                                backgroundColor: "bisque",
+                                backgroundColor: "blue",
                                 color: "#fff",
                                 border: "none",
                                 borderRadius: "5px",
                                 cursor: "pointer",
-                                transition: "all 0.3s ease",
                             }}
                             onClick={() => {
-                                // socket.emit("LockCard", {
-                                //     player: user,
-                                //     item: card,
-                                // });
-                                // setOpenDialog(false);
+                                setIsItemAction(true);
+                                setIsRotating(true);
+                                setOpenDialog(false);
                             }}
                         >
                             rotate
                         </button>
                     </div>
                 </DraggableOptions>
+            )}
+            {isRotate && (
+                <input
+                    style={{ position: "absolute", top: "-30px" }}
+                    type={"range"}
+                    value={sliderValue}
+                    min={-180}
+                    max={180}
+                    onMouseUp={() => {
+                        setIsItemAction(false);
+                        setIsRotating(false);
+                    }}
+                    onChange={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        setSliderValue(parseInt(e.target.value));
+                        card.rotate = sliderValue;
+                        socket.emit("OnBoardDrag", {
+                            item: card,
+                            player: user,
+                        });
+                    }}
+                />
             )}
             <Draggable
                 item={{
