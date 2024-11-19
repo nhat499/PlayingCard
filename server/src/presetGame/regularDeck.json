@@ -3,7 +3,7 @@
     "id": "STACK-regularDeck",
     "name": "regularDeck",
     "parent": "BOARD",
-    "rotate": 45,
+    "rotate": 0,
     "zIndex": 1,
     "width": 90,
     "height": 100,
@@ -13,7 +13,7 @@
     "data": [
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-1spade",
         "name": "1 spade",
@@ -28,7 +28,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-1club",
         "name": "1 club",
@@ -43,7 +43,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-1diamond",
         "name": "1 diamond",
@@ -58,7 +58,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-1heart",
         "name": "1 heart",
@@ -73,7 +73,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-2spade",
         "name": "2 spade",
@@ -88,7 +88,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-2club",
         "name": "2 club",
@@ -103,7 +103,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-2diamond",
         "name": "2 diamond",
@@ -118,7 +118,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-2heart",
         "name": "2 heart",
@@ -133,7 +133,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-3spade",
         "name": "3 spade",
@@ -148,7 +148,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-3club",
         "name": "3 club",
@@ -163,7 +163,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-3diamond",
         "name": "3 diamond",
@@ -178,7 +178,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-3heart",
         "name": "3 heart",
@@ -193,7 +193,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-4spade",
         "name": "4 spade",
@@ -208,7 +208,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-4club",
         "name": "4 club",
@@ -223,7 +223,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-4diamond",
         "name": "4 diamond",
@@ -238,7 +238,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-4heart",
         "name": "4 heart",
@@ -253,7 +253,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-5spade",
         "name": "5 spade",
@@ -268,7 +268,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-5club",
         "name": "5 club",
@@ -283,7 +283,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-5diamond",
         "name": "5 diamond",
@@ -298,7 +298,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-5heart",
         "name": "5 heart",
@@ -313,7 +313,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-6spade",
         "name": "6 spade",
@@ -328,7 +328,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-6club",
         "name": "6 club",
@@ -343,7 +343,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-6diamond",
         "name": "6 diamond",
@@ -358,7 +358,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-6heart",
         "name": "6 heart",
@@ -373,7 +373,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-7spade",
         "name": "7 spade",
@@ -388,7 +388,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-7club",
         "name": "7 club",
@@ -403,7 +403,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-7diamond",
         "name": "7 diamond",
@@ -418,7 +418,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-7heart",
         "name": "7 heart",
@@ -433,7 +433,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-8spade",
         "name": "8 spade",
@@ -448,7 +448,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-8club",
         "name": "8 club",
@@ -463,7 +463,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-8diamond",
         "name": "8 diamond",
@@ -478,7 +478,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-8heart",
         "name": "8 heart",
@@ -493,7 +493,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-9spade",
         "name": "9 spade",
@@ -508,7 +508,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-9club",
         "name": "9 club",
@@ -523,7 +523,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-9diamond",
         "name": "9 diamond",
@@ -538,7 +538,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-9heart",
         "name": "9 heart",
@@ -553,7 +553,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-10spade",
         "name": "10 spade",
@@ -568,7 +568,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-10club",
         "name": "10 club",
@@ -583,7 +583,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-10diamond",
         "name": "10 diamond",
@@ -598,7 +598,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-10heart",
         "name": "10 heart",
@@ -613,7 +613,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-jackspade",
         "name": "jack spade",
@@ -628,7 +628,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-jackclub",
         "name": "jack club",
@@ -643,7 +643,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-jackdiamond",
         "name": "jack diamond",
@@ -658,7 +658,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-jackheart",
         "name": "jack heart",
@@ -673,7 +673,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-queenspade",
         "name": "queen spade",
@@ -688,7 +688,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-queenclub",
         "name": "queen club",
@@ -703,7 +703,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-queendiamond",
         "name": "queen diamond",
@@ -718,7 +718,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-queenheart",
         "name": "queen heart",
@@ -733,7 +733,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-kingspade",
         "name": "king spade",
@@ -748,7 +748,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-kingclub",
         "name": "king club",
@@ -763,7 +763,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-kingdiamond",
         "name": "king diamond",
@@ -778,7 +778,7 @@
       },
       {
         "sides": 4,
-        "rotate": 45,
+        "rotate": 0,
         "color": "white",
         "id": "ITEM-kingheart",
         "name": "king heart",

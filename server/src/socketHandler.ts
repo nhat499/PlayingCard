@@ -168,11 +168,23 @@ class SocketHandler {
     }
   }
 
-  JoinRoom = ({ data, socket, callback }: HandlerParams<"JoinRoom">) => {};
-  CreateRoom = ({ data, socket, callback }: HandlerParams<"CreateRoom">) => {};
-  StartGame = ({ data, socket, callback }: HandlerParams<"StartGame">) => {};
-  OnBoardDrag = ({ data, socket, callback }: HandlerParams<"OnBoardDrag">) => {
-    const {} = data;
+  JoinRoom = ({ callback }: HandlerParams<"JoinRoom">) => {
+    // const {} = data;
+
+    if (callback) callback();
+  };
+  CreateRoom = ({ callback }: HandlerParams<"CreateRoom">) => {
+    // const {} = data;
+
+    if (callback) callback();
+  };
+  StartGame = ({ callback }: HandlerParams<"StartGame">) => {
+    // const {} = data;
+
+    if (callback) callback();
+  };
+  OnBoardDrag = ({ callback }: HandlerParams<"OnBoardDrag">) => {
+    // const {} = data;
 
     if (callback) callback();
   };
@@ -218,7 +230,6 @@ class SocketHandler {
     const { item, player } = data;
     const roomId = player.roomId;
     if ("data" in item) {
-      // item is a stack, do nothing;
       return;
     }
 
@@ -239,7 +250,14 @@ class SocketHandler {
     const index = players.findIndex(
       (curr) => curr.socketId === player.socketId
     );
+
     players[index].hand[item.id] = item;
+    // add to sender's hand
+    socket.emit("AddToHand", { item, player });
+    this.io.in(roomId).emit("Message", {
+      player,
+      message: `Add ${item.isHidden ? "hidden" : item.name} to Hand`,
+    });
 
     // update board state for every in room
     this.io.in(roomId).emit("BoardUpdate", {
@@ -249,13 +267,6 @@ class SocketHandler {
       message: ``,
     });
 
-    // add to sender's hand
-    socket.emit("AddToHand", { item, player });
-
-    this.io.in(roomId).emit("Message", {
-      player,
-      message: `Add ${item.isHidden ? "hidden" : item.name} to Hand`,
-    });
     if (callback) callback();
   };
 
@@ -302,13 +313,13 @@ class SocketHandler {
     });
     if (callback) callback();
   };
-  SendMessage = ({ data, callback, socket }: HandlerParams<"SendMessage">) => {
+  SendMessage = ({ data, callback }: HandlerParams<"SendMessage">) => {
     const { player, message } = data;
     const roomId = player.roomId;
     this.io.in(roomId).emit("Message", { player, message });
     if (callback) callback();
   };
-  FlipCard = ({ data, socket, callback }: HandlerParams<"FlipCard">) => {
+  FlipCard = ({ data, callback }: HandlerParams<"FlipCard">) => {
     const { player, item } = data;
     const roomId = player.roomId;
     if (item.parent === gameObj.BOARD) {
@@ -325,7 +336,7 @@ class SocketHandler {
 
     if (callback) callback();
   };
-  LockCard = ({ data, socket, callback }: HandlerParams<"LockCard">) => {
+  LockCard = ({ data, callback }: HandlerParams<"LockCard">) => {
     const { player, item } = data;
     const roomId = player.roomId;
     // could make this check out side?
@@ -364,7 +375,7 @@ class SocketHandler {
     this.io.emit("Message", { player, message: "shuffle stack" });
     if (callback) callback();
   };
-  FlipStack = ({ data, socket, callback }: HandlerParams<"FlipStack">) => {
+  FlipStack = ({ data, callback }: HandlerParams<"FlipStack">) => {
     const { player, stack } = data;
     const roomId = player.roomId;
     const gameStack = this.gameStates[roomId].board[stack.id];

@@ -77,9 +77,6 @@ function GameScreen() {
                 // add to hand
                 item.top = 0;
 
-                // get x cordinates
-                // item.left = 0;
-
                 item.left += delta.x;
                 item.left += boardPosition.x;
                 item.left *= boardScale;
@@ -102,6 +99,12 @@ function GameScreen() {
                     stackId: over.id.toString(),
                 });
             }
+        } else if ("data" in item) {
+            // drop a stack in hand or anther stack
+            socket.emit("DropOnBoard", {
+                item,
+                player: user,
+            });
         }
         setIsItemDrag(false);
     }
@@ -137,7 +140,8 @@ function GameScreen() {
     }
 
     useEffect(() => {
-        socket.on("BoardUpdate", ({ board }) => {
+        socket.on("BoardUpdate", ({ board, item }) => {
+            console.log("i am item", board[item.id]);
             setBoardItem(board);
         });
 

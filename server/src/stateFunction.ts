@@ -59,6 +59,7 @@ export const removeFromBoard = ({
   const board = gameStates[roomId].board;
   if (board[item.id]) {
     delete board[item.id];
+    console.log("i am true");
     return true;
   } else {
     return false;

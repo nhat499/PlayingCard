@@ -19,11 +19,10 @@ const Polygon = ({
 }: PolygonProps) => {
     const points: string[] = [];
     const rotateInRadians = (45 * Math.PI) / 180;
-    // Calculate points for a unit polygon in [-1, 1] coordinate space
     const angle = (2 * Math.PI) / sides;
     for (let i = 0; i < sides; i++) {
-        const x = Math.sin(i * angle + rotateInRadians);
-        const y = Math.cos(i * angle + rotateInRadians);
+        const y = Math.sin(i * angle + rotateInRadians);
+        const x = Math.cos(i * angle + rotateInRadians);
         points.push(`${x},${y}`);
     }
 
