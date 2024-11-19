@@ -7,22 +7,40 @@ type PlayerIconProps = {
 
 const PlayerIcon = ({ player }: PlayerIconProps) => {
     return (
-        <div
-            style={{
-                // minWidth: "60px",
-                height: "40px",
-                background: "lightblue",
-                border: "2px solid darkBlue",
-                borderRadius: "50%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "16px",
-                color: "darkBlue",
-            }}
-        >
-            {player.name}
+
+        <div style={{
+            display: "flex",
+            border: "1px solid lightBlue",
+            alignItems: "center",
+            gap: "20px",
+            paddingLeft: "10px",
+            paddingRight: "10px",
+        }}>
+
+            <div
+                style={{
+                    height: "40px",
+                    background: "lightblue",
+                    borderRadius: "50%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "16px",
+                    padding: "3px",
+                    color: "darkBlue",
+                    textOverflow: "clip"
+                }}
+            >
+                {player.name}
+            </div>
+            <div>
+                <p>hand:{Object.keys(player.hand).length}</p>
+                <p>{player.roomLeader && "RoomLeader"}</p>
+            </div>
         </div>
+
+
+
     );
 };
 

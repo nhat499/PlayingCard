@@ -48,7 +48,7 @@ const AddItemPopup = () => {
                 overflowAnchor: "auto"
             }}
         >
-            <div style={{ display: "flex", gap: "15px" }}>
+            <div style={{ display: "flex", gap: "15px", flexDirection: "column" }}>
                 <textarea
                     style={{
                         border: "1px solid #ced4da",
@@ -56,7 +56,7 @@ const AddItemPopup = () => {
                         padding: "10px",
                         resize: "vertical",
                         flex: "1",
-                        height: "300px",
+                        minHeight: "300px",
                         fontFamily: "monospace",
                         outline: "none",
                     }}

@@ -71,7 +71,6 @@ const Board = ({
     });
 
     const handleMouseDown = (e: React.MouseEvent) => {
-        console.log("i am e:", e);
         if (isItemAction) return;
         setCursorPosBefore({ x: e.clientX, y: e.clientY });
         setIsDragging(true);
@@ -108,6 +107,7 @@ const Board = ({
                 borderRadius: "12px",
                 cursor: isDragging ? "grabbing" : "grab",
                 position: "relative",
+                marginBottom: "10px",
             }}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}

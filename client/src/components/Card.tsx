@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Draggable, { item } from "./Draggable";
 import DraggableOptions from "./DraggableOptions";
 import { socket } from "../socket/Socket";
@@ -19,13 +19,20 @@ export type CardProps = {
 
 const Card = ({ card, disableOptions }: CardProps) => {
     const { user } = useUser();
-    const { setIsItemAction } = useItemAction();
+    const { isItemAction, setIsItemAction } = useItemAction();
     const [openDialog, setOpenDialog] = useState(false);
-    const [isRotate, setIsRotating] = useState(false);
+    const [isRotate, setIsRotate] = useState(false);
     const [sliderValue, setSliderValue] = useState(card.rotate);
     if (!user) {
         throw Error("user not found");
     }
+
+    useEffect(() => {
+        if (!isItemAction && isRotate) {
+            setIsRotate(false);
+        }
+    }, [isItemAction])
+
     return (
         <div
             style={{
@@ -106,7 +113,7 @@ const Card = ({ card, disableOptions }: CardProps) => {
                             }}
                             onClick={() => {
                                 setIsItemAction(true);
-                                setIsRotating(true);
+                                setIsRotate(true);
                                 setOpenDialog(false);
                             }}
                         >
@@ -119,12 +126,14 @@ const Card = ({ card, disableOptions }: CardProps) => {
                 <input
                     style={{ position: "absolute", top: "-30px" }}
                     type={"range"}
+                    tabIndex={0}
                     value={sliderValue}
                     min={-180}
                     max={180}
                     onMouseUp={() => {
+                        console.log("onMouseUp")
                         setIsItemAction(false);
-                        setIsRotating(false);
+                        setIsRotate(false);
                     }}
                     onChange={(e) => {
                         e.stopPropagation();
@@ -142,7 +151,7 @@ const Card = ({ card, disableOptions }: CardProps) => {
                 item={{
                     ...card,
                 }}
-                Children={() => (
+                Children={(isDragging) => (
                     <Polygon
                         height={card.height}
                         sides={card.sides}

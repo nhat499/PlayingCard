@@ -68,8 +68,12 @@ const CreateGameScreen = () => {
                 gap: "20px",
             }}
         >
-            <PlayerIconList players={gameStates.players} />
-            <div>
+
+            <div style={{
+                display: "flex",
+                justifyContent: "center",
+                gap: "20px",
+            }}>
                 <button onClick={() => {
                     socket.emit("LoadPresetBoard", { number: 0, player: user })
                 }}>regular</button>
@@ -79,24 +83,36 @@ const CreateGameScreen = () => {
                 }}>catan</button>
 
             </div>
-            <Configuration
-                settingValue={settingValue}
-                setSettingValue={setSettingValue}
-                boardState={boardStateValue}
-                setBoardState={setBoardStateValue}
-                isRoomLeader={user.roomLeader}
-                startGame={() => {
-                    if (!user.roomLeader) return;
-                    const setting: Room["setting"] = JSON.parse(settingValue);
-                    const boardState: Room["board"] =
-                        JSON.parse(boardStateValue);
-                    socket.emit("StartGame", {
-                        roomId,
-                        boardState: boardState,
-                        setting: setting,
-                    });
-                }}
-            />
+
+            <div style={{
+                display: "flex",
+                width: "100%",
+                justifyContent: "flex-end",
+                gridTemplateColumns: "4fr 1fr",
+
+                gap: "20px",
+            }}>
+                <Configuration
+                    players={gameStates.players}
+                    settingValue={settingValue}
+                    setSettingValue={setSettingValue}
+                    boardState={boardStateValue}
+                    setBoardState={setBoardStateValue}
+                    isRoomLeader={user.roomLeader}
+                    startGame={() => {
+                        if (!user.roomLeader) return;
+                        const setting: Room["setting"] = JSON.parse(settingValue);
+                        const boardState: Room["board"] =
+                            JSON.parse(boardStateValue);
+                        socket.emit("StartGame", {
+                            roomId,
+                            boardState: boardState,
+                            setting: setting,
+                        });
+                    }}
+                />
+                {/* <PlayerIconList players={gameStates.players} /> */}
+            </div>
         </div>
     );
 };

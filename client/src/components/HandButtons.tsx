@@ -8,6 +8,12 @@ type HandButtonProps = {
 
 const HandButton = ({ setHandItem }: HandButtonProps) => {
     return <div style={{
+        position: "absolute",
+        paddingLeft: "10px",
+        // margin: "0px",
+        // top: "borderBotLeft",
+        // bottom: "bottom",
+        // top: 0,
         display: 'flex',
         gap: "5px"
     }}>
@@ -17,7 +23,6 @@ const HandButton = ({ setHandItem }: HandButtonProps) => {
                 border: "none",
                 borderRadius: "4px",
                 cursor: "pointer",
-                transition: "background-color 0.3s ease",
             }}
             onClick={() => {
                 setHandItem((prevHand) => {

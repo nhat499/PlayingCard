@@ -48,7 +48,7 @@ const ChatBox = () => {
         <div
             tabIndex={1}
             style={{
-                maxHeight: "550px",
+                maxHeight: "350px",
                 minHeight: "200px",
                 borderRadius: "8px",
                 display: "flex",
@@ -119,8 +119,8 @@ const ChatBox = () => {
                         </div>
                     </div>
                 ))}
+                {/* element you're scrolling to */}
                 <div ref={messageEndRef} />
-                {/* This is the element you're scrolling to */}
             </div>
 
             {/* Input Box */}
@@ -145,9 +145,7 @@ const ChatBox = () => {
                         border: "none",
                         outline: "none",
                         backgroundColor: "whitesmoke",
-                        // borderRadius: "20px",
                         fontSize: "18px",
-                        // margin: "0px 10px 0 10px",
                     }}
                     placeholder="Type a message..."
                 />
@@ -158,8 +156,6 @@ const ChatBox = () => {
                         color: "white",
                         border: "none",
                         borderRadius: "50%",
-                        // width: "30px",
-                        // height: "30px",
                         marginRight: "5px",
                         fontSize: "20px",
                         cursor: "pointer",

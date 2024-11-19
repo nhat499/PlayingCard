@@ -1,12 +1,15 @@
 import { useState } from "react";
 import AddItemPopup from "./AddItemPopup";
 import ChatBox from "./ChatBox";
+import Dice from "./Dice";
+import PlayerIconList from "./PlayerIconList";
+import { useGameState } from "../atom/userAtom";
 
-const tabs = ["ChatBox", "AddItem", "Other", "Hide"];
+const tabs = ["GameInfo", "Players", "AddItem", "TBD"];
 
 const SubSection = () => {
     const [currTab, setCurrTab] = useState(0);
-
+    const { gameStates } = useGameState();
     return (
         <div
             style={{
@@ -70,11 +73,17 @@ const SubSection = () => {
             </div>
 
             {/* Content Area */}
-            <div style={{ width: "350px" }}>
-                {currTab === 0 && <ChatBox />}
-                {currTab === 1 && <AddItemPopup />}
-                {currTab === 2 && <div>Other Content</div>}
-                {currTab === 3 && <div>Hidden Content</div>}
+            <div style={{ height: "100%", width: "300px" }}>
+                {currTab === 0 && <div style={{
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "space-between"
+                }}><Dice /><ChatBox /></div>}
+                {currTab === 1 && <PlayerIconList players={gameStates?.players ?? []} detail />}
+                {currTab === 2 && <AddItemPopup />}
+                {currTab === 3 && <div>TBD</div>}
             </div>
         </div>
     );

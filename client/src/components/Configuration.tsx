@@ -1,3 +1,6 @@
+import { Player } from "../../../server/src/interfaces/gameStateInterface";
+import PlayerIconList from "./PlayerIconList";
+
 export type ConfigurationProps = {
     settingValue: string;
     setSettingValue: (value: string) => void;
@@ -5,6 +8,7 @@ export type ConfigurationProps = {
     isRoomLeader: boolean;
     boardState: string;
     setBoardState: (value: string) => void;
+    players: Player[]
 };
 
 const Configuration = ({
@@ -14,16 +18,21 @@ const Configuration = ({
     setBoardState,
     startGame,
     isRoomLeader,
+    players,
 }: ConfigurationProps) => {
+
+
+
     return (
         <div
             autoFocus
             style={{
                 top: "10%",
                 minWidth: "400px",
-                minHeight: "600px",
+                minHeight: "300px",
                 display: "flex",
                 flexDirection: "column",
+                alignItems: "center",
                 gap: 20
             }}
         >
@@ -37,8 +46,9 @@ const Configuration = ({
                     style={{
                         resize: "none",
                         minWidth: "400px",
-                        minHeight: "600px",
+                        minHeight: "300px",
                         fontSize: "16px",
+                        border: "none",
                     }}
                     disabled={!isRoomLeader}
                     value={boardState}
@@ -51,8 +61,9 @@ const Configuration = ({
                     style={{
                         resize: "none",
                         minWidth: "400px",
-                        minHeight: "600px",
+                        minHeight: "300px",
                         fontSize: "16px",
+                        border: "none",
                     }}
                     disabled={!isRoomLeader}
                     value={settingValue}
@@ -60,12 +71,14 @@ const Configuration = ({
                         setSettingValue(e.target.value);
                     }}
                 />
+                <PlayerIconList players={players} />
             </div>
             {isRoomLeader &&
                 <button
                     style={{
                         padding: "8px 16px",
                         backgroundColor: "#007bff",
+                        width: "300px",
                         color: "#fff",
                         border: "none",
                         borderRadius: "5px",

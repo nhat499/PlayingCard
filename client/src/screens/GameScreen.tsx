@@ -148,7 +148,6 @@ function GameScreen() {
 
     useEffect(() => {
         socket.on("BoardUpdate", ({ board, item }) => {
-            console.log("i am item", board[item.id]);
             setBoardItem(board);
         });
 
@@ -202,7 +201,6 @@ function GameScreen() {
                     console.log(gameStates.board);
                 }}
             >boardStates</button> */}
-            <PlayerIconList players={gameStates.players} />
             <div
                 style={{
                     display: "grid",
@@ -217,9 +215,8 @@ function GameScreen() {
                 >
                     <div
                         style={{
-                            display: "flex",
+                            // display: "flex",
                             flexDirection: "column",
-                            gap: "10px",
                             overflowAnchor: "auto",
                         }}
                     >
@@ -233,11 +230,13 @@ function GameScreen() {
                             boardScale={boardScale}
                             setBoardScale={setBoardScale}
                         />
-
-                        <Hand cards={handItem} />
                         <HandButton setHandItem={setHandItem} />
+                        <Hand cards={handItem} />
+
                     </div>
+
                 </div>
+
                 <SubSection />
             </div>
         </DndContext>
