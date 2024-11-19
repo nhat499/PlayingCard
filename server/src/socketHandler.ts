@@ -317,6 +317,22 @@ class SocketHandler {
     this.io.in(roomId).emit("Message", { player, message });
     if (callback) callback();
   };
+
+  RollDice = ({ data, socket }: HandlerParams<"RollDice">) => {
+    const { player } = data;
+    const roomId = player.roomId;
+    const sides = 6;
+    const roll = Math.floor(Math.random() * sides) + 1;
+    this.io.to(roomId).emit("RollDice", { player, roll });
+    this.SendMessage({
+      data: {
+        message: `Roll a ${roll}`,
+        player,
+      },
+      socket,
+    });
+  };
+
   FlipCard = ({ data, callback }: HandlerParams<"FlipCard">) => {
     const { player, item } = data;
     const roomId = player.roomId;

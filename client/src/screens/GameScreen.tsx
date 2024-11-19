@@ -137,7 +137,13 @@ function GameScreen() {
 
     function handleDragMove(event: DragMoveEvent) {
         const updateItem = { ...event.active.data.current } as Item | Stack;
-        if (user && updateItem && event.over?.id === gameObj.BOARD) {
+        if (
+            user &&
+            updateItem &&
+            event.over?.id === gameObj.BOARD &&
+            updateItem.parent === gameObj.BOARD
+        ) {
+            // only show drag if they are on the board
             updateItem.transform = `translate3d(${event.delta.x / boardScale}px, ${event.delta.y / boardScale}px, 0)`;
             socket.emit("OnBoardDrag", {
                 item: updateItem,
@@ -232,9 +238,7 @@ function GameScreen() {
                         />
                         <HandButton setHandItem={setHandItem} />
                         <Hand cards={handItem} />
-
                     </div>
-
                 </div>
 
                 <SubSection />

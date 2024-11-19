@@ -35,7 +35,13 @@ export interface ServerToClientEvents {
   RemoveFromHand: ({ item }: { item: Item }) => void;
 
   // let other know i am dragging
-  OnBoardDrag: ({ item, player }: { item: Item | Stack, player: Player }) => void;
+  OnBoardDrag: ({
+    item,
+    player,
+  }: {
+    item: Item | Stack;
+    player: Player;
+  }) => void;
 
   // let other know I add to a stack
   AddToStack: ({ item, roomId, stackId }: MoveItem) => void;
@@ -78,6 +84,8 @@ export interface ServerToClientEvents {
   ReceiveItem: ({ newItems }: { newItems: Player["hand"] }) => void;
 
   LoadPresetBoard: ({ board }: { board: Room["board"] }) => void;
+
+  RollDice: ({ player, roll }: { player: Player; roll: number }) => void;
 }
 
 export interface ClientToServerEvents {
@@ -107,7 +115,13 @@ export interface ClientToServerEvents {
   DropOnStack: ({ item, player, stackId }: MoveItemOnStack) => void;
 
   // a user is dragging
-  OnBoardDrag: ({ item, player }: { item: Item | Stack, player: Player }) => void;
+  OnBoardDrag: ({
+    item,
+    player,
+  }: {
+    item: Item | Stack;
+    player: Player;
+  }) => void;
 
   SendMessage: ({
     message,
@@ -128,9 +142,25 @@ export interface ClientToServerEvents {
 
   LockCard: ({ player, item }: { player: Player; item: Item }) => void;
 
-  DealItem: ({ player, amount, stack }: { player: Player; amount: number; stack: Stack }) => void;
+  DealItem: ({
+    player,
+    amount,
+    stack,
+  }: {
+    player: Player;
+    amount: number;
+    stack: Stack;
+  }) => void;
 
-  LoadPresetBoard: ({ number, player }: { number: number, player: Player }) => void;
+  LoadPresetBoard: ({
+    number,
+    player,
+  }: {
+    number: number;
+    player: Player;
+  }) => void;
+
+  RollDice: ({ player }: { player: Player }) => void;
 }
 
 export type MoveItemAction = {

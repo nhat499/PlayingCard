@@ -45,6 +45,7 @@ const PresetBoard = [regularDeck, catan];
 const SH = new SocketHandler(gameStates, io, PresetBoard);
 
 io.on("connection", (socket) => {
+  console.log("connected:", socket.id);
   socket.on("CreateRoom", async ({ name }) => {
     const roomId: string = nanoid(5);
     socket.join(roomId);
@@ -167,6 +168,13 @@ io.on("connection", (socket) => {
     const roomId = player.roomId;
     item.disabled = true;
     socket.broadcast.to(roomId).emit("OnBoardDrag", { item, player });
+  });
+
+  socket.on("RollDice", (data) => {
+    SH.RollDice({
+      data,
+      socket,
+    });
   });
 
   socket.on("DealItem", (data) => {
