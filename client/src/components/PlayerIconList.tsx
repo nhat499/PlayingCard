@@ -19,8 +19,8 @@ const PlayerIconList = ({ players }: PlayerIconListProps) => {
                     gap: "10px",
                 }}
             >
-                {players.map((player) => {
-                    return <PlayerIcon player={player} />
+                {players.map((player, index) => {
+                    return <PlayerIcon key={index} player={player} />;
                 })}
             </div>
         );

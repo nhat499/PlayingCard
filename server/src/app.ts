@@ -9,7 +9,12 @@ import http from "http";
 import { Server } from "socket.io";
 import cors from "cors";
 import nanoid from "nanoid-esm";
-import { GameStates, Player, Room } from "./interfaces/gameStateInterface";
+import {
+  GameStates,
+  Player,
+  Room,
+  Stack,
+} from "./interfaces/gameStateInterface";
 import path from "path";
 import dotenv from "dotenv";
 import SocketHandler from "./socketHandler";
@@ -168,6 +173,21 @@ io.on("connection", (socket) => {
     const roomId = player.roomId;
     item.disabled = true;
     socket.broadcast.to(roomId).emit("OnBoardDrag", { item, player });
+  });
+
+  socket.on("DragFromStack", ({ item, player }) => {
+    const roomId = player.roomId;
+    item.disabled = true;
+    item.name = "...Dragging";
+
+    const stack = gameStates[roomId].board[item.parent] as Stack;
+    if (stack.data[stack.data.length - 1].id === item.id) {
+      socket.broadcast.to(roomId).emit("DragFromStack", {
+        item,
+        stackData: stack.data.slice(0, -1),
+        player,
+      });
+    }
   });
 
   socket.on("RollDice", (data) => {

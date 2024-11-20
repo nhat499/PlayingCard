@@ -16,7 +16,7 @@ for (let r = 0; r < resource.length; r++) {
   for (let i = 0; i < 5; i++) {
     board[`ITEM-${mat}${i}`] = {
       sides: 6,
-      rotate: 15,
+      rotate: 45,
       color: hexColor[r],
       id: `ITEM-${mat}${i}`,
       name: mat,

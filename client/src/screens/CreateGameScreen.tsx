@@ -3,7 +3,6 @@ import Configuration from "../components/Configuration";
 import { socket } from "../socket/Socket";
 import { useGameState, useUser } from "../atom/userAtom";
 import { useNavigate, useParams } from "react-router-dom";
-import PlayerIconList from "../components/PlayerIconList";
 import { Room } from "../../../server/src/interfaces/gameStateInterface";
 
 const CreateGameScreen = () => {
@@ -35,10 +34,8 @@ const CreateGameScreen = () => {
         });
 
         socket.on("LoadPresetBoard", ({ board }) => {
-            setBoardStateValue(
-                JSON.stringify(board, undefined, 4)
-            );
-        })
+            setBoardStateValue(JSON.stringify(board, undefined, 4));
+        });
 
         // start game
         socket.on("StartGame", ({ roomId, gameState }) => {
@@ -68,30 +65,46 @@ const CreateGameScreen = () => {
                 gap: "20px",
             }}
         >
+            <div
+                style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    gap: "20px",
+                }}
+            >
+                <button
+                    onClick={() => {
+                        socket.emit("LoadPresetBoard", {
+                            number: 0,
+                            player: user,
+                        });
+                    }}
+                >
+                    regular
+                </button>
 
-            <div style={{
-                display: "flex",
-                justifyContent: "center",
-                gap: "20px",
-            }}>
-                <button onClick={() => {
-                    socket.emit("LoadPresetBoard", { number: 0, player: user })
-                }}>regular</button>
-
-                <button onClick={() => {
-                    socket.emit("LoadPresetBoard", { number: 1, player: user })
-                }}>catan</button>
-
+                <button
+                    onClick={() => {
+                        socket.emit("LoadPresetBoard", {
+                            number: 1,
+                            player: user,
+                        });
+                    }}
+                >
+                    catan
+                </button>
             </div>
 
-            <div style={{
-                display: "flex",
-                width: "100%",
-                justifyContent: "flex-end",
-                gridTemplateColumns: "4fr 1fr",
+            <div
+                style={{
+                    display: "flex",
+                    width: "100%",
+                    justifyContent: "flex-end",
+                    gridTemplateColumns: "4fr 1fr",
 
-                gap: "20px",
-            }}>
+                    gap: "20px",
+                }}
+            >
                 <Configuration
                     players={gameStates.players}
                     settingValue={settingValue}
@@ -101,7 +114,8 @@ const CreateGameScreen = () => {
                     isRoomLeader={user.roomLeader}
                     startGame={() => {
                         if (!user.roomLeader) return;
-                        const setting: Room["setting"] = JSON.parse(settingValue);
+                        const setting: Room["setting"] =
+                            JSON.parse(settingValue);
                         const boardState: Room["board"] =
                             JSON.parse(boardStateValue);
                         socket.emit("StartGame", {

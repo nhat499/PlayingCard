@@ -86,6 +86,16 @@ export interface ServerToClientEvents {
   LoadPresetBoard: ({ board }: { board: Room["board"] }) => void;
 
   RollDice: ({ player, roll }: { player: Player; roll: number }) => void;
+
+  DragFromStack: ({
+    item,
+    player,
+    stackData,
+  }: {
+    item: Item;
+    player: Player;
+    stackData: Stack["data"];
+  }) => void;
 }
 
 export interface ClientToServerEvents {
@@ -161,6 +171,8 @@ export interface ClientToServerEvents {
   }) => void;
 
   RollDice: ({ player }: { player: Player }) => void;
+
+  DragFromStack: ({ player, item }: { player: Player; item: Item }) => void;
 }
 
 export type MoveItemAction = {

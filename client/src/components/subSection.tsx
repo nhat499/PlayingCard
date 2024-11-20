@@ -74,14 +74,23 @@ const SubSection = () => {
 
             {/* Content Area */}
             <div style={{ height: "100%", width: "300px" }}>
-                {currTab === 0 && <div style={{
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "space-between"
-                }}><Dice /><ChatBox /></div>}
-                {currTab === 1 && <PlayerIconList players={gameStates?.players ?? []} detail />}
+                {currTab === 0 && (
+                    <div
+                        style={{
+                            height: "100%",
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                        }}
+                    >
+                        <Dice />
+                        <ChatBox />
+                    </div>
+                )}
+                {currTab === 1 && (
+                    <PlayerIconList players={gameStates?.players ?? []} />
+                )}
                 {currTab === 2 && <AddItemPopup />}
                 {currTab === 3 && <div>TBD</div>}
             </div>

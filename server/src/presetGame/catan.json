@@ -1,7 +1,7 @@
 {
   "ITEM-WOOD0": {
     "sides": 6,
-    "rotate": 15,
+    "rotate": 45,
     "color": "green",
     "id": "ITEM-WOOD0",
     "name": "WOOD",
@@ -16,7 +16,7 @@
   },
   "ITEM-WOOD1": {
     "sides": 6,
-    "rotate": 15,
+    "rotate": 45,
     "color": "green",
     "id": "ITEM-WOOD1",
     "name": "WOOD",
@@ -31,7 +31,7 @@
   },
   "ITEM-WOOD2": {
     "sides": 6,
-    "rotate": 15,
+    "rotate": 45,
     "color": "green",
     "id": "ITEM-WOOD2",
     "name": "WOOD",
@@ -46,7 +46,7 @@
   },
   "ITEM-WOOD3": {
     "sides": 6,
-    "rotate": 15,
+    "rotate": 45,
     "color": "green",
     "id": "ITEM-WOOD3",
     "name": "WOOD",
@@ -61,7 +61,7 @@
   },
   "ITEM-WOOD4": {
     "sides": 6,
-    "rotate": 15,
+    "rotate": 45,
     "color": "green",
     "id": "ITEM-WOOD4",
     "name": "WOOD",
@@ -360,7 +360,7 @@
   },
   "ITEM-HAY0": {
     "sides": 6,
-    "rotate": 15,
+    "rotate": 45,
     "color": "tan",
     "id": "ITEM-HAY0",
     "name": "HAY",
@@ -375,7 +375,7 @@
   },
   "ITEM-HAY1": {
     "sides": 6,
-    "rotate": 15,
+    "rotate": 45,
     "color": "tan",
     "id": "ITEM-HAY1",
     "name": "HAY",
@@ -390,7 +390,7 @@
   },
   "ITEM-HAY2": {
     "sides": 6,
-    "rotate": 15,
+    "rotate": 45,
     "color": "tan",
     "id": "ITEM-HAY2",
     "name": "HAY",
@@ -405,7 +405,7 @@
   },
   "ITEM-HAY3": {
     "sides": 6,
-    "rotate": 15,
+    "rotate": 45,
     "color": "tan",
     "id": "ITEM-HAY3",
     "name": "HAY",
@@ -420,7 +420,7 @@
   },
   "ITEM-HAY4": {
     "sides": 6,
-    "rotate": 15,
+    "rotate": 45,
     "color": "tan",
     "id": "ITEM-HAY4",
     "name": "HAY",
@@ -719,7 +719,7 @@
   },
   "ITEM-BRICK0": {
     "sides": 6,
-    "rotate": 15,
+    "rotate": 45,
     "color": "orange",
     "id": "ITEM-BRICK0",
     "name": "BRICK",
@@ -734,7 +734,7 @@
   },
   "ITEM-BRICK1": {
     "sides": 6,
-    "rotate": 15,
+    "rotate": 45,
     "color": "orange",
     "id": "ITEM-BRICK1",
     "name": "BRICK",
@@ -749,7 +749,7 @@
   },
   "ITEM-BRICK2": {
     "sides": 6,
-    "rotate": 15,
+    "rotate": 45,
     "color": "orange",
     "id": "ITEM-BRICK2",
     "name": "BRICK",
@@ -764,7 +764,7 @@
   },
   "ITEM-BRICK3": {
     "sides": 6,
-    "rotate": 15,
+    "rotate": 45,
     "color": "orange",
     "id": "ITEM-BRICK3",
     "name": "BRICK",
@@ -779,7 +779,7 @@
   },
   "ITEM-BRICK4": {
     "sides": 6,
-    "rotate": 15,
+    "rotate": 45,
     "color": "orange",
     "id": "ITEM-BRICK4",
     "name": "BRICK",
@@ -1078,7 +1078,7 @@
   },
   "ITEM-SHEEP0": {
     "sides": 6,
-    "rotate": 15,
+    "rotate": 45,
     "color": "lightgreen",
     "id": "ITEM-SHEEP0",
     "name": "SHEEP",
@@ -1093,7 +1093,7 @@
   },
   "ITEM-SHEEP1": {
     "sides": 6,
-    "rotate": 15,
+    "rotate": 45,
     "color": "lightgreen",
     "id": "ITEM-SHEEP1",
     "name": "SHEEP",
@@ -1108,7 +1108,7 @@
   },
   "ITEM-SHEEP2": {
     "sides": 6,
-    "rotate": 15,
+    "rotate": 45,
     "color": "lightgreen",
     "id": "ITEM-SHEEP2",
     "name": "SHEEP",
@@ -1123,7 +1123,7 @@
   },
   "ITEM-SHEEP3": {
     "sides": 6,
-    "rotate": 15,
+    "rotate": 45,
     "color": "lightgreen",
     "id": "ITEM-SHEEP3",
     "name": "SHEEP",
@@ -1138,7 +1138,7 @@
   },
   "ITEM-SHEEP4": {
     "sides": 6,
-    "rotate": 15,
+    "rotate": 45,
     "color": "lightgreen",
     "id": "ITEM-SHEEP4",
     "name": "SHEEP",
@@ -1437,7 +1437,7 @@
   },
   "ITEM-ROCK0": {
     "sides": 6,
-    "rotate": 15,
+    "rotate": 45,
     "color": "lightgray",
     "id": "ITEM-ROCK0",
     "name": "ROCK",
@@ -1452,7 +1452,7 @@
   },
   "ITEM-ROCK1": {
     "sides": 6,
-    "rotate": 15,
+    "rotate": 45,
     "color": "lightgray",
     "id": "ITEM-ROCK1",
     "name": "ROCK",
@@ -1467,7 +1467,7 @@
   },
   "ITEM-ROCK2": {
     "sides": 6,
-    "rotate": 15,
+    "rotate": 45,
     "color": "lightgray",
     "id": "ITEM-ROCK2",
     "name": "ROCK",
@@ -1482,7 +1482,7 @@
   },
   "ITEM-ROCK3": {
     "sides": 6,
-    "rotate": 15,
+    "rotate": 45,
     "color": "lightgray",
     "id": "ITEM-ROCK3",
     "name": "ROCK",
@@ -1497,7 +1497,7 @@
   },
   "ITEM-ROCK4": {
     "sides": 6,
-    "rotate": 15,
+    "rotate": 45,
     "color": "lightgray",
     "id": "ITEM-ROCK4",
     "name": "ROCK",
@@ -1796,7 +1796,7 @@
   },
   "ITEM-DESERT0": {
     "sides": 6,
-    "rotate": 15,
+    "rotate": 45,
     "color": "yellow",
     "id": "ITEM-DESERT0",
     "name": "DESERT",
@@ -1811,7 +1811,7 @@
   },
   "ITEM-DESERT1": {
     "sides": 6,
-    "rotate": 15,
+    "rotate": 45,
     "color": "yellow",
     "id": "ITEM-DESERT1",
     "name": "DESERT",
@@ -1826,7 +1826,7 @@
   },
   "ITEM-DESERT2": {
     "sides": 6,
-    "rotate": 15,
+    "rotate": 45,
     "color": "yellow",
     "id": "ITEM-DESERT2",
     "name": "DESERT",
@@ -1841,7 +1841,7 @@
   },
   "ITEM-DESERT3": {
     "sides": 6,
-    "rotate": 15,
+    "rotate": 45,
     "color": "yellow",
     "id": "ITEM-DESERT3",
     "name": "DESERT",
@@ -1856,7 +1856,7 @@
   },
   "ITEM-DESERT4": {
     "sides": 6,
-    "rotate": 15,
+    "rotate": 45,
     "color": "yellow",
     "id": "ITEM-DESERT4",
     "name": "DESERT",

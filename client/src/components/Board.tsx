@@ -62,7 +62,25 @@ const Board = ({
             setItems(board);
         });
 
+        socket.on("DragFromStack", ({ item, stackData }) => {
+            console.log("test");
+            setItems((prevItem) => {
+                const currItems = { ...prevItem };
+                const stack = currItems[item.parent];
+                if ("data" in stack) {
+                    stack.data = stackData;
+                }
+                return currItems;
+            });
+            // remove from stack for everyone temporaliy
+
+            // setIsStackItemDrag(true);
+            // items[item.parent].data.push(item);
+            // stack.data.push(item);
+        });
+
         return () => {
+            socket.off("DragFromStack");
             socket.off("FlipCard");
             socket.off("ShuffleStack");
             socket.off("FlipStack");

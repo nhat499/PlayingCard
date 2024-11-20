@@ -31,7 +31,7 @@ const Card = ({ card, disableOptions }: CardProps) => {
         if (!isItemAction && isRotate) {
             setIsRotate(false);
         }
-    }, [isItemAction])
+    }, [isItemAction]);
 
     return (
         <div
@@ -131,7 +131,7 @@ const Card = ({ card, disableOptions }: CardProps) => {
                     min={-180}
                     max={180}
                     onMouseUp={() => {
-                        console.log("onMouseUp")
+                        console.log("onMouseUp");
                         setIsItemAction(false);
                         setIsRotate(false);
                     }}
@@ -151,7 +151,7 @@ const Card = ({ card, disableOptions }: CardProps) => {
                 item={{
                     ...card,
                 }}
-                Children={(isDragging) => (
+                Children={() => (
                     <Polygon
                         height={card.height}
                         sides={card.sides}

@@ -228,6 +228,7 @@ class SocketHandler {
 
   DropOnHand = ({ data, socket, callback }: HandlerParams<"DropOnHand">) => {
     const { item, player } = data;
+
     const roomId = player.roomId;
     if ("data" in item) {
       return;
@@ -270,14 +271,18 @@ class SocketHandler {
 
   DropOnStack = ({ data, socket, callback }: HandlerParams<"DropOnStack">) => {
     const { item, player, stackId } = data;
-    // send all in room
     const roomId = player.roomId;
+    // send all in room
 
+    console.log("dropping on stack");
     // removes
     if (item.parent === gameObj.HAND) {
       // remove from hand
-      removeFromHand({ gameStates: this.gameStates, item, player, roomId });
-      socket.emit("RemoveFromHand", { item });
+      if (
+        removeFromHand({ gameStates: this.gameStates, item, player, roomId })
+      ) {
+        socket.emit("RemoveFromHand", { item });
+      }
     } else if (item.parent === gameObj.BOARD) {
       removeFromBoard({ gameStates: this.gameStates, item, roomId });
     } else {

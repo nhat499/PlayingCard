@@ -160,6 +160,7 @@ const Stack = ({ stack }: StackProps) => {
                                     disableOptions={true}
                                 />
                             )}
+                            {/* {isStackItemDrag && "dragging"} */}
                         </div>
                     </div>
                 )}

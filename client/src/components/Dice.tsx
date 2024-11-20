@@ -2,13 +2,9 @@ import { useEffect, useState } from "react";
 import { socket } from "../socket/Socket";
 import { useUser } from "../atom/userAtom";
 
-type DiceProps = {
-    sides?: number; // Optional: defaults to 6
-};
-
-const Dice = ({ sides = 6 }: DiceProps) => {
+const Dice = () => {
     const [roll, setRoll] = useState<number>(6);
-    const { user, setUser } = useUser();
+    const { user } = useUser();
     if (!user) {
         throw "User Not Found";
     }
@@ -23,7 +19,7 @@ const Dice = ({ sides = 6 }: DiceProps) => {
     });
     return (
         <button
-            onClick={(e) => {
+            onClick={() => {
                 // const result = Math.floor(Math.random() * sides) + 1;
                 socket.emit("RollDice", { player: user });
                 // setRoll(result);

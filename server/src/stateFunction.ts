@@ -44,6 +44,9 @@ export const removeFromHand = ({
   );
   if (index !== -1) {
     delete currPlayers[index].hand[item.id]; // Remove the item from the hand
+    return true;
+  } else {
+    return false;
   }
 };
 

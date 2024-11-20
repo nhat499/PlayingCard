@@ -22,7 +22,6 @@ import {
     Room,
     Stack,
 } from "../../../server/src/interfaces/gameStateInterface";
-import PlayerIconList from "../components/PlayerIconList";
 import SubSection from "../components/subSection";
 import HandButton from "../components/HandButtons";
 
@@ -30,7 +29,7 @@ function GameScreen() {
     const [highestZIndex, setHighestZIndex] = useState<number>(2);
     const { roomId } = useParams();
     const { gameStates } = useGameState();
-    const { isItemAction, setIsItemAction } = useItemAction();
+    const { setIsItemAction } = useItemAction();
     const { boardScale, setBoardScale } = useBoardScale();
     const { user } = useUser();
     if (!gameStates || !roomId || !user) {
@@ -122,6 +121,7 @@ function GameScreen() {
         if (!item) return;
         setIsItemAction(true);
         if (
+            user &&
             boardItem[item.id] &&
             item.zIndex < highestZIndex &&
             !item.id.startsWith(gameObj.STACK)
@@ -132,6 +132,12 @@ function GameScreen() {
                 return { ...currBoardItem };
             });
             setHighestZIndex(highestZIndex + 1);
+        } else if (user && item.parent.startsWith(gameObj.STACK)) {
+            console.log("test");
+            socket.emit("DragFromStack", {
+                item: item,
+                player: user,
+            });
         }
     }
 
@@ -150,10 +156,20 @@ function GameScreen() {
                 player: user,
             });
         }
+        // else if (
+        //     user &&
+        //     updateItem.parent.startsWith(gameObj.STACK) &&
+        //     !("data" in updateItem)
+        // ) {
+        //     socket.emit("DragFromStack", {
+        //         item: updateItem,
+        //         player: user,
+        //     });
+        // }
     }
 
     useEffect(() => {
-        socket.on("BoardUpdate", ({ board, item }) => {
+        socket.on("BoardUpdate", ({ board }) => {
             setBoardItem(board);
         });
 
