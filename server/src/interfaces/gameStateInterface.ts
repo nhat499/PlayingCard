@@ -14,6 +14,7 @@ export type Setting = {
 export type Room = {
   players: Player[];
   board: { [key: string]: Item | Stack };
+  maxZIndex: number;
   setting: Setting;
 };
 

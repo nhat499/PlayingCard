@@ -96,6 +96,8 @@ export interface ServerToClientEvents {
     player: Player;
     stackData: Stack["data"];
   }) => void;
+
+  MaxZIndex: ({ player, zIndex }: { player: Player, zIndex: number }) => void;
 }
 
 export interface ClientToServerEvents {

@@ -50,7 +50,7 @@ const HandButton = ({ setHandItem }: HandButtonProps) => {
                     const newHand = Object.entries(prevHand).map(([key, value], index) => {
                         return [
                             key,
-                            { ...value, top: 0, left: index * 20 }
+                            { ...value, top: 10, left: index * 20 }
                         ]
                     });
                     return Object.fromEntries(newHand);

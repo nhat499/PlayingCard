@@ -26,9 +26,9 @@ import SubSection from "../components/subSection";
 import HandButton from "../components/HandButtons";
 
 function GameScreen() {
-    const [highestZIndex, setHighestZIndex] = useState<number>(2);
     const { roomId } = useParams();
     const { gameStates } = useGameState();
+    const [highestZIndex, setHighestZIndex] = useState<number>(gameStates?.maxZIndex ?? 1);
     const { setIsItemAction } = useItemAction();
     const { boardScale, setBoardScale } = useBoardScale();
     const { user } = useUser();
@@ -44,7 +44,7 @@ function GameScreen() {
     function handleDragEnd(event: DragEndEvent) {
         const { active, over, delta } = event;
         const item = active.data.current as Item | Stack | undefined;
-        if (!item || !user || !over) return;
+        if (!item || !item.id || !user || !over) return;
         if (over.id === gameObj.BOARD) {
             let updateItem = boardItem[item.id];
             const stack = boardItem[item.parent];
@@ -53,7 +53,6 @@ function GameScreen() {
                 updateItem.left = updateItem.left + delta.x / boardScale;
                 updateItem.top = updateItem.top + delta.y / boardScale;
             } else if (item.parent.startsWith(gameObj.STACK) && stack) {
-                console.log(stack.top);
                 updateItem = { ...item };
                 updateItem.top = stack.top + delta.y / boardScale;
                 updateItem.left = stack.left + delta.x / boardScale;
@@ -80,12 +79,20 @@ function GameScreen() {
             !("data" in item) // stack have data field
         ) {
             if (!handItem[item.id]) {
-                // add to hand
-                item.top = 0;
+                const stack = boardItem[item.parent];
+                // let updateItem = boardItem[item.id];
+                item.top = 10;
+                if (stack && item.parent.startsWith(gameObj.STACK)) {
+
+                    item.left = stack.left;
+                }
 
                 item.left += delta.x;
                 item.left += boardPosition.x;
                 item.left *= boardScale;
+
+
+                // add to hand
 
                 socket.emit("DropOnHand", { item, player: user });
             } else {
@@ -121,9 +128,8 @@ function GameScreen() {
         if (!item) return;
         setIsItemAction(true);
         if (
-            user &&
             boardItem[item.id] &&
-            item.zIndex < highestZIndex &&
+            // item.zIndex < highestZIndex &&
             !item.id.startsWith(gameObj.STACK)
         ) {
             item.zIndex = highestZIndex;
@@ -131,13 +137,7 @@ function GameScreen() {
                 currBoardItem[item.id] = item;
                 return { ...currBoardItem };
             });
-            setHighestZIndex(highestZIndex + 1);
-        } else if (user && item.parent.startsWith(gameObj.STACK)) {
-            console.log("test");
-            socket.emit("DragFromStack", {
-                item: item,
-                player: user,
-            });
+
         }
     }
 
@@ -203,6 +203,10 @@ function GameScreen() {
             });
         });
 
+        socket.on("MaxZIndex", ({ zIndex }) => {
+            setHighestZIndex(zIndex);
+        })
+
         return () => {
             socket.off("BoardUpdate");
             socket.off("AddToHand");
@@ -218,11 +222,6 @@ function GameScreen() {
             onDragStart={handleDragStart}
             onDragMove={handleDragMove}
         >
-            {/* <button
-                onClick={() => {
-                    console.log(gameStates.board);
-                }}
-            >boardStates</button> */}
             <div
                 style={{
                     display: "grid",

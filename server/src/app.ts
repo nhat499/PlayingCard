@@ -50,7 +50,6 @@ const PresetBoard = [regularDeck, catan];
 const SH = new SocketHandler(gameStates, io, PresetBoard);
 
 io.on("connection", (socket) => {
-  console.log("connected:", socket.id);
   socket.on("CreateRoom", async ({ name }) => {
     const roomId: string = nanoid(5);
     socket.join(roomId);
@@ -67,6 +66,7 @@ io.on("connection", (socket) => {
     gameStates[roomId] = {
       board: {},
       players: [playerOne],
+      maxZIndex: 1,
       setting: {
         window: {
           width: 700,
@@ -172,23 +172,26 @@ io.on("connection", (socket) => {
   socket.on("OnBoardDrag", ({ item, player }) => {
     const roomId = player.roomId;
     item.disabled = true;
+    if ("data" in item) {
+      item.data = [];
+    }
     socket.broadcast.to(roomId).emit("OnBoardDrag", { item, player });
   });
 
-  socket.on("DragFromStack", ({ item, player }) => {
-    const roomId = player.roomId;
-    item.disabled = true;
-    item.name = "...Dragging";
+  // socket.on("DragFromStack", ({ item, player }) => {
+  //   const roomId = player.roomId;
+  //   item.disabled = true;
+  //   item.name = "...Dragging";
 
-    const stack = gameStates[roomId].board[item.parent] as Stack;
-    if (stack.data[stack.data.length - 1].id === item.id) {
-      socket.broadcast.to(roomId).emit("DragFromStack", {
-        item,
-        stackData: stack.data.slice(0, -1),
-        player,
-      });
-    }
-  });
+  //   const stack = gameStates[roomId].board[item.parent] as Stack;
+  //   if (stack.data[stack.data.length - 1].id === item.id) {
+  //     socket.broadcast.to(roomId).emit("DragFromStack", {
+  //       item,
+  //       stackData: stack.data.slice(0, -1),
+  //       player,
+  //     });
+  //   }
+  // });
 
   socket.on("RollDice", (data) => {
     SH.RollDice({

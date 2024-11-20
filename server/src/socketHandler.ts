@@ -204,20 +204,24 @@ class SocketHandler {
     // here
     // add to board
     item.parent = gameObj.BOARD;
-    this.gameStates[roomId].board[item.id] = item;
 
+    const currMaxIndex = this.gameStates[roomId].maxZIndex;
+    if (!("data" in item)) {
+      this.gameStates[roomId].maxZIndex = currMaxIndex + 1;
+      item.zIndex = currMaxIndex + 1;
+    }
+
+    this.gameStates[roomId].board[item.id] = item;
     this.io.in(roomId).emit("BoardUpdate", {
       board: this.gameStates[roomId].board,
       item,
       player,
       message: `Drop ${item.name} on Board`,
     });
-    if ("data" in item) {
-      this.io.in(roomId).emit("Message", {
-        player,
-        message: `Drop ${item.name} on Board`,
-      });
-    } else {
+
+    this.io.in(roomId).emit("MaxZIndex", { player, zIndex: currMaxIndex + 1 })
+
+    if (!("data" in item)) {
       this.io.in(roomId).emit("Message", {
         player,
         message: `Drop ${item.isHidden ? "hidden" : item.name} on Board`,
@@ -228,7 +232,6 @@ class SocketHandler {
 
   DropOnHand = ({ data, socket, callback }: HandlerParams<"DropOnHand">) => {
     const { item, player } = data;
-
     const roomId = player.roomId;
     if ("data" in item) {
       return;
@@ -274,7 +277,6 @@ class SocketHandler {
     const roomId = player.roomId;
     // send all in room
 
-    console.log("dropping on stack");
     // removes
     if (item.parent === gameObj.HAND) {
       // remove from hand
@@ -289,6 +291,7 @@ class SocketHandler {
       // remove from current stack
       const currStack = this.gameStates[roomId].board[item.parent];
       if (
+        currStack &&
         "data" in currStack &&
         currStack.data[currStack.data.length - 1].id === item.id
       ) {
@@ -298,9 +301,13 @@ class SocketHandler {
 
     // add to stack
     const stack = this.gameStates[roomId].board[stackId];
-    if (stack && "data" in stack) {
+    if (item.id && stack && "data" in stack) {
       item.parent = stack.id;
       stack.data.push(item);
+      this.io.in(roomId).emit("Message", {
+        player,
+        message: `Drop ${item.name} on Stack ${stack.name}`,
+      });
     }
 
     this.io.in(roomId).emit("BoardUpdate", {
@@ -310,10 +317,7 @@ class SocketHandler {
       message: ``,
     });
 
-    this.io.in(roomId).emit("Message", {
-      player,
-      message: `Drop ${item.name} on Stack ${stack.name}`,
-    });
+
     if (callback) callback();
   };
   SendMessage = ({ data, callback }: HandlerParams<"SendMessage">) => {
@@ -361,6 +365,7 @@ class SocketHandler {
     // could make this check out side?
     if (item.parent === gameObj.BOARD) {
       item.disabled = !item.disabled;
+      item.zIndex = 0;
       this.gameStates[roomId].board[item.id] = item;
 
       this.io.in(roomId).emit("LockCard", {
@@ -430,6 +435,7 @@ class SocketHandler {
       const newItems: Player["hand"] = {};
       for (let i = 0; i < amount; i++) {
         const newItem = gameStack.data.pop();
+        newItem.top = 10;
         newItem.parent = gameObj.HAND;
         newItems[newItem.id] = newItem;
         currPlayer.hand[newItem.id] = newItem;

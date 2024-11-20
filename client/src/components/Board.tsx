@@ -62,25 +62,7 @@ const Board = ({
             setItems(board);
         });
 
-        socket.on("DragFromStack", ({ item, stackData }) => {
-            console.log("test");
-            setItems((prevItem) => {
-                const currItems = { ...prevItem };
-                const stack = currItems[item.parent];
-                if ("data" in stack) {
-                    stack.data = stackData;
-                }
-                return currItems;
-            });
-            // remove from stack for everyone temporaliy
-
-            // setIsStackItemDrag(true);
-            // items[item.parent].data.push(item);
-            // stack.data.push(item);
-        });
-
         return () => {
-            socket.off("DragFromStack");
             socket.off("FlipCard");
             socket.off("ShuffleStack");
             socket.off("FlipStack");
@@ -153,9 +135,8 @@ const Board = ({
                     // background: 'url("https://img.freepik.com/premium-vector/abstract-signs-pattern-white-background-vector-illustration_716882-534.jpg?semt=ais_hybrid")',
                     // backgroundRepeat: "repeat",
                     // backgroundSize: "300px 300px",
-                    left: `${boardPosition.x}px`, // Apply left position to move the board
-                    top: `${boardPosition.y}px`, // Apply top position to move the board
-                    // transition: "",
+                    left: `${boardPosition.x}px`,
+                    top: `${boardPosition.y}px`,
                     transform: `scale(${boardScale},${boardScale})`,
                     transformOrigin: "top left",
                 }}
