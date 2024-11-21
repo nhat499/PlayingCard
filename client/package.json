@@ -12,6 +12,7 @@
     "dependencies": {
         "@dnd-kit/core": "^6.1.0",
         "@dnd-kit/sortable": "^8.0.0",
+        "@html-polygon/react": "^0.1.4",
         "jotai": "^2.9.3",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",

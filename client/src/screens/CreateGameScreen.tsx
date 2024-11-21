@@ -7,14 +7,16 @@ import PlayerIcon from "../components/PlayerIcon";
 import { useNavigate, useParams } from "react-router-dom";
 import { BoardProps } from "../components/Board";
 import { BOARD } from "./GameScreen";
+import { CardProps } from "../components/Card";
 
 const Suite = ["spade", "club", "diamond", "heart"];
 
 const createRegularDeckObject = () => {
-    const object: item[] = [];
+    const object: CardProps["card"][] = [];
     for (let i = 1; i <= 10; i++) {
         for (const s of Suite) {
-            const card: item = {
+            const card: CardProps["card"] = {
+                rotate: 0,
                 id: `card${i}${s}`,
                 name: `${i} ${s}`,
                 parent: "stack1",
@@ -30,7 +32,8 @@ const createRegularDeckObject = () => {
         }
     }
     for (const s of Suite) {
-        const card: item = {
+        const card: CardProps["card"] = {
+            rotate: 0,
             id: `card${"jack"}${s}`,
             name: `${"jack"} ${s}`,
             parent: "stack1",
@@ -45,7 +48,8 @@ const createRegularDeckObject = () => {
         object.push(card);
     }
     for (const s of Suite) {
-        const card: item = {
+        const card: CardProps["card"] = {
+            rotate: 10,
             id: `card${"queen"}${s}`,
             name: `${"queen"} ${s}`,
             parent: "stack1",
@@ -60,7 +64,8 @@ const createRegularDeckObject = () => {
         object.push(card);
     }
     for (const s of Suite) {
-        const card: item = {
+        const card: CardProps["card"] = {
+            rotate: -5,
             id: `card${"king"}${s}`,
             name: `${"king"} ${s}`,
             parent: "stack1",
@@ -78,19 +83,34 @@ const createRegularDeckObject = () => {
     return object;
 };
 
-const setting: BoardProps["items"] = {
-    stack1: {
-        id: "stack1",
-        name: "stack1",
-        parent: BOARD,
-        data: [...createRegularDeckObject()],
-        zIndex: 1,
-        width: 50,
-        height: 70,
-        top: 50,
-        left: 50,
-        disabled: false,
-        isHidden: false,
+type ISetting = {
+    [BOARD]: BoardProps["items"];
+    window: {
+        width: number;
+        height: number;
+    };
+};
+
+const setting: ISetting = {
+    [BOARD]: {
+        stack1: {
+            id: "stack1",
+            name: "stack1",
+            parent: BOARD,
+            data: [...createRegularDeckObject()],
+            rotate: 0,
+            zIndex: 1,
+            width: 50,
+            height: 70,
+            top: 50,
+            left: 50,
+            disabled: false,
+            isHidden: false,
+        },
+    },
+    window: {
+        width: 1300,
+        height: 700,
     },
 };
 
@@ -125,8 +145,8 @@ const CreateGameScreen = () => {
         });
 
         // start game
-        socket.on("StartGame", ({ roomId, players, boardData }) => {
-            navigate("/game/" + roomId, { state: boardData });
+        socket.on("StartGame", ({ roomId, players, setting }) => {
+            navigate("/game/" + roomId, { state: setting });
         });
 
         // socket.emit()
@@ -164,7 +184,7 @@ const CreateGameScreen = () => {
                         socket.emit("StartGame", {
                             roomId,
                             players,
-                            boardData: JSON.parse(settingValue),
+                            setting: JSON.parse(settingValue),
                         });
 
                         navigate("/game/" + roomId);

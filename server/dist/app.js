@@ -57,16 +57,15 @@ io.on("connection", (socket) => {
         socket.broadcast
             .to(roomId)
             .emit("SomeOneJoin", { name, socketId: socket.id });
-        // console.log("i am a:", a);
     }));
     // sent list of current players
     socket.on("CurrentPlayers", ({ players, to }) => {
         socket.to(to).emit("CurrentPlayers", { players });
     });
     // let other know the roomLeader has started the game
-    socket.on("StartGame", ({ roomId, players, boardData }) => {
+    socket.on("StartGame", ({ roomId, players, setting }) => {
         // socket.broadcast.to(roomId).emit("StartGame", { roomId, players, boardData });
-        io.in(roomId).emit("StartGame", { roomId, players, boardData });
+        io.in(roomId).emit("StartGame", { roomId, players, setting });
     });
     socket.on("DropOnBoard", ({ item, roomId, boardItem }) => {
         // socket.broadcast.to(roomId).emit("DropOnBoard", { item, roomId });\
@@ -88,8 +87,16 @@ io.on("connection", (socket) => {
     });
     socket.on("DropFromStack", ({ item, roomId, stackId }) => {
         // send all in room
-        console.log("dropping from stack");
         io.in(roomId).emit("DropFromStack2", { item, roomId, stackId });
+    });
+    socket.on("ShuffleStack", ({ roomId, stackId, stackData }) => {
+        io.in(roomId).emit("ShuffleStack", { roomId, stackId, stackData });
+    });
+    socket.on("FlipStack", ({ roomId, stackId, stackData }) => {
+        io.in(roomId).emit("FlipStack", { roomId, stackId, stackData });
+    });
+    socket.on("FlipCard", ({ roomId, itemId, value }) => {
+        io.in(roomId).emit("FlipCard", { roomId, itemId, value });
     });
 });
 server.listen(3000, () => {
