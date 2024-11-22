@@ -13,6 +13,8 @@ const hexColor = [
 ];
 for (let r = 0; r < resource.length; r++) {
   const mat = resource[r];
+
+  // hex
   for (let i = 0; i < 5; i++) {
     board[`ITEM-${mat}${i}`] = {
       sides: 6,
@@ -30,6 +32,8 @@ for (let r = 0; r < resource.length; r++) {
       isHidden: false,
     };
   }
+
+  // stack
   if (r < resource.length - 1) {
     board[`STACK-${mat}`] = {
       id: `STACK-${mat}`,
@@ -39,12 +43,13 @@ for (let r = 0; r < resource.length; r++) {
       zIndex: 1,
       width: 80,
       height: 100,
-      top: 150 + 100 * r,
-      left: 0,
+      top: 160,
+      left: 90 * r + 10,
       disabled: false,
       data: [],
     };
 
+    // item in stack
     for (let i = 0; i < 18; i++) {
       board[`STACK-${mat}`].data.push({
         sides: 4,
@@ -65,6 +70,117 @@ for (let r = 0; r < resource.length; r++) {
   }
 }
 
+// dev cards
+board[`STACK-DEV`] = {
+  id: `STACK-DEV`,
+  name: `DEVStack`,
+  parent: "BOARD",
+  rotate: 0,
+  zIndex: 1,
+  width: 80,
+  height: 100,
+  top: 160,
+  left: 90 * 5 + 10,
+  disabled: false,
+  data: [],
+};
+
+// item in stack
+// knights
+for (let i = 0; i < 14; i++) {
+  board[`STACK-DEV`].data.push({
+    sides: 4,
+    rotate: 0,
+    color: "white",
+    id: `ITEM-DEV-KNIGHTS-CARD${i}`,
+    name: "Knights",
+    parent: `STACK-DEV`,
+    zIndex: 1,
+    width: 80,
+    height: 100,
+    top: 0,
+    left: 0,
+    disabled: false,
+    isHidden: false,
+  });
+}
+
+// victory points
+for (let i = 0; i < 5; i++) {
+  board[`STACK-DEV`].data.push({
+    sides: 4,
+    rotate: 0,
+    color: "white",
+    id: `ITEM-DEV-VICTORY-CARD${i}`,
+    name: "1 Victory Point",
+    parent: `STACK-DEV`,
+    zIndex: 1,
+    width: 80,
+    height: 100,
+    top: 0,
+    left: 0,
+    disabled: false,
+    isHidden: false,
+  });
+}
+
+// road building
+for (let i = 0; i < 2; i++) {
+  board[`STACK-DEV`].data.push({
+    sides: 4,
+    rotate: 0,
+    color: "white",
+    id: `ITEM-DEV-ROAD-CARD${i}`,
+    name: "Road Building",
+    parent: `STACK-DEV`,
+    zIndex: 1,
+    width: 80,
+    height: 100,
+    top: 0,
+    left: 0,
+    disabled: false,
+    isHidden: false,
+  });
+}
+
+// year of plenty
+for (let i = 0; i < 2; i++) {
+  board[`STACK-DEV`].data.push({
+    sides: 4,
+    rotate: 0,
+    color: "white",
+    id: `ITEM-DEV-PLENTY-CARD${i}`,
+    name: "Any 2 Resources",
+    parent: `STACK-DEV`,
+    zIndex: 1,
+    width: 80,
+    height: 100,
+    top: 0,
+    left: 0,
+    disabled: false,
+    isHidden: false,
+  });
+}
+
+// monopoly
+for (let i = 0; i < 2; i++) {
+  board[`STACK-DEV`].data.push({
+    sides: 4,
+    rotate: 0,
+    color: "white",
+    id: `ITEM-DEV-MONOPOLY-CARD${i}`,
+    name: "Monopoly",
+    parent: `STACK-DEV`,
+    zIndex: 1,
+    width: 80,
+    height: 100,
+    top: 0,
+    left: 0,
+    disabled: false,
+    isHidden: false,
+  });
+}
+
 // numbers
 for (let i = 1; i < 13; i++) {
   for (let numOfNum = 0; numOfNum < 3; numOfNum++) {
@@ -76,8 +192,8 @@ for (let i = 1; i < 13; i++) {
       height: 30,
       name: `${i}`,
       isHidden: false,
-      left: 150 + (30 * i - 1),
-      top: 170,
+      left: 10 + 35 * (i - 1),
+      top: 310,
       zIndex: 0,
       rotate: 0,
       disabled: false,
@@ -100,8 +216,8 @@ for (let c = 0; c < colors.length; c++) {
       height: 40,
       name: "",
       isHidden: false,
-      left: 150 + 50 * c,
-      top: 210,
+      left: 50 * c + 10,
+      top: 350,
       zIndex: 0,
       rotate: 10,
       disabled: false,
@@ -118,10 +234,10 @@ for (let c = 0; c < colors.length; c++) {
       height: 70,
       name: "",
       isHidden: false,
-      left: 150 + 50 * c,
-      top: 260,
+      left: 50 * c + 10,
+      top: 400,
       zIndex: 0,
-      rotate: 45,
+      rotate: 30,
       disabled: false,
       parent: "BOARD",
     };
@@ -137,8 +253,8 @@ board[`ITEM-ROBBER`] = {
   height: 50,
   name: "",
   isHidden: false,
-  left: 150,
-  top: 320,
+  left: 10,
+  top: 460,
   zIndex: 0,
   rotate: 45,
   disabled: false,

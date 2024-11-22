@@ -157,7 +157,7 @@ const Card = ({ card, disableOptions }: CardProps) => {
                             sides={card.sides}
                             width={card.width}
                             rotate={card.rotate}
-                            color={card.color}
+                            color={card.isHidden ? "brown" : card.color}
                         >
                             <div
                                 style={{
@@ -184,9 +184,10 @@ const Card = ({ card, disableOptions }: CardProps) => {
         card.zIndex,
         card.parent,
         card.isHidden,
+        sliderValue,
         isRotate,
-        openDialog
-    ])
+        openDialog,
+    ]);
     return CardMemo;
 };
 

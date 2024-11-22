@@ -38,7 +38,7 @@ const Stack = ({ stack }: StackProps) => {
                 <DraggableOptions
                     openDialog={openDialog}
                     setOpenDialog={setOpenDialog}
-                    zIndex={stack.zIndex + 1}
+                    zIndex={stack.zIndex + 100}
                 >
                     <div
                         style={{
@@ -149,7 +149,6 @@ const Stack = ({ stack }: StackProps) => {
                                 style={{
                                     width: stack.width,
                                     height: stack.height,
-
                                 }}
                             >
                                 {stack.data.length > 0 && (
@@ -158,23 +157,13 @@ const Stack = ({ stack }: StackProps) => {
                                         disableOptions={true}
                                     />
                                 )}
-
                             </div>
                         </div>
                     )}
                 />
             </div>
         );
-    }, [
-        stack.left,
-        stack.top,
-        stack.id,
-        stack.data.length,
-        openDialog,
-        stack.transform,
-        stack.data[0]?.id,
-        stack.data[0]?.isHidden,
-    ])
+    }, [openDialog, stack, user, setDropRef]);
     return StackMemo;
     // return (
     //     <div

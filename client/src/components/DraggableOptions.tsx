@@ -30,9 +30,7 @@ const DraggableOptions = ({
                 fontFamily: "Arial, sans-serif", // Change font family
             }}
         >
-            <div style={{ marginBottom: "15px" }}>
-                {children}
-            </div>
+            <div style={{ marginBottom: "15px" }}>{children}</div>
 
             <button
                 style={{
@@ -50,7 +48,6 @@ const DraggableOptions = ({
                 Cancel
             </button>
         </dialog>
-
     );
 };
 
