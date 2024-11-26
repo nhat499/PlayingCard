@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import Draggable, { item } from "./Draggable";
 import DraggableOptions from "./DraggableOptions";
 import { socket } from "../socket/Socket";
-import { useItemAction, useUser } from "../atom/userAtom";
+import { useGameState, useItemAction, useUser } from "../atom/userAtom";
 import { gameObj } from "../../../server/src/interfaces/gameStateInterface";
 import Polygon from "./Polygon";
 
@@ -23,6 +23,7 @@ const Card = ({ card, disableOptions }: CardProps) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [isRotate, setIsRotate] = useState(false);
     const [sliderValue, setSliderValue] = useState(card.rotate);
+    const { gameStates } = useGameState();
     if (!user) {
         throw Error("user not found");
     }
@@ -37,21 +38,78 @@ const Card = ({ card, disableOptions }: CardProps) => {
         return (
             <div
                 style={{
-                    position: "relative",
+                    position: "absolute",
                     cursor: "pointer",
-                    // transition: "transform 0.3s ease, box-shadow 0.3s ease",
-                    marginBottom: "10px", // Add spacing between cards
+                    top: card.top,
+                    left: card.left,
                 }}
                 onContextMenu={(e) => {
                     e.preventDefault();
                     setOpenDialog(true);
                 }}
             >
+                {isRotate && (
+                    <input
+                        style={{ position: "absolute", top: "-30px" }}
+                        type={"range"}
+                        tabIndex={0}
+                        value={sliderValue}
+                        min={-180}
+                        max={180}
+                        onMouseUp={() => {
+                            if (card.parent === gameObj.BOARD) {
+                                socket.emit("DropOnBoard", {
+                                    item: card,
+                                    player: user,
+                                });
+                            }
+                            setIsItemAction(false);
+                            setIsRotate(false);
+                        }}
+                        onChange={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            setSliderValue(parseInt(e.target.value));
+                            card.rotate = sliderValue;
+                            socket.emit("OnBoardDrag", {
+                                item: card,
+                                player: user,
+                            });
+                        }}
+                    />
+                )}
+                <Draggable
+                    item={{
+                        ...card,
+                    }}
+                    Children={({ listeners }) => (
+                        <Polygon
+                            height={card.height}
+                            sides={card.sides}
+                            width={card.width}
+                            rotate={card.rotate}
+                            color={card.isHidden ? "brown" : card.color}
+                            listeners={listeners}
+                        >
+                            <div
+                                style={{
+                                    wordWrap: "normal",
+                                    overflowWrap: "break-word",
+                                    textOverflow: "ellipsis",
+                                    fontSize: "16px",
+                                }}
+                            >
+                                {card.isHidden ? "hidden" : card.name}
+                            </div>
+                        </Polygon>
+                    )}
+                />
+
                 {!disableOptions && (
                     <DraggableOptions
                         openDialog={openDialog}
                         setOpenDialog={setOpenDialog}
-                        zIndex={card.zIndex + 1}
+                        zIndex={gameStates?.maxZIndex ?? card.zIndex + 1}
                     >
                         <div
                             style={{
@@ -123,55 +181,6 @@ const Card = ({ card, disableOptions }: CardProps) => {
                         </div>
                     </DraggableOptions>
                 )}
-                {isRotate && (
-                    <input
-                        style={{ position: "absolute", top: "-30px" }}
-                        type={"range"}
-                        tabIndex={0}
-                        value={sliderValue}
-                        min={-180}
-                        max={180}
-                        onMouseUp={() => {
-                            setIsItemAction(false);
-                            setIsRotate(false);
-                        }}
-                        onChange={(e) => {
-                            e.stopPropagation();
-                            e.preventDefault();
-                            setSliderValue(parseInt(e.target.value));
-                            card.rotate = sliderValue;
-                            socket.emit("OnBoardDrag", {
-                                item: card,
-                                player: user,
-                            });
-                        }}
-                    />
-                )}
-                <Draggable
-                    item={{
-                        ...card,
-                    }}
-                    Children={() => (
-                        <Polygon
-                            height={card.height}
-                            sides={card.sides}
-                            width={card.width}
-                            rotate={card.rotate}
-                            color={card.isHidden ? "brown" : card.color}
-                        >
-                            <div
-                                style={{
-                                    wordWrap: "normal",
-                                    overflowWrap: "break-word",
-                                    textOverflow: "ellipsis",
-                                    fontSize: "16px",
-                                }}
-                            >
-                                {card.isHidden ? "hidden" : card.name}
-                            </div>
-                        </Polygon>
-                    )}
-                />
             </div>
         );
     }, [
@@ -187,6 +196,7 @@ const Card = ({ card, disableOptions }: CardProps) => {
         sliderValue,
         isRotate,
         openDialog,
+        gameStates?.maxZIndex,
     ]);
     return CardMemo;
 };

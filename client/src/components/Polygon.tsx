@@ -1,3 +1,4 @@
+import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import { CSSProperties, ReactNode } from "react";
 
 interface PolygonProps {
@@ -6,6 +7,7 @@ interface PolygonProps {
     height: number;
     rotate: number; // Rotation in degrees
     color: CSSProperties["color"];
+    listeners?: SyntheticListenerMap;
     children?: ReactNode;
 }
 
@@ -15,6 +17,7 @@ const Polygon = ({
     height,
     rotate,
     color = "lightblue",
+    listeners,
     children,
 }: PolygonProps) => {
     const points: string[] = [];
@@ -55,6 +58,7 @@ const Polygon = ({
                         position: "absolute",
                         top: 0,
                         left: 0,
+                        // border: "1px solid blue",
                         width: "100%",
                         height: "100%",
                         display: "flex",
@@ -65,6 +69,18 @@ const Polygon = ({
                     {children}
                 </div>
             )}
+            <div
+                style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "60%",
+                    height: "60%",
+                    margin: "20%",
+                    transform: `rotate(${rotate}deg) `,
+                }}
+                {...listeners}
+            ></div>
         </div>
     );
 };

@@ -24,11 +24,14 @@ import {
 } from "../../../server/src/interfaces/gameStateInterface";
 import SubSection from "../components/subSection";
 import HandButton from "../components/HandButtons";
+import DraggableOptions from "../components/DraggableOptions";
 
 function GameScreen() {
     const { roomId } = useParams();
-    const { gameStates } = useGameState();
-    const [highestZIndex, setHighestZIndex] = useState<number>(gameStates?.maxZIndex ?? 1);
+    const { gameStates, setGameStates } = useGameState();
+    // const [highestZIndex, setHighestZIndex] = useState<number>(
+    //     gameStates?.maxZIndex ?? 1
+    // );
     const { setIsItemAction } = useItemAction();
     const { boardScale, setBoardScale } = useBoardScale();
     const { user } = useUser();
@@ -83,14 +86,12 @@ function GameScreen() {
                 // let updateItem = boardItem[item.id];
                 item.top = 10;
                 if (stack && item.parent.startsWith(gameObj.STACK)) {
-
                     item.left = stack.left;
                 }
 
                 item.left += delta.x;
                 item.left += boardPosition.x;
                 item.left *= boardScale;
-
 
                 // add to hand
 
@@ -132,12 +133,11 @@ function GameScreen() {
             // item.zIndex < highestZIndex &&
             !item.id.startsWith(gameObj.STACK)
         ) {
-            item.zIndex = highestZIndex;
+            item.zIndex = gameStates?.maxZIndex ?? 0;
             setBoardItem((currBoardItem) => {
                 currBoardItem[item.id] = item;
                 return { ...currBoardItem };
             });
-
         }
     }
 
@@ -204,8 +204,15 @@ function GameScreen() {
         });
 
         socket.on("MaxZIndex", ({ zIndex }) => {
-            setHighestZIndex(zIndex);
-        })
+            // setHighestZIndex(zIndex);
+            console.log("i am zindex:", zIndex);
+            setGameStates((prevGameState) => {
+                if (!prevGameState) return prevGameState;
+                const currGameStates = { ...prevGameState };
+                currGameStates.maxZIndex = zIndex;
+                return currGameStates;
+            });
+        });
 
         return () => {
             socket.off("BoardUpdate");
@@ -213,6 +220,7 @@ function GameScreen() {
             socket.off("RemoveFromHand");
             socket.off("OnBoardDrag");
             socket.off("ReceiveItem");
+            socket.off("MaxZIndex");
         };
     }, []);
 
@@ -236,7 +244,6 @@ function GameScreen() {
                 >
                     <div
                         style={{
-                            // display: "flex",
                             flexDirection: "column",
                             overflowAnchor: "auto",
                         }}

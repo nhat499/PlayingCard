@@ -10,6 +10,8 @@ import {
     Stack,
 } from "../../../server/src/interfaces/gameStateInterface";
 import { useItemAction } from "../atom/userAtom";
+import { handleExport } from "../util";
+import DraggableOptions from "./DraggableOptions";
 
 export type BoardProps = {
     items: Room["board"];
@@ -97,74 +99,203 @@ const Board = ({
 
     return (
         <div
-            ref={setNodeRef}
-            style={{
-                minHeight: `${size.height}px`,
-                minWidth: `${size.width}px`,
-                border: "5px solid #a7c7dc",
-                ...(!isItemAction ? { overflow: "hidden" } : {}),
-                backgroundColor: "#e6f7ff",
-                borderRadius: "12px",
-                cursor: isDragging ? "grabbing" : "grab",
-                position: "relative",
-                marginBottom: "10px",
-            }}
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
-            onWheel={(e) => {
-                if (e.deltaY > 0) {
-                    // zoom out
-                    setBoardScale((prevBoardScale) => {
-                        return prevBoardScale - 0.03;
-                    });
-                } else {
-                    // zoom in
-                    setBoardScale((prevBoardScale) => {
-                        return prevBoardScale + 0.03;
-                    });
+            style={
+                {
+                    // position: "relative",
+                    // display: "flex",
                 }
-            }}
+            }
         >
-            <div
+            <button
                 style={{
-                    position: "absolute",
+                    display: "flex",
+                    justifySelf: "flex-end",
+                    marginRight: "10px",
+                    top: "",
+                    backgroundColor: "lightblue",
+                    border: "none",
+                    cursor: "pointer",
+                    borderRadius: "4px",
+                }}
+                onClick={() => handleExport(JSON.stringify(items))}
+            >
+                export
+            </button>
+            <div
+                ref={setNodeRef}
+                style={{
                     minHeight: `${size.height}px`,
                     minWidth: `${size.width}px`,
-                    // background: 'url("https://img.freepik.com/premium-vector/abstract-signs-pattern-white-background-vector-illustration_716882-534.jpg?semt=ais_hybrid")',
-                    // backgroundRepeat: "repeat",
-                    // backgroundSize: "300px 300px",
-                    left: `${boardPosition.x}px`,
-                    top: `${boardPosition.y}px`,
-                    transform: `scale(${boardScale},${boardScale})`,
-                    transformOrigin: "top left",
+                    border: "5px solid #a7c7dc",
+                    ...(!isItemAction ? { overflow: "hidden" } : {}),
+                    backgroundColor: "#e6f7ff",
+                    borderRadius: "12px",
+                    cursor: isDragging ? "grabbing" : "grab",
+                    position: "relative",
+                    marginBottom: "10px",
+                }}
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp}
+                onWheel={(e) => {
+                    if (e.deltaY > 0) {
+                        // zoom out
+                        setBoardScale((prevBoardScale) => {
+                            return prevBoardScale - 0.03;
+                        });
+                    } else {
+                        // zoom in
+                        setBoardScale((prevBoardScale) => {
+                            return prevBoardScale + 0.03;
+                        });
+                    }
                 }}
             >
-                {Object.entries(items).map(([key, item]) => {
-                    return (
+                <div
+                    style={{
+                        position: "absolute",
+                        minHeight: `${size.height}px`,
+                        minWidth: `${size.width}px`,
+                        // background: 'url("https://img.freepik.com/premium-vector/abstract-signs-pattern-white-background-vector-illustration_716882-534.jpg?semt=ais_hybrid")',
+                        // backgroundRepeat: "repeat",
+                        // backgroundSize: "300px 300px",
+                        left: `${boardPosition.x}px`,
+                        top: `${boardPosition.y}px`,
+                        transform: `scale(${boardScale},${boardScale})`,
+                        transformOrigin: "top left",
+                    }}
+                >
+                    {Object.entries(items).map(([key, item]) => {
+                        return "data" in item ? (
+                            <ItemStack key={key} stack={item as Stack} />
+                        ) : (
+                            <Card
+                                key={key}
+                                card={item as Item}
+                                disableOptions={false}
+                            />
+                        );
+
+                        // <div
+                        //     key={key}
+                        //     style={{
+                        //         position: "absolute",
+                        //         zIndex: item.zIndex,
+                        //         top: item.top,
+                        //         left: item.left,
+                        //     }}
+                        // >
+                        //     {item.id.startsWith(gameObj.ITEM) && (
+                        //         <Card
+                        //             key={key}
+                        //             card={item as Item}
+                        //             disableOptions={false}
+                        //         />
+                        //     )}
+                        //     {item.id.startsWith(gameObj.STACK) && (
+                        //         <ItemStack
+                        //             key={key}
+                        //             stack={item as Stack}
+                        //         />
+                        //     )}
+                        // </div>
+                    })}
+                    {/* Context Menu (Draggable Options) */}
+                    {/* <DraggableOptions
+                        openDialog={true}
+                        setOpenDialog={() => {}}
+                        zIndex={0}
+                        // zIndex={gameStates?.maxZIndex ?? stack.zIndex + 1}
+                    >
                         <div
-                            key={key}
                             style={{
-                                position: "absolute",
-                                zIndex: item.zIndex,
-                                top: item.top,
-                                left: item.left,
+                                display: "flex",
+                                flexDirection: "column",
+                                gap: "8px",
                             }}
                         >
-                            {item.id.startsWith(gameObj.ITEM) && (
-                                <Card
-                                    key={key}
-                                    card={item as Item}
-                                    disableOptions={false}
-                                />
-                            )}
-                            {item.id.startsWith(gameObj.STACK) && (
-                                <ItemStack key={key} stack={item as Stack} />
-                            )}
+                            <button
+                                // onClick={() => {
+                                //     if (stack.data.length < 1) return;
+                                //     // flipAll(stack.data, !stack.data[0].isHidden);
+                                //     // socket.emit("FlipStack", {
+                                //     //     roomId,
+                                //     //     stackId: stack.id,
+                                //     //     stackData: stack.data,
+                                //     // });
+
+                                //     socket.emit("DealItem", {
+                                //         player: user,
+                                //         amount: 1,
+                                //         stack,
+                                //     });
+                                //     setOpenDialog(false);
+                                // }}
+                                style={{
+                                    padding: "8px 16px",
+                                    backgroundColor: "#28a745",
+                                    color: "#fff",
+                                    border: "none",
+                                    borderRadius: "5px",
+                                    cursor: "pointer",
+                                    transition: "all 0.3s ease",
+                                }}
+                            >
+                                Deal
+                            </button>
+                            <button
+                                // onClick={() => {
+                                //     socket.emit("ShuffleStack", {
+                                //         player: user,
+                                //         stack,
+                                //     });
+                                //     setOpenDialog(false);
+                                // }}
+                                style={{
+                                    padding: "8px 16px",
+                                    backgroundColor: "#007bff",
+                                    color: "#fff",
+                                    border: "none",
+                                    borderRadius: "5px",
+                                    cursor: "pointer",
+                                    transition: "all 0.3s ease",
+                                }}
+                            >
+                                Shuffle
+                            </button>
+
+                            <button
+                                // onClick={() => {
+                                //     if (stack.data.length < 1) return;
+                                //     // flipAll(stack.data, !stack.data[0].isHidden);
+                                //     // socket.emit("FlipStack", {
+                                //     //     roomId,
+                                //     //     stackId: stack.id,
+                                //     //     stackData: stack.data,
+                                //     // });
+
+                                //     socket.emit("FlipStack", {
+                                //         player: user,
+                                //         stack,
+                                //     });
+                                //     setOpenDialog(false);
+                                // }}
+                                style={{
+                                    padding: "8px 16px",
+                                    backgroundColor: "#28a745",
+                                    color: "#fff",
+                                    border: "none",
+                                    borderRadius: "5px",
+                                    cursor: "pointer",
+                                    transition: "all 0.3s ease",
+                                }}
+                            >
+                                Flip
+                            </button>
                         </div>
-                    );
-                })}
+                    </DraggableOptions> */}
+                </div>
             </div>
         </div>
     );

@@ -1,8 +1,9 @@
-import { useDraggable } from "@dnd-kit/core";
+import { DraggableAttributes, useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { ReactNode } from "react";
 import { useBoardScale } from "../atom/userAtom";
 import { gameObj } from "../../../server/src/interfaces/gameStateInterface";
+import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 
 export type item = {
     id: string;
@@ -18,29 +19,44 @@ export type item = {
 
 export type DraggableProps = {
     item: item;
-    Children?: (isDragging: boolean) => ReactNode;
+    Children?: ({
+        isDragging,
+        dragRef,
+    }: {
+        isDragging: boolean;
+        dragRef: (element: HTMLElement | null) => void;
+        listeners?: SyntheticListenerMap;
+        attributes?: DraggableAttributes;
+        setActivatorNodeRef: (element: HTMLElement | null) => void;
+    }) => ReactNode;
 };
 
 const Draggable = ({ item, Children }: DraggableProps) => {
-    const { attributes, listeners, setNodeRef, transform, isDragging } =
-        useDraggable({
-            id: item.id,
-            data: item,
-            disabled: item.disabled,
-        });
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        isDragging,
+        setActivatorNodeRef,
+    } = useDraggable({
+        id: item.id,
+        data: item,
+        disabled: item.disabled,
+    });
     const { boardScale } = useBoardScale();
     const scaledTransform = transform
         ? {
-            ...transform,
-            x:
-                item.parent === gameObj.HAND
-                    ? transform.x
-                    : transform.x / boardScale,
-            y:
-                item.parent === gameObj.HAND
-                    ? transform.y
-                    : transform.y / boardScale,
-        }
+              ...transform,
+              x:
+                  item.parent === gameObj.HAND
+                      ? transform.x
+                      : transform.x / boardScale,
+              y:
+                  item.parent === gameObj.HAND
+                      ? transform.y
+                      : transform.y / boardScale,
+          }
         : null;
     const style = {
         transform: item.transform
@@ -58,10 +74,18 @@ const Draggable = ({ item, Children }: DraggableProps) => {
                     ...(item.transform || isDragging ? { opacity: 0.7 } : {}),
                     ...style,
                 }}
-                {...listeners}
-                {...attributes}
+                // {...listeners}
+                // {...attributes}
             >
-                {Children && Children(isDragging)}
+                {/* <div {...listeners}>dragHandle</div> */}
+                {Children &&
+                    Children({
+                        isDragging,
+                        dragRef: setNodeRef,
+                        listeners: { ...listeners },
+                        attributes,
+                        setActivatorNodeRef,
+                    })}
             </div>
         </>
     );

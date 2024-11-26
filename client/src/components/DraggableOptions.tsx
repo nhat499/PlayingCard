@@ -18,9 +18,10 @@ const DraggableOptions = ({
             open={openDialog}
             style={{
                 position: "absolute",
-                zIndex: zIndex,
-                left: "30px",
-                top: "-60px",
+                // top: "0",
+                zIndex: zIndex + 1,
+                left: "0px",
+                top: "0px",
                 padding: "20px", // Add some padding
                 border: "none", // Remove default border
                 borderRadius: "8px", // Rounded corners

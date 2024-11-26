@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Configuration from "../components/Configuration";
 import { socket } from "../socket/Socket";
 import { useGameState, useUser } from "../atom/userAtom";
 import { useNavigate, useParams } from "react-router-dom";
 import { Room } from "../../../server/src/interfaces/gameStateInterface";
+import { handleExport } from "../util";
 
 const CreateGameScreen = () => {
     const { user } = useUser();
@@ -20,6 +21,26 @@ const CreateGameScreen = () => {
     const [boardStateValue, setBoardStateValue] = useState<string>(
         JSON.stringify(gameStates.board, undefined, 4)
     );
+
+    const fileImportRef = useRef<HTMLInputElement | null>(null);
+
+    const importJsonFile = (e: ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]; // Get the first file (only one allowed)
+        if (file) {
+            const reader = new FileReader();
+
+            reader.onload = (event) => {
+                if (event.target?.result) {
+                    setBoardStateValue(event.target.result as string);
+
+                    // You can use the jsonData as needed
+                }
+            };
+
+            // Read the file as text
+            reader.readAsText(file);
+        }
+    };
 
     useEffect(() => {
         socket.on("SomeOneJoin", (players) => {
@@ -92,6 +113,28 @@ const CreateGameScreen = () => {
                     }}
                 >
                     catan
+                </button>
+
+                <button
+                    onClick={() => {
+                        if (fileImportRef.current) {
+                            fileImportRef.current.click();
+                        }
+                    }}
+                >
+                    import
+                </button>
+
+                <input
+                    type="file"
+                    hidden
+                    ref={fileImportRef}
+                    accept=".json" // Restrict to .json files
+                    onChange={importJsonFile}
+                />
+
+                <button onClick={() => handleExport(boardStateValue)}>
+                    export
                 </button>
             </div>
 
