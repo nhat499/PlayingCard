@@ -75,7 +75,7 @@ const Draggable = ({ item, Children }: DraggableProps) => {
                     ...style,
                 }}
                 // {...listeners}
-                // {...attributes}
+                {...attributes}
             >
                 {/* <div {...listeners}>dragHandle</div> */}
                 {Children &&

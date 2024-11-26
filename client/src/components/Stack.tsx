@@ -151,7 +151,17 @@ const Stack = ({ stack }: StackProps) => {
                 </DraggableOptions>
             </div>
         );
-    }, [openDialog, stack, user, gameStates?.maxZIndex, setDropRef]);
+    }, [
+        openDialog,
+        stack.top,
+        stack.left,
+        stack.data[0].isHidden,
+        stack.data[0].id,
+        stack.data.length,
+        user,
+        gameStates?.maxZIndex,
+        setDropRef,
+    ]);
     return StackMemo;
 };
 
