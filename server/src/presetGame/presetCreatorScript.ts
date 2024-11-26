@@ -11,6 +11,16 @@ const hexColor = [
   "lightgray",
   "yellow",
 ];
+
+// boards
+// const boardStart = {x: 300, y:300 }
+
+// 6 player boards
+// row 1
+// row 2
+// row 3
+
+// additional elements
 for (let r = 0; r < resource.length; r++) {
   const mat = resource[r];
 
@@ -23,7 +33,7 @@ for (let r = 0; r < resource.length; r++) {
       id: `ITEM-${mat}${i}`,
       name: mat,
       parent: "BOARD",
-      zIndex: 1,
+      zIndex: 0,
       width: 150,
       height: 150,
       top: 0,
@@ -40,7 +50,7 @@ for (let r = 0; r < resource.length; r++) {
       name: `${mat}Stack`,
       parent: "BOARD",
       rotate: 0,
-      zIndex: 1,
+      zIndex: 0,
       width: 80,
       height: 100,
       top: 160,
@@ -58,7 +68,7 @@ for (let r = 0; r < resource.length; r++) {
         id: `ITEM-${mat}-CARD${i}`,
         name: mat,
         parent: `STACK-${mat}`,
-        zIndex: 1,
+        zIndex: 0,
         width: 80,
         height: 100,
         top: 0,
@@ -76,7 +86,7 @@ board[`STACK-DEV`] = {
   name: `DEVStack`,
   parent: "BOARD",
   rotate: 0,
-  zIndex: 1,
+  zIndex: 0,
   width: 80,
   height: 100,
   top: 160,
@@ -95,7 +105,7 @@ for (let i = 0; i < 14; i++) {
     id: `ITEM-DEV-KNIGHTS-CARD${i}`,
     name: "Knights",
     parent: `STACK-DEV`,
-    zIndex: 1,
+    zIndex: 0,
     width: 80,
     height: 100,
     top: 0,
@@ -114,7 +124,7 @@ for (let i = 0; i < 5; i++) {
     id: `ITEM-DEV-VICTORY-CARD${i}`,
     name: "1 Victory Point",
     parent: `STACK-DEV`,
-    zIndex: 1,
+    zIndex: 0,
     width: 80,
     height: 100,
     top: 0,
@@ -133,7 +143,7 @@ for (let i = 0; i < 2; i++) {
     id: `ITEM-DEV-ROAD-CARD${i}`,
     name: "Road Building",
     parent: `STACK-DEV`,
-    zIndex: 1,
+    zIndex: 0,
     width: 80,
     height: 100,
     top: 0,
@@ -152,7 +162,7 @@ for (let i = 0; i < 2; i++) {
     id: `ITEM-DEV-PLENTY-CARD${i}`,
     name: "Any 2 Resources",
     parent: `STACK-DEV`,
-    zIndex: 1,
+    zIndex: 0,
     width: 80,
     height: 100,
     top: 0,
@@ -171,7 +181,7 @@ for (let i = 0; i < 2; i++) {
     id: `ITEM-DEV-MONOPOLY-CARD${i}`,
     name: "Monopoly",
     parent: `STACK-DEV`,
-    zIndex: 1,
+    zIndex: 0,
     width: 80,
     height: 100,
     top: 0,
@@ -260,6 +270,46 @@ board[`ITEM-ROBBER`] = {
   disabled: false,
   parent: "BOARD",
 };
+
+// ports
+//4, ? 3:1
+for (let i = 0; i < 4; i++) {
+  board[`ITEM-QUEST-PORT-${i}`] = {
+    id: `ITEM-QUEST-PORT-${i}`,
+    color: "white",
+    disabled: false,
+    height: 50,
+    width: 50,
+    left: 70,
+    top: 460,
+    name: "? \n 3:1",
+    parent: "BOARD",
+    sides: 4,
+    rotate: 0,
+    isHidden: false,
+    zIndex: 0,
+  };
+}
+
+// sheep, rock, hay, brick
+for (let i = 0; i < resource.length - 1; i++) {
+  const r = resource[i];
+  board[`ITEM-${r}-PORT`] = {
+    id: `ITEM-${r}-PORT`,
+    color: "white",
+    disabled: false,
+    height: 50,
+    width: 50,
+    left: 130,
+    top: 460,
+    name: `${r} \n 2:1`,
+    parent: "BOARD",
+    sides: 4,
+    rotate: 0,
+    isHidden: false,
+    zIndex: 0,
+  };
+}
 
 // console.log(JSON.stringify(board, null, 2))
 fs.writeFile(

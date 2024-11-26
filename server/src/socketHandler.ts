@@ -219,7 +219,7 @@ class SocketHandler {
       message: `Drop ${item.name} on Board`,
     });
 
-    this.io.in(roomId).emit("MaxZIndex", { player, zIndex: currMaxIndex + 1 })
+    this.io.in(roomId).emit("MaxZIndex", { player, zIndex: currMaxIndex + 1 });
 
     if (!("data" in item)) {
       this.io.in(roomId).emit("Message", {
@@ -227,6 +227,8 @@ class SocketHandler {
         message: `Drop ${item.isHidden ? "hidden" : item.name} on Board`,
       });
     }
+    console.log("drop on board");
+
     if (callback) callback();
   };
 
@@ -303,6 +305,9 @@ class SocketHandler {
     const stack = this.gameStates[roomId].board[stackId];
     if (item.id && stack && "data" in stack) {
       item.parent = stack.id;
+      item.top = 0;
+      item.left = 0;
+      item.zIndex = 0;
       stack.data.push(item);
       this.io.in(roomId).emit("Message", {
         player,
@@ -316,7 +321,6 @@ class SocketHandler {
       player,
       message: ``,
     });
-
 
     if (callback) callback();
   };
@@ -377,11 +381,7 @@ class SocketHandler {
     }
     if (callback) callback();
   };
-  ShuffleStack = ({
-    data,
-    socket,
-    callback,
-  }: HandlerParams<"ShuffleStack">) => {
+  ShuffleStack = ({ data, callback }: HandlerParams<"ShuffleStack">) => {
     const { player, stack } = data;
     const roomId = player.roomId;
 
