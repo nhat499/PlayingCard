@@ -84,18 +84,19 @@ function GameScreen() {
             if (!handItem[item.id]) {
                 const stack = boardItem[item.parent];
                 // let updateItem = boardItem[item.id];
-                item.top = 10;
+                const updateItem = { ...item };
+                updateItem.top = 10;
                 if (stack && item.parent.startsWith(gameObj.STACK)) {
-                    item.left = stack.left;
+                    updateItem.left = stack.left;
                 }
 
-                item.left += delta.x;
-                item.left += boardPosition.x;
-                item.left *= boardScale;
+                updateItem.left += delta.x;
+                updateItem.left += boardPosition.x;
+                updateItem.left *= boardScale;
 
                 // add to hand
 
-                socket.emit("DropOnHand", { item, player: user });
+                socket.emit("DropOnHand", { item: updateItem, player: user });
             } else {
                 // move in hand
                 setHandItem((currHandItem) => {
@@ -296,6 +297,7 @@ function GameScreen() {
                             overflowAnchor: "auto",
                         }}
                     >
+                        <HandButton setHandItem={setHandItem} />
                         <Board
                             size={gameStates.setting.window}
                             boardPosition={boardPosition}
@@ -306,8 +308,9 @@ function GameScreen() {
                             boardScale={boardScale}
                             setBoardScale={setBoardScale}
                         />
-                        <HandButton setHandItem={setHandItem} />
+
                         <Hand cards={handItem} />
+                        <HandButton setHandItem={setHandItem} />
                     </div>
                 </div>
 

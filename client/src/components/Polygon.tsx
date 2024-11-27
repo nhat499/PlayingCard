@@ -7,6 +7,7 @@ interface PolygonProps {
     height: number;
     rotate: number; // Rotation in degrees
     color: CSSProperties["color"];
+    isDisabled: boolean;
     listeners?: SyntheticListenerMap;
     children?: ReactNode;
 }
@@ -17,6 +18,7 @@ const Polygon = ({
     height,
     rotate,
     color = "lightblue",
+    isDisabled,
     listeners,
     children,
 }: PolygonProps) => {
@@ -72,6 +74,7 @@ const Polygon = ({
             <div
                 style={{
                     position: "absolute",
+                    cursor: isDisabled ? "auto" : "move",
                     top: 0,
                     left: 0,
                     width: "60%",

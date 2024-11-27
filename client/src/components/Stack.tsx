@@ -27,7 +27,7 @@ const Stack = ({ stack }: StackProps) => {
             <div
                 style={{
                     position: "absolute",
-                    cursor: "pointer",
+
                     top: stack.top,
                     left: stack.left,
                 }}
@@ -42,6 +42,7 @@ const Stack = ({ stack }: StackProps) => {
                     Children={({ isDragging, listeners }) => (
                         <div
                             style={{
+                                cursor: "move",
                                 position: "relative",
                                 border: "2px solid #007bff",
                                 paddingTop: "5px",
@@ -155,10 +156,10 @@ const Stack = ({ stack }: StackProps) => {
         openDialog,
         stack.top,
         stack.left,
-        stack.data[0].isHidden,
-        stack.data[0].id,
+        stack.data[0]?.isHidden,
+        stack.data[0]?.id,
         stack.data.length,
-        user,
+        stack.transform,
         gameStates?.maxZIndex,
         setDropRef,
     ]);

@@ -37,18 +37,25 @@ const AddItemPopup = () => {
     let newItem: Item | undefined;
     try {
         newItem = JSON.parse(newItemString) ?? undefined;
-    } catch (err) { }
+    } catch (err) {
+        // does nothing
+    }
 
     return (
-
         <div
             style={{
                 borderRadius: "10px",
                 padding: "20px",
-                overflowAnchor: "auto"
+                overflowAnchor: "auto",
             }}
         >
-            <div style={{ display: "flex", gap: "15px", flexDirection: "column" }}>
+            <div
+                style={{
+                    display: "flex",
+                    gap: "15px",
+                    flexDirection: "column",
+                }}
+            >
                 <textarea
                     style={{
                         border: "1px solid #ced4da",
@@ -79,12 +86,12 @@ const AddItemPopup = () => {
                     <div>
                         {newItem && (
                             <Polygon
+                                isDisabled={true}
                                 sides={newItem.sides ?? 4}
                                 rotate={newItem.rotate ?? 0}
                                 height={newItem.height}
                                 width={newItem.width}
                                 color={newItem.color}
-
                             >
                                 {newItem.name}
                             </Polygon>
@@ -105,8 +112,7 @@ const AddItemPopup = () => {
                                 backgroundColor: "#007bff",
                                 color: "white",
                                 cursor: "pointer",
-                                boxShadow:
-                                    "0 2px 5px rgba(0, 123, 255, 0.2)",
+                                boxShadow: "0 2px 5px rgba(0, 123, 255, 0.2)",
                                 transition: "background-color 0.2s",
                             }}
                             onClick={() => {
@@ -127,7 +133,6 @@ const AddItemPopup = () => {
                 </div>
             </div>
         </div>
-
     );
 };
 

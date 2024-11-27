@@ -154,7 +154,7 @@ const Board = ({
             >
                 <div
                     style={{
-                        position: "absolute",
+                        position: "relative",
                         minHeight: `${size.height}px`,
                         minWidth: `${size.width}px`,
                         // background: 'url("https://img.freepik.com/premium-vector/abstract-signs-pattern-white-background-vector-illustration_716882-534.jpg?semt=ais_hybrid")',

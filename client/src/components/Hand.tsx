@@ -24,6 +24,7 @@ const Hand = ({ cards }: HandProps) => {
                 boxShadow: "0 4px 10px rgba(0, 0, 0, 0.08)", // Soft shadow for subtle depth
                 display: "flex",
                 minHeight: "100px",
+                overflow: "clip",
                 border: "5px solid #a7c7dc", // Light border to frame the board
             }}
         >
@@ -32,8 +33,6 @@ const Hand = ({ cards }: HandProps) => {
                     key={item.id}
                     style={{
                         position: "relative",
-                        top: item.top,
-                        left: item.left,
                     }}
                 >
                     {item.id.startsWith(gameObj.ITEM) && (

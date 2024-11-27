@@ -104,6 +104,16 @@ io.on("connection", (socket) => {
   });
 
   socket.on("RequestRoomStates", ({ roomId, player }) => {
+    // room no longer exists
+    // update to error later
+    if (!gameStates[roomId]) return;
+
+    socket.join(roomId);
+    // cant have same name, future bug , but for now okay
+    const index = gameStates[roomId].players.findIndex(
+      (currPlayer) => (currPlayer.name = player.name)
+    );
+    gameStates[roomId].players[index].socketId = socket.id;
     socket.emit("RequestStates", { roomState: gameStates[roomId] });
   });
 

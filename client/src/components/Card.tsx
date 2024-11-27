@@ -39,7 +39,6 @@ const Card = ({ card, disableOptions }: CardProps) => {
             <div
                 style={{
                     position: "absolute",
-                    cursor: "pointer",
                     top: card.top,
                     left: card.left,
                 }}
@@ -84,6 +83,7 @@ const Card = ({ card, disableOptions }: CardProps) => {
                     }}
                     Children={({ listeners }) => (
                         <Polygon
+                            isDisabled={card.disabled}
                             height={card.height}
                             sides={card.sides}
                             width={card.width}

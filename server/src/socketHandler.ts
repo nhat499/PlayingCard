@@ -455,11 +455,7 @@ class SocketHandler {
     if (callback) callback();
   };
 
-  LoadPresetBoard = ({
-    data,
-    socket,
-    callback,
-  }: HandlerParams<"LoadPresetBoard">) => {
+  LoadPresetBoard = ({ data, callback }: HandlerParams<"LoadPresetBoard">) => {
     const { number, player } = data;
     const roomId = player.roomId;
     this.io

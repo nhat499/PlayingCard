@@ -4,6 +4,7 @@ type DraggableOptionsProps = {
     openDialog: boolean;
     setOpenDialog: (value: boolean) => void;
     zIndex: number;
+    scale?: number;
     children?: ReactNode;
 };
 
@@ -11,6 +12,7 @@ const DraggableOptions = ({
     openDialog,
     setOpenDialog,
     zIndex,
+    scale,
     children,
 }: DraggableOptionsProps) => {
     return (
@@ -29,6 +31,7 @@ const DraggableOptions = ({
                 boxShadow: "0 4px 15px rgba(0, 0, 0, 0.2)", // Subtle shadow for depth
                 width: "100px", // Set a fixed width
                 fontFamily: "Arial, sans-serif", // Change font family
+                transform: scale ? `scale(${scale})` : undefined,
             }}
         >
             <div style={{ marginBottom: "15px" }}>{children}</div>

@@ -70,7 +70,6 @@ const Draggable = ({ item, Children }: DraggableProps) => {
                 ref={setNodeRef}
                 style={{
                     position: "absolute",
-                    cursor: item.disabled ? "auto" : "move",
                     ...(item.transform || isDragging ? { opacity: 0.7 } : {}),
                     ...style,
                 }}
