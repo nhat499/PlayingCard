@@ -9,12 +9,7 @@ import http from "http";
 import { Server } from "socket.io";
 import cors from "cors";
 import nanoid from "nanoid-esm";
-import {
-  GameStates,
-  Player,
-  Room,
-  Stack,
-} from "./interfaces/gameStateInterface";
+import { GameStates, Player } from "./interfaces/gameStateInterface";
 import path from "path";
 import dotenv from "dotenv";
 import SocketHandler from "./socketHandler";
@@ -50,6 +45,8 @@ const PresetBoard = [regularDeck, catan];
 const SH = new SocketHandler(gameStates, io, PresetBoard);
 
 io.on("connection", (socket) => {
+  console.log("i am socket", socket.handshake.query);
+
   socket.on("CreateRoom", async ({ name }) => {
     const roomId: string = nanoid(5);
     socket.join(roomId);
@@ -104,6 +101,10 @@ io.on("connection", (socket) => {
     }
 
     io.in(roomId).emit("StartGame", { roomId, gameState: gameStates[roomId] });
+  });
+
+  socket.on("RequestRoomStates", ({ roomId, player }) => {
+    socket.emit("RequestStates", { roomState: gameStates[roomId] });
   });
 
   socket.on("LoadPresetBoard", (data) => {

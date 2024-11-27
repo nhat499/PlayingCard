@@ -34,11 +34,11 @@ function GameScreen() {
     // );
     const { setIsItemAction } = useItemAction();
     const { boardScale, setBoardScale } = useBoardScale();
-    const { user } = useUser();
-    if (!gameStates || !roomId || !user) {
-        throw Error("User || roomId States Not found");
-    }
-    const [boardItem, setBoardItem] = useState<Room["board"]>(gameStates.board);
+    const { user, setUser } = useUser();
+
+    const [boardItem, setBoardItem] = useState<Room["board"]>(
+        gameStates?.board ?? {}
+    );
     const [handItem, setHandItem] = useState<Player["hand"]>({});
     // const [isItemDrag, setIsItemDrag] = useState(false);
 
@@ -169,6 +169,12 @@ function GameScreen() {
     }
 
     useEffect(() => {
+        socket.on("RequestStates", ({ roomState }) => {
+            console.log("i am roomStates", roomState);
+            setGameStates(roomState);
+            setBoardItem(roomState.board);
+        });
+
         socket.on("BoardUpdate", ({ board }) => {
             setBoardItem(board);
         });
@@ -215,6 +221,7 @@ function GameScreen() {
         });
 
         return () => {
+            socket.off("RequestStates");
             socket.off("BoardUpdate");
             socket.off("AddToHand");
             socket.off("RemoveFromHand");
@@ -223,6 +230,47 @@ function GameScreen() {
             socket.off("MaxZIndex");
         };
     }, []);
+
+    if (!roomId) {
+        throw Error("roomId Not found");
+    }
+
+    if (!user) {
+        const storedUser = localStorage.getItem("user");
+        if (storedUser) {
+            const reUser = JSON.parse(storedUser);
+            setUser(reUser);
+        } else {
+            throw Error("User not found");
+        }
+    }
+
+    if (!gameStates) {
+        // get game states somehow
+        // setGameStates({
+        //     board: {},
+        //     maxZIndex: 0,
+        //     players: [],
+        //     setting: { window: { height: 500, width: 700 } },
+        // });
+        // throw Error("No game statues");
+        if (user) {
+            return (
+                <button
+                    onClick={() => {
+                        socket.emit("RequestRoomStates", {
+                            player: user,
+                            roomId,
+                        });
+                    }}
+                >
+                    reconnect
+                </button>
+            );
+        } else {
+            throw Error("User not found");
+        }
+    }
 
     return (
         <DndContext

@@ -97,10 +97,20 @@ export interface ServerToClientEvents {
     stackData: Stack["data"];
   }) => void;
 
-  MaxZIndex: ({ player, zIndex }: { player: Player, zIndex: number }) => void;
+  MaxZIndex: ({ player, zIndex }: { player: Player; zIndex: number }) => void;
+
+  RequestStates: ({ roomState }: { roomState: Room }) => void;
 }
 
 export interface ClientToServerEvents {
+  RequestRoomStates: ({
+    player,
+    roomId,
+  }: {
+    player: Player;
+    roomId: string;
+  }) => void;
+
   JoinRoom: (player: Player) => void;
 
   // create, join room and send room, name of the player,
