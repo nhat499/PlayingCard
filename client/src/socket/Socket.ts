@@ -12,6 +12,6 @@ export const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
     URL,
     {
         autoConnect: true,
-        query: JSON.parse(user ?? ""),
+        query: user ? JSON.parse(user) : undefined,
     }
 );

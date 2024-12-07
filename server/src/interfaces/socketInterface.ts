@@ -11,6 +11,8 @@ export interface ServerToClientEvents {
   // let other people in room knows i Join
   SomeOneJoin: (player: Player[]) => void;
 
+  SomeOneLeave: (player: Player[]) => void;
+
   // server let non roomleader knows to start the game
   StartGame: ({
     roomId,
