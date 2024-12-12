@@ -217,8 +217,32 @@ io.on("connection", (socket) => {
     });
   });
 
+  // Add this before the disconnect event
+  socket.on("disconnecting", () => {
+    const rooms = socket.rooms; // Get rooms before socket disconnects
+    rooms.forEach((roomId) => {
+      if (gameStates[roomId]) {
+        // Remove player from gameStates
+        gameStates[roomId].players = gameStates[roomId].players.filter(
+          (player) => player.socketId !== socket.id
+        );
+
+        // If no players left, delete the room
+        if (gameStates[roomId].players.length === 0) {
+          delete gameStates[roomId];
+        } else {
+          // Notify remaining players about disconnection
+          socket.broadcast
+            .to(roomId)
+            .emit("SomeOneLeave", gameStates[roomId].players);
+        }
+      }
+    });
+  });
+
   socket.on("disconnect", () => {
     console.log(socket.id, "a user disconnected");
+    console.log(gameStates);
     // io.sockets.emit('user disconnected');
   });
 });

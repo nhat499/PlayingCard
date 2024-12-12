@@ -10,3 +10,8 @@ server/dist/*
 # Ignore JavaScript files (or any files with the .js extension)
 *.js
 *.js.map
+
+# amplify
+.amplify
+amplify_outputs*
+amplifyconfiguration*

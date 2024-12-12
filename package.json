@@ -1,0 +1,25 @@
+{
+  "name": "playingcard",
+  "version": "1.0.0",
+  "description": "This project is a real-time multiplayer game platform that enables players to interact in dynamic, shared game environments. \r The platform is built with modern web technologies, including a **React** front-end and a **Node.ts** back-end powered by `socket.io` for real-time communication.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@aws-amplify/backend": "^1.8.0",
+    "@aws-amplify/backend-cli": "^1.4.2",
+    "aws-cdk": "^2.172.0",
+    "aws-cdk-lib": "^2.172.0",
+    "constructs": "^10.4.2",
+    "esbuild": "^0.24.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "aws-amplify": "^6.10.2"
+  }
+}
