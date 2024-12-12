@@ -24,7 +24,6 @@ import {
 } from "../../../server/src/interfaces/gameStateInterface";
 import SubSection from "../components/subSection";
 import HandButton from "../components/HandButtons";
-import DraggableOptions from "../components/DraggableOptions";
 
 function GameScreen() {
     const { roomId } = useParams();

@@ -45,8 +45,6 @@ const PresetBoard = [regularDeck, catan];
 const SH = new SocketHandler(gameStates, io, PresetBoard);
 
 io.on("connection", (socket) => {
-  console.log("i am socket", socket.handshake.query);
-
   socket.on("CreateRoom", async ({ name }) => {
     const roomId: string = nanoid(5);
     socket.join(roomId);

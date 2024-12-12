@@ -101,7 +101,7 @@ const Stack = ({ stack }: StackProps) => {
                                 border: "none",
                                 borderRadius: "5px",
                                 cursor: "pointer",
-                                transition: "all 0.3s ease",
+                                // transition: "all 0.3s ease",
                             }}
                         >
                             Deal
@@ -121,7 +121,7 @@ const Stack = ({ stack }: StackProps) => {
                                 border: "none",
                                 borderRadius: "5px",
                                 cursor: "pointer",
-                                transition: "all 0.3s ease",
+                                // transition: "all 0.3s ease",
                             }}
                         >
                             Shuffle
@@ -143,7 +143,7 @@ const Stack = ({ stack }: StackProps) => {
                                 border: "none",
                                 borderRadius: "5px",
                                 cursor: "pointer",
-                                transition: "all 0.3s ease",
+                                // transition: "all 0.3s ease",
                             }}
                         >
                             Flip

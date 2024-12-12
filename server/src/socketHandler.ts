@@ -227,7 +227,6 @@ class SocketHandler {
         message: `Drop ${item.isHidden ? "hidden" : item.name} on Board`,
       });
     }
-    console.log("drop on board");
 
     if (callback) callback();
   };
