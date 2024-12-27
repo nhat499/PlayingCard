@@ -1,10 +1,11 @@
 {
-  "name": "server",
+  "name": "playing_card",
   "version": "1.0.0",
   "main": "dist/app.js",
   "scripts": {
     "start": "tsc && node dist/app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "pm2": "pm2 start dist/app.js --name playing_card --watch"
   },
   "author": "",
   "license": "ISC",
