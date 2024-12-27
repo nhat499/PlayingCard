@@ -19,7 +19,15 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
-app.use(cors({ origin: ["http://localhost:3000", process.env.ORIGIN] }));
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:5173",
+      process.env.ORIGIN,
+    ],
+  })
+);
 
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, "./../../client/dist")));
@@ -55,9 +63,6 @@ io.on("connection", (socket) => {
       socketId: socket.id,
       roomLeader: true,
     };
-    // const importBoard: Room["board"] = (
-    //   await import("./presetGame/regularDeck.json")
-    // ).default;
     gameStates[roomId] = {
       board: {},
       players: [playerOne],
@@ -84,7 +89,7 @@ io.on("connection", (socket) => {
       socketId: socket.id,
     };
     gameStates[roomId].players.push(player);
-    // i join room
+
     await socket.join(roomId);
     socket.emit("JoinRoom", player, gameStates[roomId]);
 
@@ -109,7 +114,7 @@ io.on("connection", (socket) => {
     socket.join(roomId);
     // cant have same name, future bug , but for now okay
     const index = gameStates[roomId].players.findIndex(
-      (currPlayer) => (currPlayer.name = player.name)
+      (currPlayer) => (currPlayer.socketId = player.socketId)
     );
     gameStates[roomId].players[index].socketId = socket.id;
     socket.emit("RequestStates", { roomState: gameStates[roomId] });
@@ -245,6 +250,10 @@ io.on("connection", (socket) => {
     console.log(gameStates);
     // io.sockets.emit('user disconnected');
   });
+});
+
+app.get("/test", (req, res) => {
+  return res.status(200).send({ user: 1, name: "nameTest" });
 });
 
 server.listen(3000, "0.0.0.0", () => {
