@@ -229,7 +229,9 @@ io.on("connection", (socket) => {
       if (gameStates[roomId]) {
         // Remove player from gameStates
         gameStates[roomId].players = gameStates[roomId].players.filter(
-          (player) => player.socketId !== socket.id
+          (player) => {
+            return player.socketId !== socket.id;
+          }
         );
 
         // If no players left, delete the room
@@ -247,7 +249,6 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     console.log(socket.id, "a user disconnected");
-    console.log(gameStates);
     // io.sockets.emit('user disconnected');
   });
 });
