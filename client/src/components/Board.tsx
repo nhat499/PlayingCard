@@ -11,7 +11,6 @@ import {
 } from "../../../server/src/interfaces/gameStateInterface";
 import { useItemAction } from "../atom/userAtom";
 import { handleExport } from "../util";
-import DraggableOptions from "./DraggableOptions";
 
 export type BoardProps = {
     items: Room["board"];
