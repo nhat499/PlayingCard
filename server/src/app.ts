@@ -257,6 +257,10 @@ app.get("/test", (req, res) => {
   return res.status(200).send({ user: 1, name: "nameTest" });
 });
 
+app.get("/hc", (req, res) => {
+  return res.status(200).send("ok");
+});
+
 server.listen(3000, "0.0.0.0", () => {
   console.log("Server running at http://localhost:3000");
 });
